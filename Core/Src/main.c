@@ -350,6 +350,20 @@ int _write(int file, char *ptr, int len) {
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart->Instance == USART2)
 	{
+		if (huart->ErrorCode & HAL_UART_ERROR_ORE) 
+		{
+            // Xóa cờ lỗi ORE bằng cách đọc thanh ghi SR (hoặc ISR) và DR (hoặc RDR)
+            // (Thư viện HAL thường đã tự xử lý việc xóa cờ trong hàm IRQHandler, 
+            // ta chỉ cần kích hoạt lại ngắt nhận)
+            
+            // Xóa cờ lỗi của HAL
+            huart->ErrorCode = HAL_UART_ERROR_NONE;
+            
+            // Kích hoạt lại ngắt nhận byte mới để không bị "tịt"
+            HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
+			return;
+        }
+
 		FingerPrint_UART_RxCallback(UART2_rx_data);
       	// enable interrupt for the next time
       	HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);

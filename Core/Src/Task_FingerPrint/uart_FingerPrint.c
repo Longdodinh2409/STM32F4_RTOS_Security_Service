@@ -6,6 +6,7 @@ extern uint8_t UART2_rx_data;
 RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
 uint8_t g_au8RXFingerPrintBufferSize = 0;
 uint8_t g_au8RXFingerPrintBuffer[RX_BUFFER_SIZE];
+static uint32_t wait_start_time = 0;
 
 // Global TX
 Fingerprint_Packet_t g_stFingerPrintTXData;
@@ -277,6 +278,8 @@ void ProcessFingerPrintApplication(void)
 			// Gửi lệnh 01H (Không cần tham số data)
 			Fingerprint_SendCommand(0x01, NULL, 0);
 			g_FingerState = FSM_FINGER_WAIT_GENIMG; // Chuyển sang chờ
+			
+			wait_start_time = HAL_GetTick();
 		}
 		break;
 
@@ -301,6 +304,17 @@ void ProcessFingerPrintApplication(void)
 					g_FingerState = FSM_FINGER_SEND_GENIMG;
 				}
 			}
+			else 
+            {
+                // Logic Timeout: Kiểm tra xem đã quá thời gian chờ chưa
+                if ((HAL_GetTick() - wait_start_time) > FINGERPRINT_TIMEOUT_MS)
+                {
+                    printf("[WARN] Sensor Timeout! Resetting FSM...\r\n");
+                    // Hủy gói tin cũ, reset buffer nếu cần thiết
+                    bDataReady = false;
+                    g_FingerState = FSM_FINGER_SEND_GENIMG; // Thử lại từ đầu
+                }
+            }
 		}
 		break;
 

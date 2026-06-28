@@ -9,6 +9,8 @@
 #define TX_PAYLOAD_MAX_SIZE 		(16)
 #define RX_BUFFER_SIZE 				(256)
 
+#define FINGERPRINT_TIMEOUT_MS      (1000)
+
 // TX - RX frame
 #pragma pack(push, 1)
 typedef struct {
