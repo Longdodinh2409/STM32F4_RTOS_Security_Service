@@ -18,15 +18,14 @@ bool bNewPacketRX = false;
 //testing
 // Biến toàn cục hoặc tĩnh quản lý FSM
 Fingerprint_State_t g_FingerState = FSM_NONE;
-uint32_t g_FingerDelayTick = 0; // Dùng cho trạng thái nghỉ (Non-blocking delay)
 
 void Init_UART2_FingerPrint(void)
 {
 	HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
 }
 
-void Fingerprint_SendCommand(uint8_t instructionCode, uint8_t *params,
-		uint8_t param_len) {
+void Fingerprint_SendCommand(uint8_t instructionCode, uint8_t *params, uint8_t param_len) 
+{
 	uint32_t sum = 0;
 
 	// 1. Header, Big-Endian
@@ -62,8 +61,7 @@ void Fingerprint_SendCommand(uint8_t instructionCode, uint8_t *params,
 
 	// 6. Send UART
 	uint16_t total_transmit_bytes = 9 + package_len;
-	HAL_StatusTypeDef status = HAL_UART_Transmit(&huart2,
-			(uint8_t*) &g_stFingerPrintTXData, total_transmit_bytes, 1000);
+	HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart2, (uint8_t*) &g_stFingerPrintTXData, total_transmit_bytes);
 
 	// Debug: Check if transmit succeeded
 	if (status == HAL_OK) {
@@ -295,7 +293,6 @@ void ProcessFingerPrintApplication(void)
 				else if (confirm_code == 0x02) // 0x02: Không có ngón tay trên kính
 				{
 					// Không có ngón tay thì nghỉ 1 lát (VD: 50ms) rồi quét lại
-					g_FingerDelayTick = HAL_GetTick();
 					g_FingerState = FSM_FINGER_DELAY;
 				} 
 				else 
@@ -378,7 +375,6 @@ void ProcessFingerPrintApplication(void)
 				}
 
 				// Xử lý xong, bắt buộc phải đợi 1 lát (chờ người dùng rút ngón tay ra)
-				g_FingerDelayTick = HAL_GetTick();
 				g_FingerState = FSM_FINGER_DELAY;
 			}
 		}
@@ -391,9 +387,8 @@ void ProcessFingerPrintApplication(void)
 		{
 			// // Nghỉ 100ms trước khi tiếp tục chu trình quét mới
 			// // Việc này giúp module rảnh rang không bị quá tải lệnh liên tục
-			if (HAL_GetTick() - g_FingerDelayTick >= 100) {
-				g_FingerState = FSM_FINGER_SEND_GENIMG; // Quay lại từ đầu
-			}
+			g_FingerState = FSM_FINGER_SEND_GENIMG; // Quay lại từ đầu
+			vTaskDelay(pdMS_TO_TICKS(100));
 		}
 		break;
 	}
