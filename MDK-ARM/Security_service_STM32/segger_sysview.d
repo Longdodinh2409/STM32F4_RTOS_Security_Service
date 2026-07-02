@@ -1,0 +1,13 @@
+security_service_stm32\segger_sysview.o: ..\3rdParty\SEGGER\SEGGER\SEGGER_SYSVIEW.c
+security_service_stm32\segger_sysview.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+security_service_stm32\segger_sysview.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+security_service_stm32\segger_sysview.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+security_service_stm32\segger_sysview.o: ..\3rdParty\SEGGER\SEGGER\SEGGER_SYSVIEW_Int.h
+security_service_stm32\segger_sysview.o: ..\3rdParty\SEGGER\SEGGER\SEGGER_SYSVIEW.h
+security_service_stm32\segger_sysview.o: ..\3rdParty\SEGGER\SEGGER\SEGGER.h
+security_service_stm32\segger_sysview.o: ..\3rdParty\SEGGER\SEGGER\../Config/Global.h
+security_service_stm32\segger_sysview.o: ..\3rdParty\SEGGER\SEGGER\SEGGER_SYSVIEW_ConfDefaults.h
+security_service_stm32\segger_sysview.o: ..\3rdParty\SEGGER\SEGGER\../Config/SEGGER_SYSVIEW_Conf.h
+security_service_stm32\segger_sysview.o: ..\3rdParty\SEGGER\SEGGER\../Config/SEGGER_RTT_Conf.h
+security_service_stm32\segger_sysview.o: ..\3rdParty\SEGGER\SEGGER\SEGGER_RTT.h
+security_service_stm32\segger_sysview.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h

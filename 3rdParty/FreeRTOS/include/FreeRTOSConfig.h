@@ -47,7 +47,7 @@
 #define configMAX_PRIORITIES                       5U
 #define configMINIMAL_STACK_SIZE                   128U
 #define configMAX_TASK_NAME_LEN                    15U
-#define configTICK_TYPE_WIDTH_IN_BITS              TICK_TYPE_WIDTH_64_BITS
+#define configTICK_TYPE_WIDTH_IN_BITS              TICK_TYPE_WIDTH_32_BITS
 #define configIDLE_SHOULD_YIELD                    1
 #define configTASK_NOTIFICATION_ARRAY_ENTRIES      1U
 #define configQUEUE_REGISTRY_SIZE                  0U
@@ -82,7 +82,7 @@
 /******************************************************************************/
 
 #define configKERNEL_INTERRUPT_PRIORITY          (0xF0)
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY     5U
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY     5	
 #define configMAX_API_CALL_INTERRUPT_PRIORITY    5U
 
 /******************************************************************************/
@@ -100,7 +100,7 @@
 /******************************************************************************/
 
 #define configGENERATE_RUN_TIME_STATS           0
-#define configUSE_TRACE_FACILITY                0
+#define configUSE_TRACE_FACILITY                1
 #define configUSE_STATS_FORMATTING_FUNCTIONS    0
 #define configKERNEL_PROVIDED_STATIC_MEMORY     1
 
@@ -136,7 +136,7 @@
 #define xPortPendSVHandler  PendSV_Handler
 #define xPortSysTickHandler SysTick_Handler
 
-//#include "../../SEGGER/OS/SEGGER_SYSVIEW_FreeRTOS.h"
+#include "../../SEGGER/OS/SEGGER_SYSVIEW_FreeRTOS.h"
 
 #define INCLUDE_xTaskGetIdleTaskHandle         1
 #define INCLUED_pxTaskGetStackStart			   1
