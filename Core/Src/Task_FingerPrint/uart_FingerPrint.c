@@ -431,6 +431,6 @@ void Fingerprint_StateMachine_Task(void* param)
 		ProcessFingerPrintApplication();
 
 		// --------------- End of function ---------------
-		vTaskDelay(pdTICKS_TO_MS(10));
+		vTaskDelay(pdMS_TO_TICKS(10));
 	}
 }

@@ -102,14 +102,15 @@ int main(void)
   /* USER CODE BEGIN 2 */
   
   /****************************** SEGGER AREA  ******************************/
-	// DWT_CTRL |= (1 << 0);
-	// SEGGER_SYSVIEW_Conf();
-	// SEGGER_SYSVIEW_Start();
+	DWT_CTRL |= (1 << 0);
+	SEGGER_SYSVIEW_Conf();
+  vSetVarulMaxPRIGROUPValue();
 	
-	// memset(&_SEGGER_RTT, 0, sizeof(_SEGGER_RTT));
+	
+	memset(&_SEGGER_RTT, 0, sizeof(_SEGGER_RTT));
 
     // 3. Bây giờ bạn có thể in log thoải mái (lúc này hàm thư viện sẽ tự động điền chuỗi ID "SEGGER RTT")
-    // SEGGER_RTT_WriteString(0, "System Initialized Successfully!\n");
+    SEGGER_RTT_WriteString(0, "System Initialized Successfully!\n");
   /****************************** SEGGER AREA  ******************************/
 
 	// Init_UART2_FingerPrint();
@@ -120,6 +121,7 @@ int main(void)
 	// xTaskCreate(Fingerprint_StateMachine_Task,  "Task FingerPrint",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
   // xTaskCreate(ProcessFingerPrintRXData,       "Task Parsing Data",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
 
+  SEGGER_SYSVIEW_Start();
 	vTaskStartScheduler();
   /* USER CODE END 2 */
 
@@ -362,8 +364,8 @@ void task1_handler_func(void *para) {
 	while (1) {
     HAL_GPIO_TogglePin(GPIOD, LED_ORANGE);
 		// printf("%s \n", (char*) para);
-    // SEGGER_RTT_printf(0, "%s \n", (char*) para);
-		vTaskDelay(pdTICKS_TO_MS(500));
+    SEGGER_RTT_printf(0, "%s \n", (char*) para);
+		vTaskDelay(pdMS_TO_TICKS(500));
 	}
 }
 
@@ -371,8 +373,8 @@ void task2_handler_func(void *para) {
 	while (1) {
     HAL_GPIO_TogglePin(GPIOD, LED_RED);
 		// printf("%s \n", (char*) para);
-    // SEGGER_RTT_printf(0, "%s \n", (char*) para);
-		vTaskDelay(pdTICKS_TO_MS(500));
+    SEGGER_RTT_printf(0, "%s \n", (char*) para);
+		vTaskDelay(pdMS_TO_TICKS(500));
 	}
 }
 
@@ -404,6 +406,27 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 		FingerPrint_UART_RxCallback(UART2_rx_data);
       	// enable interrupt for the next time
       	HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
+    }
+}
+
+void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
+{
+    /* 
+     * Nếu CPU nhảy vào hàm này, nghĩa là Task có tên nằm trong biến 
+     * 'pcTaskName' vừa bị tràn Stack.
+     */
+
+    /* Bước 1: Tắt toàn bộ ngắt hệ thống để ngăn chặn thảm họa lan rộng */
+    taskDISABLE_INTERRUPTS();
+
+    /* 
+     * Bước 2: Bác có thể đặt Breakpoint tại dòng for(;;) này khi Debug.
+     * Mở Watch window, xem biến pcTaskName để biết đích danh Task nào gây lỗi,
+     * sau đó vào code khởi tạo Task đó tăng cấu hình StackSize lên!
+     */
+    for( ;; )
+    {
+        // Gắn code bật LED sáng chói lóa lên ở đây để báo hiệu lỗi
     }
 }
 /* USER CODE END 4 */

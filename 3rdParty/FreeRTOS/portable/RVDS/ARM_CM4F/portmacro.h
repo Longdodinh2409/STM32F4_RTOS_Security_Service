@@ -243,6 +243,11 @@ BaseType_t xReturn;
 	return xReturn;
 }
 
+// Add function below in file portmacro.h
+#ifdef configASSERT
+	void vSetVarulMaxPRIGROUPValue( void );
+#endif
+
 
 #ifdef __cplusplus
 }

@@ -34,13 +34,10 @@ security_service_stm32\main.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal
 security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\FreeRTOS.h
 security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\FreeRTOSConfig.h
 security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\../../SEGGER/OS/SEGGER_SYSVIEW_FreeRTOS.h
-security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\../../SEGGER/OS/../SEGGER/SEGGER_SYSVIEW.h
-security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\../../SEGGER/OS/../SEGGER/SEGGER.h
+security_service_stm32\main.o: ..\3rdParty\SEGGER\SEGGER\SEGGER_SYSVIEW.h
+security_service_stm32\main.o: ..\3rdParty\SEGGER\SEGGER\SEGGER.h
 security_service_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
-security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\../../SEGGER/OS/../SEGGER/../Config/Global.h
-security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\../../SEGGER/OS/../SEGGER/SEGGER_SYSVIEW_ConfDefaults.h
-security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\../../SEGGER/OS/../SEGGER/../Config/SEGGER_SYSVIEW_Conf.h
-security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\../../SEGGER/OS/../SEGGER/../Config/SEGGER_RTT_Conf.h
+security_service_stm32\main.o: ..\3rdParty\SEGGER\Config\Global.h
 security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\projdefs.h
 security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\portable.h
 security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\deprecated_definitions.h
@@ -53,4 +50,5 @@ security_service_stm32\main.o: ../Core/Inc/Task_FingerPrint/task_uart_FingerPrin
 security_service_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 security_service_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 security_service_stm32\main.o: ..\3rdParty\SEGGER\SEGGER\SEGGER_RTT.h
+security_service_stm32\main.o: ..\3rdParty\SEGGER\Config\SEGGER_RTT_Conf.h
 security_service_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
