@@ -2,6 +2,7 @@
 
 extern UART_HandleTypeDef huart2;
 extern uint8_t UART2_rx_data;
+extern TaskHandle_t task_PD_handler;
 
 RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
 uint8_t g_au8RXFingerPrintBufferSize = 0;
@@ -62,7 +63,8 @@ void Fingerprint_SendCommand(uint8_t instructionCode, uint8_t *params, uint8_t p
 
 	// 6. Send UART
 	uint16_t total_transmit_bytes = 9 + package_len;
-	HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart2, (uint8_t*) &g_stFingerPrintTXData, total_transmit_bytes);
+	// HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart2, (uint8_t*) &g_stFingerPrintTXData, total_transmit_bytes);
+	HAL_StatusTypeDef status = HAL_UART_Transmit(&huart2, (uint8_t*) &g_stFingerPrintTXData, total_transmit_bytes, portMAX_DELAY);
 
 	// Debug: Check if transmit succeeded
 	if (status == HAL_OK) {
@@ -134,34 +136,39 @@ bool Fingerprint_ExtractPacketFromRingBuffer(uint8_t *buffer_ptr,
 	return true;
 }
 
-void ProcessFingerPrintRXData() {
+void ProcessFingerPrintRXData(void* param) {
 	bool bIsItGood = false;
 
-	if (bDataReady == true) {
-		bDataReady = false;
-
-		__disable_irq();
-		// 1. Parse data from array buffer
-		// Note: stRXRingBuffer.head indicates the number of bytes available in g_au8RXFingerPrintBuffer
-		bIsItGood = Fingerprint_ExtractPacketFromRingBuffer(g_au8RXFingerPrintBuffer, 
-															g_au8RXFingerPrintBufferSize,
-															&g_stFingerPrintRXData);
-		__enable_irq();
-
-		if (bIsItGood == false) {
-			printf("/n failed extract./n ");
-			return;
+	while(1)
+	{
+		// if (bDataReady == true) 
+		if (xTaskNotifyWait(0, 0, NULL, portMAX_DELAY) == pdTRUE)
+		{
+			bDataReady = false;
+	
+			__disable_irq();
+			// 1. Parse data from array buffer
+			// Note: stRXRingBuffer.head indicates the number of bytes available in g_au8RXFingerPrintBuffer
+			bIsItGood = Fingerprint_ExtractPacketFromRingBuffer(g_au8RXFingerPrintBuffer, 
+																g_au8RXFingerPrintBufferSize,
+																&g_stFingerPrintRXData);
+			__enable_irq();
+	
+			if (bIsItGood == false) {
+				printf("/n failed extract./n ");
+				return;
+			}
+	
+			// 2. Checksum
+			if (Fingerprint_VerifyChecksum(&g_stFingerPrintRXData) == false) {
+				printf("/n wrong checksum./n ");
+				return;
+			}
+	
+			/* ------------- Important flag -------------*/
+			bNewPacketRX = true;
+			/* ------------- -------------- -------------*/
 		}
-
-		// 2. Checksum
-		if (Fingerprint_VerifyChecksum(&g_stFingerPrintRXData) == false) {
-			printf("/n wrong checksum./n ");
-			return;
-		}
-
-		/* ------------- Important flag -------------*/
-        bNewPacketRX = true;
-		/* ------------- -------------- -------------*/
 	}
 }
 
@@ -239,6 +246,11 @@ void FingerPrint_UART_RxCallback(uint8_t rx_byte) {
 
 			// Save size and set flag for ProcessMain
 			g_au8RXFingerPrintBufferSize = expected_total_length;
+
+			BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+			xTaskNotifyFromISR(task_PD_handler, 0, eNoAction, &xHigherPriorityTaskWoken);
+			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+			
 			bDataReady = true;
 		} else {
 			// Case where bDataReady is still true (Main hasn't processed yet)
@@ -413,12 +425,12 @@ void Fingerprint_StateMachine_Task(void* param)
 	while (1)
 	{
 		// Step 1: Parsing data & set bNewPacketRX flag
-		ProcessFingerPrintRXData();
+		// ProcessFingerPrintRXData();
 
 		// Step 2: Using parsed data for Finger Print processing
 		ProcessFingerPrintApplication();
 
 		// --------------- End of function ---------------
-		vTaskDelay(pdTICKS_TO_MS(100));
+		vTaskDelay(pdTICKS_TO_MS(10));
 	}
 }

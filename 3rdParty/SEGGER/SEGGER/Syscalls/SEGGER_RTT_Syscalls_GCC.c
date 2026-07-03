@@ -3,7 +3,7 @@
 *                        The Embedded Experts                        *
 **********************************************************************
 *                                                                    *
-*            (c) 1995 - 2024 SEGGER Microcontroller GmbH             *
+*            (c) 1995 - 2019 SEGGER Microcontroller GmbH             *
 *                                                                    *
 *       www.segger.com     Support: support@segger.com               *
 *                                                                    *
@@ -42,7 +42,7 @@
 *                                                                    *
 **********************************************************************
 *                                                                    *
-*       SystemView version: 3.54                                    *
+*       SystemView version: 3.10                                    *
 *                                                                    *
 **********************************************************************
 ---------------------------END-OF-HEADER------------------------------
@@ -50,13 +50,13 @@ File    : SEGGER_RTT_Syscalls_GCC.c
 Purpose : Low-level functions for using printf() via RTT in GCC.
           To use RTT for printf output, include this file in your 
           application.
-Revision: $Rev: 24316 $
+Revision: $Rev: 16265 $
 ----------------------------------------------------------------------
 */
-#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM) && !(defined __ARMCC_VERSION) && !(defined __CC_ARM)
+#if (defined __GNUC__) && !(defined __SES_ARM) && !(defined __CROSSWORKS_ARM)
 
 #include <reent.h>  // required for _write_r
-#include "../SEGGER_RTT.h"
+#include "SEGGER_RTT.h"
 
 
 /*********************************************************************
@@ -66,7 +66,7 @@ Revision: $Rev: 24316 $
 **********************************************************************
 */
 //
-// If necessary define the _reent struct
+// If necessary define the _reent struct 
 // to match the one passed by the used standard library.
 //
 struct _reent;
@@ -77,8 +77,8 @@ struct _reent;
 *
 **********************************************************************
 */
-_ssize_t _write  (int file, const void *ptr, size_t len);
-_ssize_t _write_r(struct _reent *r, int file, const void *ptr, size_t len);
+int _write(int file, char *ptr, int len);
+int _write_r(struct _reent *r, int file, const void *ptr, int len);
 
 /*********************************************************************
 *
@@ -97,7 +97,7 @@ _ssize_t _write_r(struct _reent *r, int file, const void *ptr, size_t len);
 *   including stdout.
 *   Write data via RTT.
 */
-_ssize_t _write(int file, const void *ptr, size_t len) {
+int _write(int file, char *ptr, int len) {
   (void) file;  /* Not used, avoid warning */
   SEGGER_RTT_Write(0, ptr, len);
   return len;
@@ -113,7 +113,7 @@ _ssize_t _write(int file, const void *ptr, size_t len) {
 *   including stdout.
 *   Write data via RTT.
 */
-_ssize_t _write_r(struct _reent *r, int file, const void *ptr, size_t len) {
+int _write_r(struct _reent *r, int file, const void *ptr, int len) {
   (void) file;  /* Not used, avoid warning */
   (void) r;     /* Not used, avoid warning */
   SEGGER_RTT_Write(0, ptr, len);

@@ -49,7 +49,8 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-TaskHandle_t task_FP_handler, task2_handler;
+TaskHandle_t task1_handler, task2_handler;
+TaskHandle_t task_FP_handler, task_PD_handler;
 uint8_t UART2_rx_data;
 /* USER CODE END PV */
 
@@ -58,6 +59,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
+void task1_handler_func(void *para);
 void task2_handler_func(void *para);
 /* USER CODE END PFP */
 
@@ -74,7 +76,8 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  // check HardFault error
+  *((volatile uint32_t *)0xE000E008) |= (1 << 1);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -97,14 +100,25 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-	DWT_CTRL |= (1 << 0);
-	SEGGER_SYSVIEW_Conf();
-	SEGGER_SYSVIEW_Start();
+  
+  /****************************** SEGGER AREA  ******************************/
+	// DWT_CTRL |= (1 << 0);
+	// SEGGER_SYSVIEW_Conf();
+	// SEGGER_SYSVIEW_Start();
+	
+	// memset(&_SEGGER_RTT, 0, sizeof(_SEGGER_RTT));
 
-	Init_UART2_FingerPrint();
+    // 3. Bây giờ bạn có thể in log thoải mái (lúc này hàm thư viện sẽ tự động điền chuỗi ID "SEGGER RTT")
+    // SEGGER_RTT_WriteString(0, "System Initialized Successfully!\n");
+  /****************************** SEGGER AREA  ******************************/
 
-	xTaskCreate(Fingerprint_StateMachine_Task, "Task FingerPrint", configMINIMAL_STACK_SIZE, NULL, 2, &task_FP_handler);
-	xTaskCreate(task2_handler_func, "Task-2", configMINIMAL_STACK_SIZE,"Hello from Task 2", 2, &task2_handler);
+	// Init_UART2_FingerPrint();
+  // HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
+
+	xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
+  xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
+	// xTaskCreate(Fingerprint_StateMachine_Task,  "Task FingerPrint",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
+  // xTaskCreate(ProcessFingerPrintRXData,       "Task Parsing Data",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
 
 	vTaskStartScheduler();
   /* USER CODE END 2 */
@@ -344,11 +358,21 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void task1_handler_func(void *para) {
+	while (1) {
+    HAL_GPIO_TogglePin(GPIOD, LED_ORANGE);
+		// printf("%s \n", (char*) para);
+    // SEGGER_RTT_printf(0, "%s \n", (char*) para);
+		vTaskDelay(pdTICKS_TO_MS(500));
+	}
+}
+
 void task2_handler_func(void *para) {
 	while (1) {
+    HAL_GPIO_TogglePin(GPIOD, LED_RED);
 		// printf("%s \n", (char*) para);
-    SEGGER_RTT_printf(0, "%s \n", (char*) para);
-		vTaskDelay(pdTICKS_TO_MS(100));
+    // SEGGER_RTT_printf(0, "%s \n", (char*) para);
+		vTaskDelay(pdTICKS_TO_MS(500));
 	}
 }
 
@@ -363,19 +387,19 @@ int _write(int file, char *ptr, int len) {
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart->Instance == USART2)
 	{
-		if (huart->ErrorCode & HAL_UART_ERROR_ORE) 
-		{
-            // Xóa cờ lỗi ORE bằng cách đọc thanh ghi SR (hoặc ISR) và DR (hoặc RDR)
-            // (Thư viện HAL thường đã tự xử lý việc xóa cờ trong hàm IRQHandler, 
-            // ta chỉ cần kích hoạt lại ngắt nhận)
+		// if (huart->ErrorCode & HAL_UART_ERROR_ORE) 
+		// {
+        //     // Xóa cờ lỗi ORE bằng cách đọc thanh ghi SR (hoặc ISR) và DR (hoặc RDR)
+        //     // (Thư viện HAL thường đã tự xử lý việc xóa cờ trong hàm IRQHandler, 
+        //     // ta chỉ cần kích hoạt lại ngắt nhận)
             
-            // Xóa cờ lỗi của HAL
-            huart->ErrorCode = HAL_UART_ERROR_NONE;
+        //     // Xóa cờ lỗi của HAL
+        //     huart->ErrorCode = HAL_UART_ERROR_NONE;
             
-            // Kích hoạt lại ngắt nhận byte mới để không bị "tịt"
-            HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
-			return;
-        }
+        //     // Kích hoạt lại ngắt nhận byte mới để không bị "tịt"
+        //     HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
+		// 	return;
+    	// }
 
 		FingerPrint_UART_RxCallback(UART2_rx_data);
       	// enable interrupt for the next time

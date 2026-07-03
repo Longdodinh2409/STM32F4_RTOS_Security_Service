@@ -3,7 +3,7 @@
 *                        The Embedded Experts                        *
 **********************************************************************
 *                                                                    *
-*            (c) 1995 - 2024 SEGGER Microcontroller GmbH             *
+*            (c) 1995 - 2019 SEGGER Microcontroller GmbH             *
 *                                                                    *
 *       www.segger.com     Support: support@segger.com               *
 *                                                                    *
@@ -42,7 +42,7 @@
 *                                                                    *
 **********************************************************************
 *                                                                    *
-*       SystemView version: 3.54                                    *
+*       SystemView version: 3.10                                    *
 *                                                                    *
 **********************************************************************
 -------------------------- END-OF-HEADER -----------------------------
@@ -53,7 +53,7 @@ Revision: $Rev: 7947 $
 */
 #include "FreeRTOS.h"
 #include "task.h"
-#include "../SEGGER/SEGGER_SYSVIEW.h"	// "SEGGER_SYSVIEW.h"
+#include "SEGGER_SYSVIEW.h"
 #include "SEGGER_SYSVIEW_FreeRTOS.h"
 #include "string.h" // Required for memset
 

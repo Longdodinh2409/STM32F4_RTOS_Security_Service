@@ -3,7 +3,7 @@
 *                        The Embedded Experts                        *
 **********************************************************************
 *                                                                    *
-*            (c) 1995 - 2024 SEGGER Microcontroller GmbH             *
+*            (c) 1995 - 2019 SEGGER Microcontroller GmbH             *
 *                                                                    *
 *       www.segger.com     Support: support@segger.com               *
 *                                                                    *
@@ -42,7 +42,7 @@
 *                                                                    *
 **********************************************************************
 *                                                                    *
-*       SystemView version: 3.54                                    *
+*       SystemView version: 3.10                                    *
 *                                                                    *
 **********************************************************************
 -------------------------- END-OF-HEADER -----------------------------
@@ -52,7 +52,7 @@ Purpose : Sample setup configuration of SystemView with FreeRTOS.
 Revision: $Rev: 7745 $
 */
 #include "FreeRTOS.h"
-#include "../SEGGER/SEGGER_SYSVIEW.h"  //SEGGER_SYSVIEW.h"
+#include "SEGGER_SYSVIEW.h"
 
 extern const SEGGER_SYSVIEW_OS_API SYSVIEW_X_OS_TraceAPI;
 
@@ -63,10 +63,10 @@ extern const SEGGER_SYSVIEW_OS_API SYSVIEW_X_OS_TraceAPI;
 **********************************************************************
 */
 // The application name to be displayed in SystemViewer
-#define SYSVIEW_APP_NAME        "sEcUrItY SERVICE Application"
+#define SYSVIEW_APP_NAME        "FreeRTOS Demo Application"
 
 // The target device name
-#define SYSVIEW_DEVICE_NAME     "Cortex-M4_Disco"
+#define SYSVIEW_DEVICE_NAME     "Cortex-M4"
 
 // Frequency of the timestamp. Must match SEGGER_SYSVIEW_GET_TIMESTAMP in SEGGER_SYSVIEW_Conf.h
 #define SYSVIEW_TIMESTAMP_FREQ  (configCPU_CLOCK_HZ)
@@ -75,7 +75,7 @@ extern const SEGGER_SYSVIEW_OS_API SYSVIEW_X_OS_TraceAPI;
 #define SYSVIEW_CPU_FREQ        configCPU_CLOCK_HZ
 
 // The lowest RAM address used for IDs (pointers)
-#define SYSVIEW_RAM_BASE        (0x20000000)
+#define SYSVIEW_RAM_BASE        (0x10000000)
 
 /********************************************************************* 
 *

@@ -49,7 +49,7 @@ void Init_UART2_FingerPrint(void);
 void Fingerprint_SendCommand(uint8_t instructionCode, uint8_t *params, uint8_t param_len);
 void Fingerprint_Test_TX(void);  // Test function for debugging TX
 
-void ProcessFingerPrintRXData(void);
+void ProcessFingerPrintRXData(void* param);
 void ProcessFingerPrintApplication(void);
 bool Fingerprint_VerifyChecksum(const Fingerprint_Packet_t *packet);
 void FingerPrint_UART_RxCallback(uint8_t rx_byte);
