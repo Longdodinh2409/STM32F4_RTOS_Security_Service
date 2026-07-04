@@ -13,5 +13,6 @@ security_service_stm32\list.o: ..\3rdParty\FreeRTOS\include\projdefs.h
 security_service_stm32\list.o: ..\3rdParty\FreeRTOS\include\portable.h
 security_service_stm32\list.o: ..\3rdParty\FreeRTOS\include\deprecated_definitions.h
 security_service_stm32\list.o: ..\3rdParty\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
+security_service_stm32\list.o: ..\3rdParty\FreeRTOS\include\FreeRTOS.h
 security_service_stm32\list.o: ..\3rdParty\FreeRTOS\include\mpu_wrappers.h
 security_service_stm32\list.o: ..\3rdParty\FreeRTOS\include\list.h

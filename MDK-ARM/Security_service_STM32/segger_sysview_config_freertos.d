@@ -12,4 +12,5 @@ security_service_stm32\segger_sysview_config_freertos.o: ..\3rdParty\FreeRTOS\in
 security_service_stm32\segger_sysview_config_freertos.o: ..\3rdParty\FreeRTOS\include\portable.h
 security_service_stm32\segger_sysview_config_freertos.o: ..\3rdParty\FreeRTOS\include\deprecated_definitions.h
 security_service_stm32\segger_sysview_config_freertos.o: ..\3rdParty\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
+security_service_stm32\segger_sysview_config_freertos.o: ..\3rdParty\FreeRTOS\include\FreeRTOS.h
 security_service_stm32\segger_sysview_config_freertos.o: ..\3rdParty\FreeRTOS\include\mpu_wrappers.h

@@ -599,9 +599,9 @@
               <FilePath>..\3rdParty\SEGGER\SEGGER\SEGGER_SYSVIEW.c</FilePath>
             </File>
             <File>
-              <FileName>SEGGER_RTT_Syscalls_GCC.c</FileName>
+              <FileName>SEGGER_RTT_Syscalls_KEIL.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\3rdParty\SEGGER\SEGGER\Syscalls\SEGGER_RTT_Syscalls_GCC.c</FilePath>
+              <FilePath>..\3rdParty\SEGGER\SEGGER\Syscalls\SEGGER_RTT_Syscalls_KEIL.c</FilePath>
             </File>
           </Files>
         </Group>

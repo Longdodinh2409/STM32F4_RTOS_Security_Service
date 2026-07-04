@@ -36,7 +36,7 @@
 "security_service_stm32\segger_rtt.o"
 "security_service_stm32\segger_rtt_printf.o"
 "security_service_stm32\segger_sysview.o"
-"security_service_stm32\segger_rtt_syscalls_gcc.o"
+"security_service_stm32\segger_rtt_syscalls_keil.o"
 --strict --scatter "Security_service_STM32\Security_service_STM32.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

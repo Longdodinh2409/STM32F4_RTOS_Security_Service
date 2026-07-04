@@ -27,6 +27,7 @@
 #include "stdio.h"
 #include <Task_FingerPrint/task_uart_FingerPrint.h>
 #include "SEGGER_RTT.h"
+#include "SEGGER_SYSVIEW.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -107,7 +108,7 @@ int main(void)
   vSetVarulMaxPRIGROUPValue();
 	
 	
-	memset(&_SEGGER_RTT, 0, sizeof(_SEGGER_RTT));
+	// memset(&_SEGGER_RTT, 0, sizeof(_SEGGER_RTT));
 
     // 3. Bây giờ bạn có thể in log thoải mái (lúc này hàm thư viện sẽ tự động điền chuỗi ID "SEGGER RTT")
     SEGGER_RTT_WriteString(0, "System Initialized Successfully!\n");
@@ -365,7 +366,7 @@ void task1_handler_func(void *para) {
     HAL_GPIO_TogglePin(GPIOD, LED_ORANGE);
 		// printf("%s \n", (char*) para);
     SEGGER_RTT_printf(0, "%s \n", (char*) para);
-		vTaskDelay(pdMS_TO_TICKS(500));
+		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }
 
@@ -374,7 +375,7 @@ void task2_handler_func(void *para) {
     HAL_GPIO_TogglePin(GPIOD, LED_RED);
 		// printf("%s \n", (char*) para);
     SEGGER_RTT_printf(0, "%s \n", (char*) para);
-		vTaskDelay(pdMS_TO_TICKS(500));
+		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }
 
