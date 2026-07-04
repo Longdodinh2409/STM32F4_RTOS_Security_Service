@@ -81,8 +81,7 @@ void Fingerprint_SendCommand(uint8_t instructionCode, uint8_t *params, uint8_t p
 // Input: buffer_ptr - pointer to receive buffer array
 //        buffer_len - number of bytes available in buffer
 //        packet - pointer to output Fingerprint_Packet_t structure
-bool Fingerprint_ExtractPacketFromRingBuffer(uint8_t *buffer_ptr,
-		uint16_t buffer_len, Fingerprint_Packet_t *packet) {
+bool Fingerprint_ExtractPacketFromRingBuffer(uint8_t *buffer_ptr, uint16_t buffer_len, Fingerprint_Packet_t *packet) {
 	uint16_t packet_length;
 	uint16_t total_packet_size;
 	uint16_t i;
@@ -155,13 +154,13 @@ void ProcessFingerPrintRXData(void* param) {
 			__enable_irq();
 	
 			if (bIsItGood == false) {
-				printf("/n failed extract./n ");
+				// printf("/n failed extract./n ");
 				return;
 			}
 	
 			// 2. Checksum
 			if (Fingerprint_VerifyChecksum(&g_stFingerPrintRXData) == false) {
-				printf("/n wrong checksum./n ");
+				// printf("/n wrong checksum./n ");
 				return;
 			}
 	
@@ -321,7 +320,7 @@ void ProcessFingerPrintApplication(void)
                 // Logic Timeout: Kiểm tra xem đã quá thời gian chờ chưa
                 if ((HAL_GetTick() - wait_start_time) > FINGERPRINT_TIMEOUT_MS)
                 {
-                    printf("[WARN] Sensor Timeout! Resetting FSM...\r\n");
+                    // printf("[WARN] Sensor Timeout! Resetting FSM...\r\n");
                     // Hủy gói tin cũ, reset buffer nếu cần thiết
                     bDataReady = false;
                     g_FingerState = FSM_FINGER_SEND_GENIMG; // Thử lại từ đầu
@@ -386,18 +385,18 @@ void ProcessFingerPrintApplication(void)
 									| g_stFingerPrintRXData.payload[4];
 
 					// => BẠN CHECK TẠI ĐÂY: Nếu matchedID == 0 nghĩa là ngón trỏ của bạn!
-					printf("Xac thuc thanh cong! ID cua ban la: %d, Diem khop: %d\n", matchedID, matchScore);
+					// printf("Xac thuc thanh cong! ID cua ban la: %d, Diem khop: %d\n", matchedID, matchScore);
 
 					// Mở cửa, bật còi báo, v.v...
 					// UnlockDoor();
 				}
 				else if (confirm_code == 0x17)
 				{
-					printf("Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! \n");
+					// printf("Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! \n");
 				}
 				else if (confirm_code == 0x09) // 0x09: KHÔNG TÌM THẤY (Ngón tay lạ)
 				{
-					printf("Van tay sai! Khong tim thay trong thu vien.\n");
+					// printf("Van tay sai! Khong tim thay trong thu vien.\n");
 				}
 
 				// Xử lý xong, bắt buộc phải đợi 1 lát (chờ người dùng rút ngón tay ra)
