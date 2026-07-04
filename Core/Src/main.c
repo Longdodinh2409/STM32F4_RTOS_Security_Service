@@ -114,10 +114,10 @@ int main(void)
 	// Init_UART2_FingerPrint();
   // HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
 
-	xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
-  xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
-	// xTaskCreate(Fingerprint_StateMachine_Task,  "Task FingerPrint",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
-  // xTaskCreate(ProcessFingerPrintRXData,       "Task Parsing Data",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
+	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
+  // xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
+	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
+  xTaskCreate(ProcessFingerPrintRXData,       "Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
 
   SEGGER_SYSVIEW_Start();
 	vTaskStartScheduler();
@@ -382,6 +382,17 @@ int _write(int file, char *ptr, int len) {
         ITM_SendChar((*ptr++));
     }
     return len;
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if (huart->Instance == USART2)
+	{
+		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+		vTaskNotifyGiveFromISR(task_FP_handler, &xHigherPriorityTaskWoken);
+		// Ép RTOS chuyển ngữ cảnh ngay lập tức nếu task vừa được đánh thức có priority cao hơn task đang chạy trước khi có ngắt
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	}
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {

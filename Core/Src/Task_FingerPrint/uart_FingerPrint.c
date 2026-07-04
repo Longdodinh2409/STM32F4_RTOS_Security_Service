@@ -63,17 +63,17 @@ void Fingerprint_SendCommand(uint8_t instructionCode, uint8_t *params, uint8_t p
 
 	// 6. Send UART
 	uint16_t total_transmit_bytes = 9 + package_len;
-	// HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart2, (uint8_t*) &g_stFingerPrintTXData, total_transmit_bytes);
-	HAL_StatusTypeDef status = HAL_UART_Transmit(&huart2, (uint8_t*) &g_stFingerPrintTXData, total_transmit_bytes, portMAX_DELAY);
+	HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart2, (uint8_t*) &g_stFingerPrintTXData, total_transmit_bytes);
+	ulTaskNotifyTake(pdTRUE, portMAX_DELAY);	// sleep ultil TX interrupt
 
 	// Debug: Check if transmit succeeded
-	if (status == HAL_OK) {
-		printf("[TX] Sent instruction 0x%02X, %d bytes\r\n", instructionCode,
-				total_transmit_bytes);
-	} else {
-		printf("[TX_ERROR] Instruction 0x%02X failed! Status=%d\r\n",
-				instructionCode, status);
-	}
+	// if (status == HAL_OK) {
+	// 	printf("[TX] Sent instruction 0x%02X, %d bytes\r\n", instructionCode,
+	// 			total_transmit_bytes);
+	// } else {
+	// 	printf("[TX_ERROR] Instruction 0x%02X failed! Status=%d\r\n",
+	// 			instructionCode, status);
+	// }
 }
 
 // Extract packet from array buffer to packet structure
