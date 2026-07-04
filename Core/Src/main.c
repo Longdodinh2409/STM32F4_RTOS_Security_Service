@@ -106,9 +106,6 @@ int main(void)
 	DWT_CTRL |= (1 << 0);
 	SEGGER_SYSVIEW_Conf();
   vSetVarulMaxPRIGROUPValue();
-	
-	
-	// memset(&_SEGGER_RTT, 0, sizeof(_SEGGER_RTT));
 
     // 3. Bây giờ bạn có thể in log thoải mái (lúc này hàm thư viện sẽ tự động điền chuỗi ID "SEGGER RTT")
     SEGGER_RTT_WriteString(0, "System Initialized Successfully!\n");
