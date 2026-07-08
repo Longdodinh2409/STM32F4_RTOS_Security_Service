@@ -11,6 +11,8 @@
 
 #define FINGERPRINT_TIMEOUT_MS      (1000)
 
+#define FINGERPRINT_RX_NEW_PACKET_VALUE 	(uint32_t)(0x01)
+
 // TX - RX frame
 #pragma pack(push, 1)
 typedef struct {
@@ -54,5 +56,7 @@ void ProcessFingerPrintApplication(void);
 bool Fingerprint_VerifyChecksum(const Fingerprint_Packet_t *packet);
 void FingerPrint_UART_RxCallback(uint8_t rx_byte);
 bool Fingerprint_ExtractPacketFromRingBuffer(uint8_t *buffer_ptr, uint16_t buffer_len, Fingerprint_Packet_t *packet);
+
+void SetTimePointForRetrySendGenImg(void);
 
 void Fingerprint_StateMachine_Task(void* param);

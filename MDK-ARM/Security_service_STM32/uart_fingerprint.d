@@ -49,3 +49,6 @@ security_service_stm32\uart_fingerprint.o: ..\3rdParty\FreeRTOS\include\FreeRTOS
 security_service_stm32\uart_fingerprint.o: ..\3rdParty\FreeRTOS\include\mpu_wrappers.h
 security_service_stm32\uart_fingerprint.o: ..\3rdParty\FreeRTOS\include\task.h
 security_service_stm32\uart_fingerprint.o: ..\3rdParty\FreeRTOS\include\list.h
+security_service_stm32\uart_fingerprint.o: ..\3rdParty\SEGGER\SEGGER\SEGGER_RTT.h
+security_service_stm32\uart_fingerprint.o: ..\3rdParty\SEGGER\Config\SEGGER_RTT_Conf.h
+security_service_stm32\uart_fingerprint.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

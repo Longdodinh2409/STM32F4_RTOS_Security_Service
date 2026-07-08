@@ -53,6 +53,7 @@ UART_HandleTypeDef huart2;
 TaskHandle_t task1_handler, task2_handler;
 TaskHandle_t task_FP_handler, task_PD_handler;
 uint8_t UART2_rx_data;
+char msg[128];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -105,21 +106,21 @@ int main(void)
   /****************************** SEGGER AREA  ******************************/
 	DWT_CTRL |= (1 << 0);
 	SEGGER_SYSVIEW_Conf();
-  vSetVarulMaxPRIGROUPValue();
+  	vSetVarulMaxPRIGROUPValue();
 
     // 3. Bây giờ bạn có thể in log thoải mái (lúc này hàm thư viện sẽ tự động điền chuỗi ID "SEGGER RTT")
     SEGGER_RTT_WriteString(0, "System Initialized Successfully!\n");
   /****************************** SEGGER AREA  ******************************/
 
-	// Init_UART2_FingerPrint();
+	Init_UART2_FingerPrint();
   // HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
 
 	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
-  // xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
+  	// xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
 	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
-  xTaskCreate(ProcessFingerPrintRXData,       "Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
+  	xTaskCreate(ProcessFingerPrintRXData,       "Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
 
-  SEGGER_SYSVIEW_Start();
+	SEGGER_SYSVIEW_Start();
 	vTaskStartScheduler();
   /* USER CODE END 2 */
 
@@ -388,10 +389,16 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if (huart->Instance == USART2)
 	{
-		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-		vTaskNotifyGiveFromISR(task_FP_handler, &xHigherPriorityTaskWoken);
-		// Ép RTOS chuyển ngữ cảnh ngay lập tức nếu task vừa được đánh thức có priority cao hơn task đang chạy trước khi có ngắt
-		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+		// BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+		sprintf(msg, "Send FingerPrint TX data done!\n");
+		SEGGER_SYSVIEW_PrintfTarget(msg);
+
+		SetTimePointForRetrySendGenImg();
+
+		// vTaskNotifyGiveFromISR(task_FP_handler, &xHigherPriorityTaskWoken);
+		// // Ép RTOS chuyển ngữ cảnh ngay lập tức nếu task vừa được đánh thức có priority cao hơn task đang chạy trước khi có ngắt
+		// portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 	}
 }
 
@@ -411,6 +418,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
         //     HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
 		// 	return;
     	// }
+
+		// sprintf(msg, "Receive FingerPrint RX data!");
+		// SEGGER_SYSVIEW_PrintfTarget(msg);
 
 		FingerPrint_UART_RxCallback(UART2_rx_data);
       	// enable interrupt for the next time
