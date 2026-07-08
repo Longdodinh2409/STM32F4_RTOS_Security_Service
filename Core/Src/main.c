@@ -44,6 +44,7 @@
 /* USER CODE BEGIN PM */
 // Segger configurations
 #define DWT_CTRL	(*(volatile uint32_t*)(0xE0001000))
+#define SEGGER_SYSVIEW_DEBUG_ENABLE		(1)
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -63,6 +64,7 @@ static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void task1_handler_func(void *para);
 void task2_handler_func(void *para);
+void My_SEGGER_SYSVIEW_Conf(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -103,23 +105,23 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   
-  /****************************** SEGGER AREA  ******************************/
-	DWT_CTRL |= (1 << 0);
-	SEGGER_SYSVIEW_Conf();
-  	vSetVarulMaxPRIGROUPValue();
-
-    // 3. Bây giờ bạn có thể in log thoải mái (lúc này hàm thư viện sẽ tự động điền chuỗi ID "SEGGER RTT")
-    SEGGER_RTT_WriteString(0, "System Initialized Successfully!\n");
-  /****************************** SEGGER AREA  ******************************/
-
+  	/****************************** SEGGER AREA  ******************************/
+	My_SEGGER_SYSVIEW_Conf();
+	/****************************** SEGGER AREA  ******************************/
+	
+	/****************************** SYSTEM AREA  ******************************/
+	vSetVarulMaxPRIGROUPValue();
 	Init_UART2_FingerPrint();
+	/****************************** SYSTEM AREA  ******************************/
 
 	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
   	// xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
 	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
   	xTaskCreate(ProcessFingerPrintRXData,       "Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
 
+#if (SEGGER_SYSVIEW_DEBUG_ENABLE == 1)
 	SEGGER_SYSVIEW_Start();
+#endif
 	vTaskStartScheduler();
   /* USER CODE END 2 */
 
@@ -436,6 +438,17 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
     {
         // Gắn code bật LED sáng chói lóa lên ở đây để báo hiệu lỗi
     }
+}
+
+void My_SEGGER_SYSVIEW_Conf(void)
+{
+#if (SEGGER_SYSVIEW_DEBUG_ENABLE == 1)
+	DWT_CTRL |= (1 << 0);
+	SEGGER_SYSVIEW_Conf();
+	
+    // 3. Bây giờ bạn có thể in log thoải mái (lúc này hàm thư viện sẽ tự động điền chuỗi ID "SEGGER RTT")
+    SEGGER_RTT_WriteString(0, "System Initialized Successfully!\n");
+#endif
 }
 /* USER CODE END 4 */
 
