@@ -9,7 +9,6 @@ extern char msg[128];
 RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
 uint8_t g_au8RXFingerPrintBufferSize = 0;
 uint8_t g_au8RXFingerPrintBuffer[RX_BUFFER_SIZE];
-volatile uint32_t wait_start_time = 0;
 
 // Global TX
 Fingerprint_Packet_t g_stFingerPrintTXData;
@@ -17,9 +16,7 @@ Fingerprint_Packet_t g_stFingerPrintTXData;
 Fingerprint_Packet_t g_stFingerPrintRXData;
 // Data Ready flag
 volatile bool bDataReady = false;
-bool bNewPacketRX = false;
 
-//testing
 // Biến toàn cục hoặc tĩnh quản lý FSM
 Fingerprint_State_t g_FingerState = FSM_NONE;
 
@@ -66,16 +63,6 @@ void Fingerprint_SendCommand(uint8_t instructionCode, uint8_t *params, uint8_t p
 	// 6. Send UART
 	uint16_t total_transmit_bytes = 9 + package_len;
 	HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart2, (uint8_t*) &g_stFingerPrintTXData, total_transmit_bytes);
-	// ulTaskNotifyTake(pdTRUE, portMAX_DELAY);	// sleep ultil TX interrupt
-
-	// Debug: Check if transmit succeeded
-	// if (status == HAL_OK) {
-	// 	printf("[TX] Sent instruction 0x%02X, %d bytes\r\n", instructionCode,
-	// 			total_transmit_bytes);
-	// } else {
-	// 	printf("[TX_ERROR] Instruction 0x%02X failed! Status=%d\r\n",
-	// 			instructionCode, status);
-	// }
 }
 
 // Extract packet from array buffer to packet structure
@@ -142,7 +129,6 @@ void ProcessFingerPrintRXData(void* param) {
 
 	while(1)
 	{
-		// if (bDataReady == true) 
 		if (xTaskNotifyWait(0, 0, NULL, portMAX_DELAY) == pdTRUE)
 		{
 			bDataReady = false;
@@ -167,7 +153,6 @@ void ProcessFingerPrintRXData(void* param) {
 			}
 	
 			/* ------------- Important flag -------------*/
-			// bNewPacketRX = true;
 			xTaskNotify(task_FP_handler, FINGERPRINT_RX_NEW_PACKET_VALUE, eSetBits);
 			/* ------------- -------------- -------------*/
 		}
@@ -298,27 +283,20 @@ void ProcessFingerPrintApplication(void)
 		case FSM_FINGER_SEND_GENIMG:
 		{
 			// Gửi lệnh 01H (Không cần tham số data)
-			// SEGGER_RTT_WriteString(0, "Send GEN_IMG - 01H\n");
-
 			sprintf(msg, "Send GEN_IMG - 01H\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
 			Fingerprint_SendCommand(0x01, NULL, 0);
 			g_FingerState = FSM_FINGER_WAIT_GENIMG; // Chuyển sang chờ
-			
-			// wait_start_time = HAL_GetTick();
 		}
 		break;
 
 		case FSM_FINGER_WAIT_GENIMG:
 		{
-			// if (bNewPacketRX) // Cờ có dữ liệu từ luồng Interrupt RX
 			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &u32TaskNotifyValue, pdMS_TO_TICKS(1000)) == pdTRUE)	
 			{
 				if (u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
 				{
-					// bNewPacketRX = false; // Xóa cờ
-					// SEGGER_RTT_WriteString(0, "WAIT_GENIMG receive data\n");
 					sprintf(msg, "WAIT_GENIMG receive data\n");
 					SEGGER_SYSVIEW_PrintfTarget(msg);
 
@@ -330,7 +308,7 @@ void ProcessFingerPrintApplication(void)
 					} 
 					else if (u8confirmstate == 0x02) // 0x02: Không có ngón tay trên kính
 					{
-						// Không có ngón tay thì nghỉ 1 lát (VD: 50ms) rồi quét lại
+						// Không có ngón tay thì nghỉ 1 lát (VD: 100ms) rồi quét lại
 						g_FingerState = FSM_FINGER_DELAY;
 					} 
 					else 
@@ -342,18 +320,10 @@ void ProcessFingerPrintApplication(void)
 			}
 			else 	// timeout
             {
-				// SEGGER_RTT_WriteString(0, "WAIT_GENIMG timeout, resend GEN_IMG - 01H\n");
 				sprintf(msg, "WAIT_GENIMG timeout, resend GEN_IMG - 01H\n");
 				SEGGER_SYSVIEW_PrintfTarget(msg);
 
-                // Logic Timeout: Kiểm tra xem đã quá thời gian chờ chưa
-                // if ((HAL_GetTick() - wait_start_time) > FINGERPRINT_TIMEOUT_MS)
-                // {
-                //     // printf("[WARN] Sensor Timeout! Resetting FSM...\r\n");
-                //     // Hủy gói tin cũ, reset buffer nếu cần thiết
-                //     bDataReady = false;
-                    g_FingerState = FSM_FINGER_SEND_GENIMG; // Thử lại từ đầu
-                // }
+                g_FingerState = FSM_FINGER_SEND_GENIMG; // Try again!
             }
 		}
 		break;
@@ -378,8 +348,6 @@ void ProcessFingerPrintApplication(void)
 			{
 				if (u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
 				{
-					bNewPacketRX = false;
-
 					u8confirmstate = g_stFingerPrintRXData.payload[0];
 					
 					if (u8confirmstate == 0x00) // Tạo đặc trưng thành công
@@ -417,8 +385,6 @@ void ProcessFingerPrintApplication(void)
 			{
 				if (u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
 				{
-					bNewPacketRX = false;
-
 					u8confirmstate = g_stFingerPrintRXData.payload[0];
 
 					if (u8confirmstate == 0x00) // 0x00: TÌM THẤY TRONG THƯ VIỆN!
@@ -472,22 +438,10 @@ void ProcessFingerPrintApplication(void)
 	}
 }
 
-void SetTimePointForRetrySendGenImg(void)
-{
-	if (g_FingerState == FSM_FINGER_SEND_GENIMG)
-	{
-		wait_start_time = HAL_GetTick();
-	}
-}
-
 void Fingerprint_StateMachine_Task(void* param)
 {
 	while (1)
 	{
-		// Step 1: Parsing data & set bNewPacketRX flag
-		// ProcessFingerPrintRXData();
-
-		// Step 2: Using parsed data for Finger Print processing
 		ProcessFingerPrintApplication();
 
 		// --------------- End of function ---------------

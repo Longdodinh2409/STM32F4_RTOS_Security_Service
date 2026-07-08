@@ -57,6 +57,4 @@ bool Fingerprint_VerifyChecksum(const Fingerprint_Packet_t *packet);
 void FingerPrint_UART_RxCallback(uint8_t rx_byte);
 bool Fingerprint_ExtractPacketFromRingBuffer(uint8_t *buffer_ptr, uint16_t buffer_len, Fingerprint_Packet_t *packet);
 
-void SetTimePointForRetrySendGenImg(void);
-
 void Fingerprint_StateMachine_Task(void* param);

@@ -113,7 +113,6 @@ int main(void)
   /****************************** SEGGER AREA  ******************************/
 
 	Init_UART2_FingerPrint();
-  // HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
 
 	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
   	// xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
@@ -389,16 +388,9 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if (huart->Instance == USART2)
 	{
-		// BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-
+		// For debugging
 		sprintf(msg, "Send FingerPrint TX data done!\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
-
-		SetTimePointForRetrySendGenImg();
-
-		// vTaskNotifyGiveFromISR(task_FP_handler, &xHigherPriorityTaskWoken);
-		// // Ép RTOS chuyển ngữ cảnh ngay lập tức nếu task vừa được đánh thức có priority cao hơn task đang chạy trước khi có ngắt
-		// portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 	}
 }
 
@@ -418,9 +410,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
         //     HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
 		// 	return;
     	// }
-
-		// sprintf(msg, "Receive FingerPrint RX data!");
-		// SEGGER_SYSVIEW_PrintfTarget(msg);
 
 		FingerPrint_UART_RxCallback(UART2_rx_data);
       	// enable interrupt for the next time
