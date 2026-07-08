@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Security_service_STM32\Security_service_STM32.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Security_service_STM32\Security_service_STM32.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed Jul 08 14:42:58 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed Jul 08 15:47:30 2026
 <BR><P>
 <H3>Maximum Stack Usage =        444 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -60,7 +60,7 @@ Function Pointers
  <LI><a href="#[27]">EXTI9_5_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
  <LI><a href="#[18]">FLASH_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
  <LI><a href="#[4a]">FPU_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
- <LI><a href="#[53]">Fingerprint_StateMachine_Task</a> from uart_fingerprint.o(i.Fingerprint_StateMachine_Task) referenced from main.o(i.main)
+ <LI><a href="#[53]">Fingerprint_StateMachine_Task</a> from task_uart_fingerprint.o(i.Fingerprint_StateMachine_Task) referenced from main.o(i.main)
  <LI><a href="#[c]">HardFault_Handler</a> from stm32f4xx_it.o(i.HardFault_Handler) referenced from startup_stm32f411xe.o(RESET)
  <LI><a href="#[30]">I2C1_ER_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
  <LI><a href="#[2f]">I2C1_EV_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
@@ -73,8 +73,8 @@ Function Pointers
  <LI><a href="#[43]">OTG_FS_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
  <LI><a href="#[39]">OTG_FS_WKUP_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
  <LI><a href="#[15]">PVD_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
+ <LI><a href="#[54]">ParsingRXData_Task</a> from task_parsingdata.o(i.ParsingRXData_Task) referenced from main.o(i.main)
  <LI><a href="#[12]">PendSV_Handler</a> from port.o(.emb_text) referenced from startup_stm32f411xe.o(RESET)
- <LI><a href="#[54]">ProcessFingerPrintRXData</a> from uart_fingerprint.o(i.ProcessFingerPrintRXData) referenced from main.o(i.main)
  <LI><a href="#[19]">RCC_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
  <LI><a href="#[38]">RTC_Alarm_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
  <LI><a href="#[17]">RTC_WKUP_IRQHandler</a> from startup_stm32f411xe.o(.text) referenced from startup_stm32f411xe.o(RESET)
@@ -514,22 +514,22 @@ Global Symbols
 <P><STRONG><a name="[ec]"></a>strcpy</STRONG> (Thumb, 72 bytes, Stack size 12 bytes, strcpy.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = strcpy
 </UL>
-<BR>[Called By]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
+<BR>[Called By]<UL><LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
 </UL>
 
-<P><STRONG><a name="[ca]"></a>strlen</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, strlen.o(.text))
+<P><STRONG><a name="[cb]"></a>strlen</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, strlen.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = strlen
 </UL>
-<BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 </UL>
 
 <P><STRONG><a name="[81]"></a>__aeabi_memcpy</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_memcpy_v6.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCopyDataToQueue
 <LI><a href="#[105]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCopyDataFromQueue
-<LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteSkipNoLock
-<LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ReadNoLock
-<LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteNoCheck
-<LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteBlocking
+<LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteSkipNoLock
+<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ReadNoLock
+<LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteNoCheck
+<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteBlocking
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Fingerprint_SendCommand
 </UL>
 
@@ -550,7 +550,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_MspInit
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
-<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 <LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SYSVIEW_SendTaskInfo
 </UL>
 
@@ -645,12 +645,12 @@ Global Symbols
 <P><STRONG><a name="[11]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f4xx_it.o(i.DebugMon_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f411xe.o(RESET)
 </UL>
-<P><STRONG><a name="[b9]"></a>Error_Handler</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, main.o(i.Error_Handler))
+<P><STRONG><a name="[b8]"></a>Error_Handler</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, main.o(i.Error_Handler))
 <BR><BR>[Called By]<UL><LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
+<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
 </UL>
 
-<P><STRONG><a name="[7d]"></a>FingerPrint_UART_RxCallback</STRONG> (Thumb, 300 bytes, Stack size 16 bytes, uart_fingerprint.o(i.FingerPrint_UART_RxCallback))
+<P><STRONG><a name="[7d]"></a>FingerPrint_UART_RxCallback</STRONG> (Thumb, 300 bytes, Stack size 16 bytes, task_uart_fingerprint.o(i.FingerPrint_UART_RxCallback))
 <BR><BR>[Stack]<UL><LI>Max Depth = 364 + Unknown Stack Size
 <LI>Call Chain = FingerPrint_UART_RxCallback &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
@@ -661,13 +661,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
 
-<P><STRONG><a name="[bc]"></a>Fingerprint_ExtractPacketFromRingBuffer</STRONG> (Thumb, 150 bytes, Stack size 24 bytes, uart_fingerprint.o(i.Fingerprint_ExtractPacketFromRingBuffer))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = Fingerprint_ExtractPacketFromRingBuffer
-</UL>
-<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintRXData
-</UL>
-
-<P><STRONG><a name="[80]"></a>Fingerprint_SendCommand</STRONG> (Thumb, 154 bytes, Stack size 40 bytes, uart_fingerprint.o(i.Fingerprint_SendCommand))
+<P><STRONG><a name="[80]"></a>Fingerprint_SendCommand</STRONG> (Thumb, 154 bytes, Stack size 40 bytes, task_uart_fingerprint.o(i.Fingerprint_SendCommand))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = Fingerprint_SendCommand &rArr; HAL_UART_Transmit_IT
 </UL>
 <BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit_IT
@@ -676,7 +670,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintApplication
 </UL>
 
-<P><STRONG><a name="[53]"></a>Fingerprint_StateMachine_Task</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, uart_fingerprint.o(i.Fingerprint_StateMachine_Task))
+<P><STRONG><a name="[53]"></a>Fingerprint_StateMachine_Task</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, task_uart_fingerprint.o(i.Fingerprint_StateMachine_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 372 + Unknown Stack Size
 <LI>Call Chain = Fingerprint_StateMachine_Task &rArr; ProcessFingerPrintApplication &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
@@ -684,12 +678,6 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
-<P><STRONG><a name="[bd]"></a>Fingerprint_VerifyChecksum</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, uart_fingerprint.o(i.Fingerprint_VerifyChecksum))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Fingerprint_VerifyChecksum
-</UL>
-<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintRXData
-</UL>
-
 <P><STRONG><a name="[84]"></a>HAL_DMA_Abort</STRONG> (Thumb, 172 bytes, Stack size 16 bytes, stm32f4xx_hal_dma.o(i.HAL_DMA_Abort))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = HAL_DMA_Abort
 </UL>
@@ -706,16 +694,15 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = HAL_GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_MspInit
-<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 </UL>
 
-<P><STRONG><a name="[b7]"></a>HAL_GPIO_WritePin</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f4xx_hal_gpio.o(i.HAL_GPIO_WritePin))
-<BR><BR>[Called By]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
+<P><STRONG><a name="[b6]"></a>HAL_GPIO_WritePin</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f4xx_hal_gpio.o(i.HAL_GPIO_WritePin))
+<BR><BR>[Called By]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 </UL>
 
 <P><STRONG><a name="[85]"></a>HAL_GetTick</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32f4xx_hal.o(i.HAL_GetTick))
-<BR><BR>[Called By]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetTimePointForRetrySendGenImg
-<LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_OscConfig
+<BR><BR>[Called By]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_OscConfig
 <LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_ClockConfig
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_Abort
 </UL>
@@ -920,7 +907,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_MspInit
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_SetConfig
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
+<BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
 </UL>
 
 <P><STRONG><a name="[ac]"></a>HAL_UART_MspInit</STRONG> (Thumb, 138 bytes, Stack size 32 bytes, stm32f4xx_hal_msp.o(i.HAL_UART_MspInit))
@@ -939,7 +926,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Start_Receive_IT
 </UL>
-<BR>[Called By]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_UART2_FingerPrint
+<BR>[Called By]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_UART2_FingerPrint
 <LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
 
@@ -959,12 +946,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Fingerprint_SendCommand
 </UL>
 
-<P><STRONG><a name="[b3]"></a>HAL_UART_TxCpltCallback</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, main.o(i.HAL_UART_TxCpltCallback))
+<P><STRONG><a name="[b3]"></a>HAL_UART_TxCpltCallback</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, main.o(i.HAL_UART_TxCpltCallback))
 <BR><BR>[Stack]<UL><LI>Max Depth = 356 + Unknown Stack Size
 <LI>Call Chain = HAL_UART_TxCpltCallback &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetTimePointForRetrySendGenImg
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_PrintfTarget
+<BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_PrintfTarget
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_EndTransmit_IT
@@ -973,7 +959,7 @@ Global Symbols
 <P><STRONG><a name="[c]"></a>HardFault_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f4xx_it.o(i.HardFault_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f411xe.o(RESET)
 </UL>
-<P><STRONG><a name="[b5]"></a>Init_UART2_FingerPrint</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, uart_fingerprint.o(i.Init_UART2_FingerPrint))
+<P><STRONG><a name="[b4]"></a>Init_UART2_FingerPrint</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, task_uart_fingerprint.o(i.Init_UART2_FingerPrint))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = Init_UART2_FingerPrint &rArr; HAL_UART_Receive_IT &rArr; UART_Start_Receive_IT
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Receive_IT
@@ -984,77 +970,98 @@ Global Symbols
 <P><STRONG><a name="[d]"></a>MemManage_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f4xx_it.o(i.MemManage_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f411xe.o(RESET)
 </UL>
+<P><STRONG><a name="[b9]"></a>My_SEGGER_SYSVIEW_Conf</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, main.o(i.My_SEGGER_SYSVIEW_Conf))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = My_SEGGER_SYSVIEW_Conf &rArr; SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
+</UL>
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Conf
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+</UL>
+<BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+</UL>
+
 <P><STRONG><a name="[b]"></a>NMI_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f4xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f411xe.o(RESET)
 </UL>
-<P><STRONG><a name="[83]"></a>ProcessFingerPrintApplication</STRONG> (Thumb, 476 bytes, Stack size 24 bytes, uart_fingerprint.o(i.ProcessFingerPrintApplication))
+<P><STRONG><a name="[bd]"></a>ParsingData_FP_ExtractPacketFromRingBuffer</STRONG> (Thumb, 150 bytes, Stack size 24 bytes, task_parsingdata.o(i.ParsingData_FP_ExtractPacketFromRingBuffer))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = ParsingData_FP_ExtractPacketFromRingBuffer
+</UL>
+<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ParsingRXData_Task
+</UL>
+
+<P><STRONG><a name="[be]"></a>ParsingData_FP_VerifyChecksum</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, task_parsingdata.o(i.ParsingData_FP_VerifyChecksum))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = ParsingData_FP_VerifyChecksum
+</UL>
+<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ParsingRXData_Task
+</UL>
+
+<P><STRONG><a name="[54]"></a>ParsingRXData_Task</STRONG> (Thumb, 80 bytes, Stack size 16 bytes, task_parsingdata.o(i.ParsingRXData_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 212<LI>Call Chain = ParsingRXData_Task &rArr; xTaskNotifyWait &rArr; prvAddCurrentTaskToDelayedList &rArr; SEGGER_SYSVIEW_OnTaskStopReady &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
+</UL>
+<BR>[Calls]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ParsingData_FP_VerifyChecksum
+<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ParsingData_FP_ExtractPacketFromRingBuffer
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
+</UL>
+<P><STRONG><a name="[83]"></a>ProcessFingerPrintApplication</STRONG> (Thumb, 464 bytes, Stack size 24 bytes, task_uart_fingerprint.o(i.ProcessFingerPrintApplication))
 <BR><BR>[Stack]<UL><LI>Max Depth = 372 + Unknown Stack Size
 <LI>Call Chain = ProcessFingerPrintApplication &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
+<BR>[Calls]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_PrintfTarget
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Fingerprint_SendCommand
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Fingerprint_StateMachine_Task
 </UL>
 
-<P><STRONG><a name="[54]"></a>ProcessFingerPrintRXData</STRONG> (Thumb, 80 bytes, Stack size 16 bytes, uart_fingerprint.o(i.ProcessFingerPrintRXData))
-<BR><BR>[Stack]<UL><LI>Max Depth = 212<LI>Call Chain = ProcessFingerPrintRXData &rArr; xTaskNotifyWait &rArr; prvAddCurrentTaskToDelayedList &rArr; SEGGER_SYSVIEW_OnTaskStopReady &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
-</UL>
-<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
-<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Fingerprint_VerifyChecksum
-<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Fingerprint_ExtractPacketFromRingBuffer
-</UL>
-<BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
-</UL>
-<P><STRONG><a name="[bf]"></a>SEGGER_RTT_ConfigDownBuffer</STRONG> (Thumb, 164 bytes, Stack size 32 bytes, segger_rtt.o(i.SEGGER_RTT_ConfigDownBuffer))
+<P><STRONG><a name="[c1]"></a>SEGGER_RTT_ConfigDownBuffer</STRONG> (Thumb, 164 bytes, Stack size 32 bytes, segger_rtt.o(i.SEGGER_RTT_ConfigDownBuffer))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = SEGGER_RTT_ConfigDownBuffer &rArr; _DoInit &rArr; strcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
+<BR>[Calls]<UL><LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Init
 </UL>
 
-<P><STRONG><a name="[c1]"></a>SEGGER_RTT_ConfigUpBuffer</STRONG> (Thumb, 164 bytes, Stack size 32 bytes, segger_rtt.o(i.SEGGER_RTT_ConfigUpBuffer))
+<P><STRONG><a name="[c3]"></a>SEGGER_RTT_ConfigUpBuffer</STRONG> (Thumb, 164 bytes, Stack size 32 bytes, segger_rtt.o(i.SEGGER_RTT_ConfigUpBuffer))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = SEGGER_RTT_ConfigUpBuffer &rArr; _DoInit &rArr; strcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
+<BR>[Calls]<UL><LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Init
 </UL>
 
-<P><STRONG><a name="[c2]"></a>SEGGER_RTT_ReadNoLock</STRONG> (Thumb, 148 bytes, Stack size 48 bytes, segger_rtt.o(i.SEGGER_RTT_ReadNoLock))
+<P><STRONG><a name="[c4]"></a>SEGGER_RTT_ReadNoLock</STRONG> (Thumb, 148 bytes, Stack size 48 bytes, segger_rtt.o(i.SEGGER_RTT_ReadNoLock))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
+<BR>[Calls]<UL><LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_HandleIncomingPacket
 </UL>
 
-<P><STRONG><a name="[c3]"></a>SEGGER_RTT_Write</STRONG> (Thumb, 68 bytes, Stack size 24 bytes, segger_rtt.o(i.SEGGER_RTT_Write))
+<P><STRONG><a name="[c5]"></a>SEGGER_RTT_Write</STRONG> (Thumb, 68 bytes, Stack size 24 bytes, segger_rtt.o(i.SEGGER_RTT_Write))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
-<LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
+<BR>[Calls]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
+<LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
 </UL>
-<BR>[Called By]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
+<BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 </UL>
 
-<P><STRONG><a name="[c4]"></a>SEGGER_RTT_WriteNoLock</STRONG> (Thumb, 126 bytes, Stack size 32 bytes, segger_rtt.o(i.SEGGER_RTT_WriteNoLock))
+<P><STRONG><a name="[c6]"></a>SEGGER_RTT_WriteNoLock</STRONG> (Thumb, 126 bytes, Stack size 32 bytes, segger_rtt.o(i.SEGGER_RTT_WriteNoLock))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteNoCheck
-<LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteBlocking
-<LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_GetAvailWriteSpace
+<BR>[Calls]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteNoCheck
+<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteBlocking
+<LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_GetAvailWriteSpace
 </UL>
-<BR>[Called By]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+<BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
 </UL>
 
-<P><STRONG><a name="[c8]"></a>SEGGER_RTT_WriteSkipNoLock</STRONG> (Thumb, 134 bytes, Stack size 40 bytes, segger_rtt.o(i.SEGGER_RTT_WriteSkipNoLock))
+<P><STRONG><a name="[ca]"></a>SEGGER_RTT_WriteSkipNoLock</STRONG> (Thumb, 134 bytes, Stack size 40 bytes, segger_rtt.o(i.SEGGER_RTT_WriteSkipNoLock))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = SEGGER_RTT_WriteSkipNoLock
 </UL>
 <BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
@@ -1064,22 +1071,22 @@ Global Symbols
 <LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_SendPacket
 </UL>
 
-<P><STRONG><a name="[c9]"></a>SEGGER_RTT_WriteString</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, segger_rtt.o(i.SEGGER_RTT_WriteString))
+<P><STRONG><a name="[bb]"></a>SEGGER_RTT_WriteString</STRONG> (Thumb, 26 bytes, Stack size 16 bytes, segger_rtt.o(i.SEGGER_RTT_WriteString))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = SEGGER_RTT_WriteString &rArr; SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
-<LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
+<BR>[Calls]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+<LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
 </UL>
-<BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR>[Called By]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;My_SEGGER_SYSVIEW_Conf
 </UL>
 
-<P><STRONG><a name="[cb]"></a>SEGGER_SYSVIEW_Conf</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, segger_sysview_config_freertos.o(i.SEGGER_SYSVIEW_Conf))
+<P><STRONG><a name="[ba]"></a>SEGGER_SYSVIEW_Conf</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, segger_sysview_config_freertos.o(i.SEGGER_SYSVIEW_Conf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = SEGGER_SYSVIEW_Conf &rArr; SEGGER_SYSVIEW_Init &rArr; SEGGER_RTT_ConfigUpBuffer &rArr; _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_SetRAMBase
 <LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Init
 </UL>
-<BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<BR>[Called By]<UL><LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;My_SEGGER_SYSVIEW_Conf
 </UL>
 
 <P><STRONG><a name="[ce]"></a>SEGGER_SYSVIEW_GetSysDesc</STRONG> (Thumb, 180 bytes, Stack size 16 bytes, segger_sysview.o(i.SEGGER_SYSVIEW_GetSysDesc))
@@ -1095,10 +1102,10 @@ Global Symbols
 <P><STRONG><a name="[cc]"></a>SEGGER_SYSVIEW_Init</STRONG> (Thumb, 74 bytes, Stack size 24 bytes, segger_sysview.o(i.SEGGER_SYSVIEW_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = SEGGER_SYSVIEW_Init &rArr; SEGGER_RTT_ConfigUpBuffer &rArr; _DoInit &rArr; strcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ConfigUpBuffer
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ConfigDownBuffer
+<BR>[Calls]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ConfigUpBuffer
+<LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ConfigDownBuffer
 </UL>
-<BR>[Called By]<UL><LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Conf
+<BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Conf
 </UL>
 
 <P><STRONG><a name="[d1]"></a>SEGGER_SYSVIEW_OnIdle</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, segger_sysview.o(i.SEGGER_SYSVIEW_OnIdle))
@@ -1138,7 +1145,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotifyFromISR
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskRemoveFromEventList
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 <LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
@@ -1180,7 +1187,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_SendPacket
 <LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PreparePacket
 </UL>
-<BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
+<BR>[Called By]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskPriorityDisinherit
 <LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_RecordSystime
 </UL>
@@ -1212,8 +1219,8 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_SendPacket
 <LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_PreparePacket
 </UL>
-<BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueReceive
 <LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 </UL>
@@ -1294,12 +1301,12 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[cd]"></a>SEGGER_SYSVIEW_SetRAMBase</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, segger_sysview.o(i.SEGGER_SYSVIEW_SetRAMBase))
-<BR><BR>[Called By]<UL><LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Conf
+<BR><BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Conf
 </UL>
 
 <P><STRONG><a name="[125]"></a>SEGGER_SYSVIEW_ShrinkId</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, segger_sysview.o(i.SEGGER_SYSVIEW_ShrinkId))
 <BR><BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotifyFromISR
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueReceive
 <LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSendFromISR
 <LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -1310,7 +1317,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 64 + In Cycle
 <LI>Call Chain = SEGGER_SYSVIEW_Start &rArr;  _SendPacket (Cycle)
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteSkipNoLock
+<BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteSkipNoLock
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_RecordVoid
 <LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_SendTaskList
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_SendNumModules
@@ -1362,14 +1369,6 @@ Global Symbols
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SYSVIEW_AddTask
 </UL>
 
-<P><STRONG><a name="[b4]"></a>SetTimePointForRetrySendGenImg</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, uart_fingerprint.o(i.SetTimePointForRetrySendGenImg))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SetTimePointForRetrySendGenImg
-</UL>
-<BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
-</UL>
-<BR>[Called By]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_TxCpltCallback
-</UL>
-
 <P><STRONG><a name="[13]"></a>SysTick_Handler</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, port.o(i.SysTick_Handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 172<LI>Call Chain = SysTick_Handler &rArr; xTaskIncrementTick &rArr; SEGGER_SYSVIEW_OnTaskStartReady &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
@@ -1382,7 +1381,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_OscConfig
 <LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_ClockConfig
-<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Handler
+<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Handler
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -1425,7 +1424,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_exit_exit
 </UL>
 
-<P><STRONG><a name="[68]"></a>main</STRONG> (Thumb, 120 bytes, Stack size 16 bytes, main.o(i.main))
+<P><STRONG><a name="[68]"></a>main</STRONG> (Thumb, 100 bytes, Stack size 16 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 356 + Unknown Stack Size
 <LI>Call Chain = main &rArr; vTaskStartScheduler &rArr; xTimerCreateTimerTask &rArr; xTaskCreate &rArr; prvAddNewTaskToReadyList &rArr; SYSVIEW_AddTask &rArr; SYSVIEW_SendTaskInfo &rArr; SEGGER_SYSVIEW_SendTaskInfo &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
@@ -1433,13 +1432,12 @@ Global Symbols
 <LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
 <LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vSetVarulMaxPRIGROUPValue
 <LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Start
-<LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Conf
-<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
-<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_UART2_FingerPrint
+<LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_UART2_FingerPrint
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Init
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
-<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;My_SEGGER_SYSVIEW_Conf
+<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
+<LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
@@ -1463,7 +1461,7 @@ Global Symbols
 <P><STRONG><a name="[f8]"></a>uxListRemove</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, list.o(i.uxListRemove))
 <BR><BR>[Called By]<UL><LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotifyFromISR
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskRemoveFromEventList
 <LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskPriorityDisinherit
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
@@ -1500,7 +1498,7 @@ Global Symbols
 <P><STRONG><a name="[f9]"></a>vListInsertEnd</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, list.o(i.vListInsertEnd))
 <BR><BR>[Called By]<UL><LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotifyFromISR
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskRemoveFromEventList
 <LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskPriorityDisinherit
 <LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskPlaceOnEventListRestricted
@@ -1510,8 +1508,8 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[fc]"></a>vPortEnterCritical</STRONG> (Thumb, 76 bytes, Stack size 0 bytes, port.o(i.vPortEnterCritical))
-<BR><BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR><BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCheckForTimeOut
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueReceive
 <LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -1527,8 +1525,8 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[fe]"></a>vPortExitCritical</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, port.o(i.vPortExitCritical))
-<BR><BR>[Called By]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR><BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCheckForTimeOut
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueReceive
 <LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -1595,7 +1593,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[bb]"></a>vTaskDelay</STRONG> (Thumb, 90 bytes, Stack size 16 bytes, tasks.o(i.vTaskDelay))
+<P><STRONG><a name="[c0]"></a>vTaskDelay</STRONG> (Thumb, 90 bytes, Stack size 16 bytes, tasks.o(i.vTaskDelay))
 <BR><BR>[Stack]<UL><LI>Max Depth = 196<LI>Call Chain = vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick &rArr; SEGGER_SYSVIEW_OnTaskStartReady &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_RecordU32
@@ -1651,7 +1649,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[117]"></a>vTaskSuspendAll</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, tasks.o(i.vTaskSuspendAll))
-<BR><BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
+<BR><BR>[Called By]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueReceive
 <LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[108]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
@@ -1779,7 +1777,7 @@ Global Symbols
 <LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTimerCreateTimerTask
 </UL>
 
-<P><STRONG><a name="[be]"></a>xTaskGenericNotify</STRONG> (Thumb, 306 bytes, Stack size 40 bytes, tasks.o(i.xTaskGenericNotify))
+<P><STRONG><a name="[bf]"></a>xTaskGenericNotify</STRONG> (Thumb, 306 bytes, Stack size 40 bytes, tasks.o(i.xTaskGenericNotify))
 <BR><BR>[Stack]<UL><LI>Max Depth = 196<LI>Call Chain = xTaskGenericNotify &rArr; SEGGER_SYSVIEW_RecordU32x4 &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_ShrinkId
@@ -1790,7 +1788,7 @@ Global Symbols
 <LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
 <LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_OnTaskStartReady
 </UL>
-<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintRXData
+<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ParsingRXData_Task
 </UL>
 
 <P><STRONG><a name="[7f]"></a>xTaskGenericNotifyFromISR</STRONG> (Thumb, 368 bytes, Stack size 56 bytes, tasks.o(i.xTaskGenericNotifyFromISR))
@@ -1836,7 +1834,7 @@ Global Symbols
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
 </UL>
 
-<P><STRONG><a name="[ba]"></a>xTaskNotifyWait</STRONG> (Thumb, 166 bytes, Stack size 32 bytes, tasks.o(i.xTaskNotifyWait))
+<P><STRONG><a name="[bc]"></a>xTaskNotifyWait</STRONG> (Thumb, 166 bytes, Stack size 32 bytes, tasks.o(i.xTaskNotifyWait))
 <BR><BR>[Stack]<UL><LI>Max Depth = 196<LI>Call Chain = xTaskNotifyWait &rArr; prvAddCurrentTaskToDelayedList &rArr; SEGGER_SYSVIEW_OnTaskStopReady &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_RecordU32x4
@@ -1844,7 +1842,7 @@ Global Symbols
 <LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddCurrentTaskToDelayedList
 </UL>
-<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintRXData
+<BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ParsingRXData_Task
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintApplication
 </UL>
 
@@ -1883,7 +1881,7 @@ Global Symbols
 <LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_OnTaskStartReady
 <LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvResetNextTaskUnblockTime
 </UL>
-<BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
+<BR>[Called By]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueReceive
 <LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[108]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
@@ -1924,21 +1922,21 @@ Global Symbols
 <H3>
 Local Symbols
 </H3>
-<P><STRONG><a name="[b6]"></a>MX_GPIO_Init</STRONG> (Thumb, 590 bytes, Stack size 32 bytes, main.o(i.MX_GPIO_Init))
+<P><STRONG><a name="[b5]"></a>MX_GPIO_Init</STRONG> (Thumb, 590 bytes, Stack size 32 bytes, main.o(i.MX_GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = MX_GPIO_Init &rArr; HAL_GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
+<BR>[Calls]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_Init
 <LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[b8]"></a>MX_USART2_UART_Init</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, main.o(i.MX_USART2_UART_Init))
+<P><STRONG><a name="[b7]"></a>MX_USART2_UART_Init</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, main.o(i.MX_USART2_UART_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = MX_USART2_UART_Init &rArr; HAL_UART_Init &rArr; UART_SetConfig &rArr; __aeabi_uldivmod
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Init
-<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Handler
+<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Error_Handler
 </UL>
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -2079,8 +2077,8 @@ Local Symbols
 <LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_OnTaskStopReady
 </UL>
-<BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
+<BR>[Called By]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
 <LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskPlaceOnEventListRestricted
 <LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskPlaceOnEventList
 </UL>
@@ -2259,37 +2257,37 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> segger_sysview_freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[c0]"></a>_DoInit</STRONG> (Thumb, 74 bytes, Stack size 8 bytes, segger_rtt.o(i._DoInit))
+<P><STRONG><a name="[c2]"></a>_DoInit</STRONG> (Thumb, 74 bytes, Stack size 8 bytes, segger_rtt.o(i._DoInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strcpy
 </UL>
-<BR>[Called By]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
-<LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ReadNoLock
-<LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ConfigUpBuffer
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ConfigDownBuffer
+<BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_Write
+<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ReadNoLock
+<LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ConfigUpBuffer
+<LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ConfigDownBuffer
 </UL>
 
-<P><STRONG><a name="[c5]"></a>_GetAvailWriteSpace</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, segger_rtt.o(i._GetAvailWriteSpace))
+<P><STRONG><a name="[c7]"></a>_GetAvailWriteSpace</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, segger_rtt.o(i._GetAvailWriteSpace))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = _GetAvailWriteSpace
 </UL>
-<BR>[Called By]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
+<BR>[Called By]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
 </UL>
 
-<P><STRONG><a name="[c7]"></a>_WriteBlocking</STRONG> (Thumb, 114 bytes, Stack size 32 bytes, segger_rtt.o(i._WriteBlocking))
+<P><STRONG><a name="[c9]"></a>_WriteBlocking</STRONG> (Thumb, 114 bytes, Stack size 32 bytes, segger_rtt.o(i._WriteBlocking))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = _WriteBlocking
 </UL>
 <BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
-<BR>[Called By]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
+<BR>[Called By]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
 </UL>
 
-<P><STRONG><a name="[c6]"></a>_WriteNoCheck</STRONG> (Thumb, 76 bytes, Stack size 32 bytes, segger_rtt.o(i._WriteNoCheck))
+<P><STRONG><a name="[c8]"></a>_WriteNoCheck</STRONG> (Thumb, 76 bytes, Stack size 32 bytes, segger_rtt.o(i._WriteNoCheck))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = _WriteNoCheck
 </UL>
 <BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
-<BR>[Called By]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
+<BR>[Called By]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
 </UL>
 
 <P><STRONG><a name="[df]"></a>_EncodeStr</STRONG> (Thumb, 68 bytes, Stack size 12 bytes, segger_sysview.o(i._EncodeStr))
@@ -2305,7 +2303,7 @@ Local Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Start
-<LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ReadNoLock
+<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ReadNoLock
 <LI><a href="#[e5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_Stop
 <LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_SendTaskList
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_SendNumModules
@@ -2362,7 +2360,7 @@ Local Symbols
 <P><STRONG><a name="[d0]"></a>_SendPacket</STRONG> (Thumb, 272 bytes, Stack size 32 bytes, segger_sysview.o(i._SendPacket))
 <BR><BR>[Stack]<UL><LI>Max Depth = 116<LI>Call Chain = _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteSkipNoLock
+<BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteSkipNoLock
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_TrySendOverflowPacket
 <LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_HandleIncomingPacket
 </UL>
@@ -2403,7 +2401,7 @@ Local Symbols
 <P><STRONG><a name="[f2]"></a>_TrySendOverflowPacket</STRONG> (Thumb, 124 bytes, Stack size 32 bytes, segger_sysview.o(i._TrySendOverflowPacket))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = _TrySendOverflowPacket &rArr; SEGGER_RTT_WriteSkipNoLock
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteSkipNoLock
+<BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteSkipNoLock
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_SendPacket
 </UL>

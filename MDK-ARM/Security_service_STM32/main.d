@@ -47,9 +47,10 @@ security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\mpu_wrappers.h
 security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\task.h
 security_service_stm32\main.o: ..\3rdParty\FreeRTOS\include\list.h
 security_service_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-security_service_stm32\main.o: ../Core/Inc/Task_FingerPrint/task_uart_FingerPrint.h
-security_service_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-security_service_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 security_service_stm32\main.o: ..\3rdParty\SEGGER\SEGGER\SEGGER_RTT.h
 security_service_stm32\main.o: ..\3rdParty\SEGGER\Config\SEGGER_RTT_Conf.h
 security_service_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+security_service_stm32\main.o: ../Core/Src/Task_FingerPrint/task_uart_FingerPrint.h
+security_service_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+security_service_stm32\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+security_service_stm32\main.o: ../Core/Src/Task_ParsingData/task_ParsingData.h

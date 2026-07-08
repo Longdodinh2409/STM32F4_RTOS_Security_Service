@@ -564,9 +564,19 @@
           <GroupName>Task_FingerPrint</GroupName>
           <Files>
             <File>
-              <FileName>uart_FingerPrint.c</FileName>
+              <FileName>task_uart_FingerPrint.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Core\Src\Task_FingerPrint\uart_FingerPrint.c</FilePath>
+              <FilePath>..\Core\Src\Task_FingerPrint\task_uart_FingerPrint.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Task_ParsingData</GroupName>
+          <Files>
+            <File>
+              <FileName>task_ParsingData.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\Task_ParsingData\task_ParsingData.c</FilePath>
             </File>
           </Files>
         </Group>

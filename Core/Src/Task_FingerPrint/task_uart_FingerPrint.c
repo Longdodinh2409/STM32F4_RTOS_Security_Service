@@ -1,4 +1,4 @@
-#include <Task_FingerPrint/task_uart_FingerPrint.h>
+#include "task_uart_FingerPrint.h"
 #include "SEGGER_RTT.h"
 
 extern UART_HandleTypeDef huart2;
@@ -7,13 +7,13 @@ extern TaskHandle_t task_PD_handler, task_FP_handler;
 extern char msg[128];
 
 RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
-uint8_t g_au8RXFingerPrintBufferSize = 0;
-uint8_t g_au8RXFingerPrintBuffer[RX_BUFFER_SIZE];
 
 // Global TX
 Fingerprint_Packet_t g_stFingerPrintTXData;
 // Global RX
 Fingerprint_Packet_t g_stFingerPrintRXData;
+volatile uint8_t g_au8RXFingerPrintBufferSize = 0;
+volatile uint8_t g_au8RXFingerPrintBuffer[RX_BUFFER_SIZE];
 // Data Ready flag
 volatile bool bDataReady = false;
 
@@ -65,127 +65,6 @@ void Fingerprint_SendCommand(uint8_t instructionCode, uint8_t *params, uint8_t p
 	HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart2, (uint8_t*) &g_stFingerPrintTXData, total_transmit_bytes);
 }
 
-// Extract packet from array buffer to packet structure
-// Return: true if extraction successful, false if insufficient data
-// Input: buffer_ptr - pointer to receive buffer array
-//        buffer_len - number of bytes available in buffer
-//        packet - pointer to output Fingerprint_Packet_t structure
-bool Fingerprint_ExtractPacketFromRingBuffer(uint8_t *buffer_ptr, uint16_t buffer_len, Fingerprint_Packet_t *packet) {
-	uint16_t packet_length;
-	uint16_t total_packet_size;
-	uint16_t i;
-
-	// 1. Need at least 9 bytes (Header + Address + Packet_ID + Length)
-	if (buffer_len < 9) {
-		return false;
-	}
-
-	// 2. Check Header (0xEF01) at the start position
-	if (buffer_ptr[0] != 0xEF || buffer_ptr[1] != 0x01) {
-		return false;
-	}
-
-	// 3. Get length (2 bytes, Big-Endian) at offset 7-8
-	uint8_t length_high = buffer_ptr[7];
-	uint8_t length_low = buffer_ptr[8];
-	packet_length = ((uint16_t) length_high << 8) | length_low;
-
-	// 4. Check packet_length is valid (minimum 2 bytes checksum, maximum payload_size)
-	if (packet_length < 2 || packet_length > TX_PAYLOAD_MAX_SIZE) {
-		return false;
-	}
-
-	// 5. Calculate total packet size: 9 (header+addr+pktID+len) + payload
-	total_packet_size = 9 + packet_length;
-
-	// 6. Check if there is enough data in the buffer
-	if (buffer_len < total_packet_size) {
-		return false;
-	}
-
-	// 7. Extract packet from array buffer to packet structure
-	for (i = 0; i < 2; i++) {
-		packet->header[i] = buffer_ptr[i];
-	}
-
-	for (i = 0; i < 4; i++) {
-		packet->address[i] = buffer_ptr[2 + i];
-	}
-
-	packet->packet_ID = buffer_ptr[6];
-	packet->length[0] = length_high;
-	packet->length[1] = length_low;
-
-	// 8. Copy payload
-	for (i = 0; i < packet_length; i++) {
-		packet->payload[i] = buffer_ptr[9 + i];
-	}
-
-	return true;
-}
-
-void ProcessFingerPrintRXData(void* param) {
-	bool bIsItGood = false;
-
-	while(1)
-	{
-		if (xTaskNotifyWait(0, 0, NULL, portMAX_DELAY) == pdTRUE)
-		{
-			bDataReady = false;
-	
-			__disable_irq();
-			// 1. Parse data from array buffer
-			// Note: stRXRingBuffer.head indicates the number of bytes available in g_au8RXFingerPrintBuffer
-			bIsItGood = Fingerprint_ExtractPacketFromRingBuffer(g_au8RXFingerPrintBuffer, 
-																g_au8RXFingerPrintBufferSize,
-																&g_stFingerPrintRXData);
-			__enable_irq();
-	
-			if (bIsItGood == false) {
-				// printf("/n failed extract./n ");
-				return;
-			}
-	
-			// 2. Checksum
-			if (Fingerprint_VerifyChecksum(&g_stFingerPrintRXData) == false) {
-				// printf("/n wrong checksum./n ");
-				return;
-			}
-	
-			/* ------------- Important flag -------------*/
-			xTaskNotify(task_FP_handler, FINGERPRINT_RX_NEW_PACKET_VALUE, eSetBits);
-			/* ------------- -------------- -------------*/
-		}
-	}
-}
-
-bool Fingerprint_VerifyChecksum(const Fingerprint_Packet_t *packet) {
-	uint32_t calculated_sum = 0; // Use uint32_t to avoid overflow when accumulating
-
-	// 1. Calculate the length of the sequence (Payload + Checksum) - Big Endian
-	uint16_t packet_len = (packet->length[0] << 8) | packet->length[1];
-
-	// 2. Actual data length (excluding 2 bytes checksum)
-	uint16_t data_len = packet_len - 2;
-
-	// 3. Accumulate Packet Type and 2 bytes Length
-	calculated_sum += packet->packet_ID;
-	calculated_sum += packet->length[0];
-	calculated_sum += packet->length[1];
-
-	// 4. Accumulate bytes in Payload (excluding 2 bytes checksum at the end)
-	for (uint16_t i = 0; i < data_len; i++) {
-		calculated_sum += packet->payload[i];
-	}
-
-	// 5. Get actual Checksum from sensor (Located at end of payload array)
-	uint16_t received_checksum = (packet->payload[data_len] << 8)
-			| packet->payload[data_len + 1];
-
-	// 6. Compare lower 16-bit of calculated_sum with received_checksum
-	return ((calculated_sum & 0xFFFF) == received_checksum);
-}
-
 void FingerPrint_UART_RxCallback(uint8_t rx_byte) {
 	// Static variables to track current packet state
 	static uint16_t byte_count = 0;
@@ -235,7 +114,7 @@ void FingerPrint_UART_RxCallback(uint8_t rx_byte) {
 			g_au8RXFingerPrintBufferSize = expected_total_length;
 
 			// SEGGER_RTT_WriteString(0, "Receive a packet FingerPrint RX data!\n");
-			sprintf(msg, "Receive a packet FingerPrint RX data!\n");
+			sprintf(msg, "[My Debug] Receive a packet FingerPrint RX data!\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
 			BaseType_t xHigherPriorityTaskWoken = pdFALSE;
@@ -268,7 +147,7 @@ void ProcessFingerPrintApplication(void)
 	if (g_FingerState == FSM_NONE) {
 		// printf("[FSM] Initializing Fingerprint State Machine...\r\n");
 		// SEGGER_RTT_WriteString(0, "Init...");
-		sprintf(msg, "Init...\n");
+		sprintf(msg, "[My Debug] Init...\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 
 		// initialize FingerPrint sensor
@@ -283,7 +162,7 @@ void ProcessFingerPrintApplication(void)
 		case FSM_FINGER_SEND_GENIMG:
 		{
 			// Gửi lệnh 01H (Không cần tham số data)
-			sprintf(msg, "Send GEN_IMG - 01H\n");
+			sprintf(msg, "[My Debug] Send GEN_IMG - 01H\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
 			Fingerprint_SendCommand(0x01, NULL, 0);
@@ -297,7 +176,7 @@ void ProcessFingerPrintApplication(void)
 			{
 				if (u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
 				{
-					sprintf(msg, "WAIT_GENIMG receive data\n");
+					sprintf(msg, "[My Debug] WAIT_GENIMG receive data\n");
 					SEGGER_SYSVIEW_PrintfTarget(msg);
 
 					u8confirmstate = g_stFingerPrintRXData.payload[0];
@@ -320,7 +199,7 @@ void ProcessFingerPrintApplication(void)
 			}
 			else 	// timeout
             {
-				sprintf(msg, "WAIT_GENIMG timeout, resend GEN_IMG - 01H\n");
+				sprintf(msg, "[My Debug] WAIT_GENIMG timeout, resend GEN_IMG - 01H\n");
 				SEGGER_SYSVIEW_PrintfTarget(msg);
 
                 g_FingerState = FSM_FINGER_SEND_GENIMG; // Try again!
@@ -333,7 +212,7 @@ void ProcessFingerPrintApplication(void)
 		// ---------------------------------------------------------
 		case FSM_FINGER_SEND_IMG2TZ:
 		{
-			sprintf(msg, "Send IMG_2_TZ - 02H, Chon CharBuffer1\n");
+			sprintf(msg, "[My Debug] Send IMG_2_TZ - 02H, Chon CharBuffer1\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
 			uint8_t bufferID[1] = { 0x01 }; // Tham số: Chọn CharBuffer1
@@ -370,7 +249,7 @@ void ProcessFingerPrintApplication(void)
 		case FSM_FINGER_SEND_SEARCH:
 		{
 			// Tham số cho lệnh Search: BufferID (1), StartPage (0x00, 0x00), PageNum (0x01, 0x2C - Tìm tối đa 300 vân tay)
-			sprintf(msg, "Send SEARCH - 04H, BufferID (1), StartPage (0x00, 0x00), PageNum (0x01, 0x2C) search 300 FPs\n");
+			sprintf(msg, "[My Debug] Send SEARCH - 04H, BufferID (1), StartPage (0x00, 0x00), PageNum (0x01, 0x2C) search 300 FPs\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
 			uint8_t au8searchParams[5] = { 0x01, 0x00, 0x00, 0x01, 0x2C };
@@ -395,7 +274,7 @@ void ProcessFingerPrintApplication(void)
 										| g_stFingerPrintRXData.payload[4];
 
 						// => BẠN CHECK TẠI ĐÂY: Nếu u16matchedID == 0 nghĩa là ngón trỏ của bạn!
-						sprintf(msg, "Xac thuc thanh cong! ID cua ban la: %d, Diem khop: %d\n", u16matchedID, u16matchScore);
+						sprintf(msg, "[Conclusion] Xac thuc thanh cong! ID cua ban la: %d, Diem khop: %d\n", u16matchedID, u16matchScore);
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 
 						// Display Found!!!
@@ -404,13 +283,13 @@ void ProcessFingerPrintApplication(void)
 					else if (u8confirmstate == 0x17)
 					{
 						// printf("Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! \n");
-						sprintf(msg, "Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! (neu muon) \n");
+						sprintf(msg, "[Conclusion] Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! (neu muon) \n");
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 					}
 					else if (u8confirmstate == 0x09) // 0x09: KHÔNG TÌM THẤY (Ngón tay lạ)
 					{
 						// printf("Van tay sai! Khong tim thay trong thu vien.\n");
-						sprintf(msg, "Van tay sai! Khong tim thay trong thu vien.\n");
+						sprintf(msg, "[Conclusion] Van tay sai! Khong tim thay trong thu vien.\n");
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 					}
 
@@ -428,7 +307,7 @@ void ProcessFingerPrintApplication(void)
 		{
 			// Nghỉ 100ms trước khi tiếp tục chu trình quét mới
 
-			sprintf(msg, "FingerPrint TX-RX delay 100ms\n");
+			sprintf(msg, "[My Debug] FingerPrint TX-RX delay 100ms\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 			// // Việc này giúp module rảnh rang không bị quá tải lệnh liên tục
 			g_FingerState = FSM_FINGER_SEND_GENIMG; // Quay lại từ đầu

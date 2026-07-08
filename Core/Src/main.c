@@ -21,13 +21,18 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+// FreeRTOS System
 #include "FreeRTOS.h"
-// #include "SEGGER_SYSVIEW_FreeRTOS.h"
 #include "task.h"
 #include "stdio.h"
-#include <Task_FingerPrint/task_uart_FingerPrint.h>
+
+// SEGGER System
 #include "SEGGER_RTT.h"
 #include "SEGGER_SYSVIEW.h"
+
+// Task System
+#include "Task_FingerPrint/task_uart_FingerPrint.h"
+#include "Task_ParsingData/task_ParsingData.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -117,7 +122,7 @@ int main(void)
 	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
   	// xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
 	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
-  	xTaskCreate(ProcessFingerPrintRXData,       "Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
+  	xTaskCreate(ParsingRXData_Task,       		"Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
 
 #if (SEGGER_SYSVIEW_DEBUG_ENABLE == 1)
 	SEGGER_SYSVIEW_Start();
@@ -391,7 +396,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 	if (huart->Instance == USART2)
 	{
 		// For debugging
-		sprintf(msg, "Send FingerPrint TX data done!\n");
+		sprintf(msg, "[My Debug] Send FingerPrint TX data done!\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 	}
 }
