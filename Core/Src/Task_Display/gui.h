@@ -31,8 +31,11 @@ typedef enum {
 
 #define WIDTH_EACH_STEP_SCANNING_ANIMATION ((END_Y_SCANNING_BAR - START_Y_SCANNING_BAR) / (TOTAL_STEP_OF_SCANNING_ANIMATION - 1))
 
+void SetDisplayState(E_SCREEN_STATE eState);
+E_SCREEN_STATE GetDisplayState(void);
+
 void InitScreen(void);
-void ProcessDisplay(uint8_t u8State);
+void ProcessDisplay(void);
 void ProcessDisplayInit(void);
 void ProcessDisplayStandby(void);
 void ProcessDisplayScanning(void);
@@ -40,5 +43,7 @@ void ProcessDisplayPass(void);
 void ProcessDisplayFail(void);
 void ProcessDisplayTempLock(void);
 void ProcessDisplayInfLock(void);
+
+void Display_Task(void* param);
 
 #endif // DEF_GUI_H

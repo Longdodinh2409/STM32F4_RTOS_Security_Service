@@ -60,7 +60,7 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 TaskHandle_t task1_handler, task2_handler;
-TaskHandle_t task_FP_handler, task_PD_handler;
+TaskHandle_t task_FP_handler, task_PD_handler, task_Display_handler;
 uint8_t UART2_rx_data;
 char msg[128];
 /* USER CODE END PV */
@@ -126,8 +126,9 @@ int main(void)
 
 	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
   	// xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
-	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
   	xTaskCreate(ParsingRXData_Task,       		"Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
+	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
+	xTaskCreate(Display_Task,  				"Task_Display",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
 
 #if (SEGGER_SYSVIEW_DEBUG_ENABLE == 1)
 	SEGGER_SYSVIEW_Start();
@@ -397,19 +398,21 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void task1_handler_func(void *para) {
-	while (1) {
-    HAL_GPIO_TogglePin(GPIOD, LED_ORANGE);
-		// printf("%s \n", (char*) para);
-    SEGGER_RTT_printf(0, "%s \n", (char*) para);
+	while (1) 
+	{
+		HAL_GPIO_TogglePin(GPIOD, LED_ORANGE);
+			// printf("%s \n", (char*) para);
+		SEGGER_RTT_printf(0, "%s \n", (char*) para);
 		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }
 
 void task2_handler_func(void *para) {
-	while (1) {
-    HAL_GPIO_TogglePin(GPIOD, LED_RED);
-		// printf("%s \n", (char*) para);
-    SEGGER_RTT_printf(0, "%s \n", (char*) para);
+	while (1) 
+	{
+		HAL_GPIO_TogglePin(GPIOD, LED_RED);
+			// printf("%s \n", (char*) para);
+		SEGGER_RTT_printf(0, "%s \n", (char*) para);
 		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }

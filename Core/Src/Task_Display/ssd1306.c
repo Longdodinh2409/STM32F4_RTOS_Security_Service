@@ -21,6 +21,8 @@
    ----------------------------------------------------------------------
  */
 #include "ssd1306.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 extern I2C_HandleTypeDef hi2c1;
 /* Write command */

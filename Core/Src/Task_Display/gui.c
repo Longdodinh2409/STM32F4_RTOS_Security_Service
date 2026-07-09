@@ -1,4 +1,6 @@
 #include "gui.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include <stdbool.h>
 
 static E_SCREEN_STATE s_u8ScreenState;
@@ -179,44 +181,53 @@ const unsigned char pass_access_bitmap[] = {
 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
 };
 
-void InitScreen()
+void SetDisplayState(E_SCREEN_STATE eState)
 {
-	SSD1306_Init();
-	s_u8ScreenState = SCREEN_STATE_INIT;
-//	SSD1306_DrawBitmap(2, 0, garfield_128x64, 128, 64, SSD1306_COLOR_WHITE);
-//	SSD1306_UpdateScreen();
-//	vTaskDelay(pdMS_TO_TICKS(3000));
-}
-
-void ProcessDisplay(uint8_t u8State)
-{
-	static uint8_t s_u8PrevScreenState = SCREEN_STATE_MAX_CNT;
-
-	if (u8State == INVALID_CMD)
+	if (eState == INVALID_CMD)
 	{
 		return;
 	}
 
-	if (u8State >= (uint8_t)(SCREEN_STATE_MAX_CNT))
+	if (eState >= SCREEN_STATE_MAX_CNT)
 	{
 		// Error
 		return;
 	}
 
-	s_u8ScreenState = (E_SCREEN_STATE)u8State;
+	s_u8ScreenState = eState;
+}
 
-	if (s_u8ScreenState != s_u8PrevScreenState)
+E_SCREEN_STATE GetDisplayState(void)
+{
+	return s_u8ScreenState;
+}
+
+void InitScreen()
+{
+	SSD1306_Init();
+	SetDisplayState(SCREEN_STATE_INIT);
+//	SSD1306_DrawBitmap(2, 0, garfield_128x64, 128, 64, SSD1306_COLOR_WHITE);
+//	SSD1306_UpdateScreen();
+//	vTaskDelay(pdMS_TO_TICKS(3000));
+}
+
+void ProcessDisplay(void)
+{
+	static E_SCREEN_STATE s_u8PrevScreenState = SCREEN_STATE_MAX_CNT;
+	E_SCREEN_STATE u8CurrentState = GetDisplayState();
+
+	if (u8CurrentState != s_u8PrevScreenState)
 	{
 		SSD1306_Clear();
-		s_u8PrevScreenState = s_u8ScreenState;
+		s_u8PrevScreenState = u8CurrentState;
 	}
 
-	  switch(s_u8ScreenState)
+	  switch(u8CurrentState)
 	  {
 		  case SCREEN_STATE_INIT:
 		  {
 			  ProcessDisplayInit();
-			  s_u8ScreenState = SCREEN_STATE_STANDBY;
+			  SetDisplayState(SCREEN_STATE_STANDBY);
 		  }
 		  break;
 
@@ -266,7 +277,7 @@ void ProcessDisplayInit()
 {
 	SSD1306_DrawBitmap(2, 0, garfield_128x64, 128, 64, SSD1306_COLOR_WHITE);
 	SSD1306_UpdateScreen();
-	// vTaskDelay(pdMS_TO_TICKS(1000));
+	vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
 void ProcessDisplayStandby()
@@ -356,6 +367,8 @@ void ProcessDisplayPass()
 	SSD1306_Puts("Welcome, Thomas!", &Font_7x10, SSD1306_COLOR_WHITE);
 
 	SSD1306_UpdateScreen();
+
+	vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
 void ProcessDisplayFail()
@@ -367,6 +380,8 @@ void ProcessDisplayFail()
 	SSD1306_Puts("Try again!", &Font_7x10, SSD1306_COLOR_WHITE);
 
 	SSD1306_UpdateScreen();
+
+	vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
 void ProcessDisplayTempLock()
@@ -385,6 +400,8 @@ void ProcessDisplayTempLock()
 	//	SSD1306_DrawFilledRectangle();
 
 	SSD1306_UpdateScreen();
+
+	vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
 void ProcessDisplayInfLock()
@@ -403,6 +420,14 @@ void ProcessDisplayInfLock()
 	SSD1306_DrawFilledRectangle(3, 54, 118, 5, SSD1306_COLOR_WHITE);
 
 	SSD1306_UpdateScreen();
+
+	vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
-
+void Display_Task(void* param)
+{
+	while(1)
+	{
+		ProcessDisplay();
+	}
+}
