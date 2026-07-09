@@ -25,6 +25,8 @@ security_service_stm32\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/I
 security_service_stm32\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h
 security_service_stm32\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h
 security_service_stm32\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h
+security_service_stm32\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c.h
+security_service_stm32\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h
 security_service_stm32\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h
 security_service_stm32\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h
 security_service_stm32\stm32f4xx_hal_pwr_ex.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h

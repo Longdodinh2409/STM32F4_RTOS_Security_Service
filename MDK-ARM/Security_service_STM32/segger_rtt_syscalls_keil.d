@@ -6,6 +6,6 @@ security_service_stm32\segger_rtt_syscalls_keil.o: C:\Keil_v5\ARM\ARMCC\Bin\..\i
 security_service_stm32\segger_rtt_syscalls_keil.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\rt_misc.h
 security_service_stm32\segger_rtt_syscalls_keil.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 security_service_stm32\segger_rtt_syscalls_keil.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-security_service_stm32\segger_rtt_syscalls_keil.o: ..\3rdParty\SEGGER\SEGGER\SEGGER_RTT.h
-security_service_stm32\segger_rtt_syscalls_keil.o: ..\3rdParty\SEGGER\Config\SEGGER_RTT_Conf.h
+security_service_stm32\segger_rtt_syscalls_keil.o: ../3rdParty/SEGGER/SEGGER/SEGGER_RTT.h
+security_service_stm32\segger_rtt_syscalls_keil.o: ../3rdParty/SEGGER/Config/SEGGER_RTT_Conf.h
 security_service_stm32\segger_rtt_syscalls_keil.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
