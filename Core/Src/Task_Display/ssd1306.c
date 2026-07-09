@@ -678,7 +678,7 @@ void SSD1306_SoftwareScrollRight(uint32_t speed_ms)
 
     SSD1306_UpdateScreen();
 
-    HAL_Delay(speed_ms);
+    vTaskDelay(pdMS_TO_TICKS(speed_ms));
 }
 
 void SSD1306_SavePrevBitmapAnimation(void) {

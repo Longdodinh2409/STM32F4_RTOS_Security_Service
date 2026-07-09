@@ -185,7 +185,7 @@ void InitScreen()
 	s_u8ScreenState = SCREEN_STATE_INIT;
 //	SSD1306_DrawBitmap(2, 0, garfield_128x64, 128, 64, SSD1306_COLOR_WHITE);
 //	SSD1306_UpdateScreen();
-//	HAL_Delay(3000);
+//	vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
 void ProcessDisplay(uint8_t u8State)
@@ -266,7 +266,7 @@ void ProcessDisplayInit()
 {
 	SSD1306_DrawBitmap(2, 0, garfield_128x64, 128, 64, SSD1306_COLOR_WHITE);
 	SSD1306_UpdateScreen();
-	HAL_Delay(1000);
+	// vTaskDelay(pdMS_TO_TICKS(1000));
 }
 
 void ProcessDisplayStandby()
@@ -300,7 +300,7 @@ void ProcessDisplayStandby()
 	SSD1306_UpdateScreen();
 
 	bIsColonBlink ^= 1;
-	HAL_Delay(500);
+	vTaskDelay(pdMS_TO_TICKS(500));
 }
 
 void ProcessDisplayScanning()
@@ -344,7 +344,7 @@ void ProcessDisplayScanning()
 		u16CurrentStep = 0;
 	}
 
-	HAL_Delay(75);
+	vTaskDelay(pdMS_TO_TICKS(75));
 }
 
 void ProcessDisplayPass()
