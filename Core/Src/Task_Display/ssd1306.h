@@ -69,6 +69,8 @@ SDA        |PB7          |Serial data line
 #define SSD1306_HEIGHT           64
 #endif
 
+#define TX_I2C_TASK_NOTIFY_BIT			(uint32_t)(0x02)
+
 /**
  * @brief  SSD1306 color enumeration
  */

@@ -53,3 +53,4 @@ security_service_stm32\gui.o: ../3rdParty/FreeRTOS/include/mpu_wrappers.h
 security_service_stm32\gui.o: ../3rdParty/FreeRTOS/include/task.h
 security_service_stm32\gui.o: ../3rdParty/FreeRTOS/include/list.h
 security_service_stm32\gui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+security_service_stm32\gui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

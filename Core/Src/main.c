@@ -128,7 +128,7 @@ int main(void)
   	// xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
   	xTaskCreate(ParsingRXData_Task,       		"Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
 	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
-	xTaskCreate(Display_Task,  				"Task_Display",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
+	xTaskCreate(Display_Task,  				"Task_Display",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_Display_handler);
 
 #if (SEGGER_SYSVIEW_DEBUG_ENABLE == 1)
 	SEGGER_SYSVIEW_Start();
@@ -456,6 +456,25 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
       	// enable interrupt for the next time
       	HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
     }
+}
+
+void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c)
+{
+	if (hi2c->Instance == I2C1)
+	{
+		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+		xTaskNotifyFromISR(task_Display_handler, TX_I2C_TASK_NOTIFY_BIT, eSetBits, &xHigherPriorityTaskWoken);
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	}
+}
+
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c) {
+    if (hi2c->Instance == I2C1)
+	{
+		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+		xTaskNotifyFromISR(task_Display_handler, TX_I2C_TASK_NOTIFY_BIT, eSetBits, &xHigherPriorityTaskWoken);
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	}
 }
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )

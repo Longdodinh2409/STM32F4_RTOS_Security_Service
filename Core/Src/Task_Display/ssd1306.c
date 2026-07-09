@@ -20,11 +20,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
    ----------------------------------------------------------------------
  */
+
+#include "stdio.h"
 #include "ssd1306.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
 extern I2C_HandleTypeDef hi2c1;
+extern char msg[128];
+
 /* Write command */
 #define SSD1306_WRITECOMMAND(command)      ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x00, (command))
 /* Write data */
@@ -648,20 +652,63 @@ void ssd1306_I2C_Init(void) {
 }
 
 void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count) {
-uint8_t dt[256];
-dt[0] = reg;
-uint8_t i;
-for(i = 0; i < count; i++)
-dt[i+1] = data[i];
-HAL_I2C_Master_Transmit(&hi2c1, address, dt, count+1, 10);
+	uint8_t dt[256];
+	uint8_t i;
+
+	dt[0] = reg;
+	for(i = 0; i < count; i++)
+	{
+		dt[i+1] = data[i];
+	}
+	// HAL_I2C_Master_Transmit(&hi2c1, address, dt, count+1, 10);
+	HAL_I2C_Master_Transmit_IT(&hi2c1, address, dt, count+1);
+
+	uint32_t u32NotificationValue;
+	if (xTaskNotifyWait(0, TX_I2C_TASK_NOTIFY_BIT, &u32NotificationValue, pdMS_TO_TICKS(1000)) == pdTRUE)
+	{
+		if (u32NotificationValue & TX_I2C_TASK_NOTIFY_BIT)
+		{
+			sprintf(msg, "[My Debug] Send OLED Screen TX data done!\n");
+			SEGGER_SYSVIEW_PrintfTarget(msg);
+		}
+	}
+	else 	// timeout
+	{
+		HAL_I2C_Master_Transmit_IT(&hi2c1, address, dt, count+1);	// resend
+
+		sprintf(msg, "[My Debug] Send OLED Screen TX data failed! Resent it!\n");
+		SEGGER_SYSVIEW_PrintfTarget(msg);
+	}
+
+	
 }
 
 
 void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data) {
 	uint8_t dt[2];
+
 	dt[0] = reg;
 	dt[1] = data;
-	HAL_I2C_Master_Transmit(&hi2c1, address, dt, 2, 10);
+	
+	// HAL_I2C_Master_Transmit(&hi2c1, address, dt, 2, 10);
+	HAL_I2C_Master_Transmit_IT(&hi2c1, address, dt, 2);
+
+	uint32_t u32NotificationValue;
+	if (xTaskNotifyWait(0, TX_I2C_TASK_NOTIFY_BIT, &u32NotificationValue, pdMS_TO_TICKS(1000)) == pdTRUE)
+	{
+		if (u32NotificationValue & TX_I2C_TASK_NOTIFY_BIT)
+		{
+			sprintf(msg, "[My Debug] Send OLED Screen TX data done!\n");
+			SEGGER_SYSVIEW_PrintfTarget(msg);
+		}
+	}
+	else 	// timeout
+	{
+		HAL_I2C_Master_Transmit_IT(&hi2c1, address, dt, 2);	// resend
+
+		sprintf(msg, "[My Debug] Send OLED Screen TX data failed! Resent it!\n");
+		SEGGER_SYSVIEW_PrintfTarget(msg);
+	}
 }
 
 void SSD1306_SoftwareScrollRight(uint32_t speed_ms)

@@ -1,4 +1,5 @@
 security_service_stm32\ssd1306.o: ..\Core\Src\Task_Display\ssd1306.c
+security_service_stm32\ssd1306.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 security_service_stm32\ssd1306.o: ..\Core\Src\Task_Display\ssd1306.h
 security_service_stm32\ssd1306.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 security_service_stm32\ssd1306.o: ../Core/Inc/stm32f4xx_hal_conf.h

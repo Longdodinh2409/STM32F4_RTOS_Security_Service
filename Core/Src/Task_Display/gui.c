@@ -2,6 +2,9 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include <stdbool.h>
+#include <stdio.h>
+
+extern char msg[128];
 
 static E_SCREEN_STATE s_u8ScreenState;
 
@@ -308,6 +311,7 @@ void ProcessDisplayStandby()
 		SSD1306_GotoXY(4, 50);
 		SSD1306_Puts("-               -", &Font_7x10, SSD1306_COLOR_WHITE);
 	}
+
 	SSD1306_UpdateScreen();
 
 	bIsColonBlink ^= 1;
