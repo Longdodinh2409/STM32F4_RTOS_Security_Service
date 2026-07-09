@@ -1,29 +1,38 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2026 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+// FreeRTOS System
 #include "FreeRTOS.h"
 #include "task.h"
 #include "stdio.h"
+
+// SEGGER System
+#include "SEGGER_RTT.h"
+#include "SEGGER_SYSVIEW.h"
+
+// Task System
+#include "Task_FingerPrint/task_uart_FingerPrint.h"
+#include "Task_ParsingData/task_ParsingData.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -38,21 +47,29 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+// Segger configurations
+#define DWT_CTRL	(*(volatile uint32_t*)(0xE0001000))
+#define SEGGER_SYSVIEW_DEBUG_ENABLE		(1)
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 TaskHandle_t task1_handler, task2_handler;
+TaskHandle_t task_FP_handler, task_PD_handler;
+uint8_t UART2_rx_data;
+char msg[128];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-void task1_handler_func(void* para);
-void task2_handler_func(void* para);
+void task1_handler_func(void *para);
+void task2_handler_func(void *para);
+void My_SEGGER_SYSVIEW_Conf(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -66,44 +83,62 @@ void task2_handler_func(void* para);
   */
 int main(void)
 {
-	/* USER CODE BEGIN 1 */
 
-	/* USER CODE END 1 */
+  /* USER CODE BEGIN 1 */
+  // check HardFault error
+  *((volatile uint32_t *)0xE000E008) |= (1 << 1);
+  /* USER CODE END 1 */
 
-	/* MCU Configuration--------------------------------------------------------*/
+  /* MCU Configuration--------------------------------------------------------*/
 
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
 
-	/* USER CODE BEGIN Init */
+  /* USER CODE BEGIN Init */
 
-	/* USER CODE END Init */
+  /* USER CODE END Init */
 
-	/* Configure the system clock */
-	SystemClock_Config();
+  /* Configure the system clock */
+  SystemClock_Config();
 
-	/* USER CODE BEGIN SysInit */
+  /* USER CODE BEGIN SysInit */
 
-	/* USER CODE END SysInit */
+  /* USER CODE END SysInit */
 
-	/* Initialize all configured peripherals */
-	MX_GPIO_Init();
-	/* USER CODE BEGIN 2 */
-	xTaskCreate(task1_handler_func, "Task-1", configMINIMAL_STACK_SIZE, "Hello from Task 1", 2, &task1_handler);
-	xTaskCreate(task2_handler_func, "Task-2", configMINIMAL_STACK_SIZE, "Hello from Task 2", 2, &task2_handler);
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_USART2_UART_Init();
+  /* USER CODE BEGIN 2 */
+  
+  	/****************************** SEGGER AREA  ******************************/
+	My_SEGGER_SYSVIEW_Conf();
+	/****************************** SEGGER AREA  ******************************/
+	
+	/****************************** SYSTEM AREA  ******************************/
+	vSetVarulMaxPRIGROUPValue();
+	Init_UART2_FingerPrint();
+	/****************************** SYSTEM AREA  ******************************/
 
+	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
+  	// xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
+	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
+  	xTaskCreate(ParsingRXData_Task,       		"Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
+
+#if (SEGGER_SYSVIEW_DEBUG_ENABLE == 1)
+	SEGGER_SYSVIEW_Start();
+#endif
 	vTaskStartScheduler();
-	/* USER CODE END 2 */
+  /* USER CODE END 2 */
 
-	/* Infinite loop */
-	/* USER CODE BEGIN WHILE */
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
 	while (1)
 	{
-	/* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
-	/* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN 3 */
 	}
-	/* USER CODE END 3 */
+  /* USER CODE END 3 */
 }
 
 /**
@@ -150,6 +185,39 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 57600;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
+
 }
 
 /**
@@ -297,22 +365,95 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void task1_handler_func(void* para)
-{
-	while(1)
-	{
-		printf("%s \n", (char*)para);
-		taskYIELD();
+void task1_handler_func(void *para) {
+	while (1) {
+    HAL_GPIO_TogglePin(GPIOD, LED_ORANGE);
+		// printf("%s \n", (char*) para);
+    SEGGER_RTT_printf(0, "%s \n", (char*) para);
+		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }
 
-void task2_handler_func(void* para)
-{
-	while(1)
-	{
-		printf("%s \n", (char*)para);
-		taskYIELD();
+void task2_handler_func(void *para) {
+	while (1) {
+    HAL_GPIO_TogglePin(GPIOD, LED_RED);
+		// printf("%s \n", (char*) para);
+    SEGGER_RTT_printf(0, "%s \n", (char*) para);
+		vTaskDelay(pdMS_TO_TICKS(5));
 	}
+}
+
+// UART 2
+int _write(int file, char *ptr, int len) {
+    for (int i = 0; i < len; i++) {
+        ITM_SendChar((*ptr++));
+    }
+    return len;
+}
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if (huart->Instance == USART2)
+	{
+		// For debugging
+		sprintf(msg, "[My Debug] Send FingerPrint TX data done!\n");
+		SEGGER_SYSVIEW_PrintfTarget(msg);
+	}
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+    if (huart->Instance == USART2)
+	{
+		// if (huart->ErrorCode & HAL_UART_ERROR_ORE) 
+		// {
+        //     // Xóa cờ lỗi ORE bằng cách đọc thanh ghi SR (hoặc ISR) và DR (hoặc RDR)
+        //     // (Thư viện HAL thường đã tự xử lý việc xóa cờ trong hàm IRQHandler, 
+        //     // ta chỉ cần kích hoạt lại ngắt nhận)
+            
+        //     // Xóa cờ lỗi của HAL
+        //     huart->ErrorCode = HAL_UART_ERROR_NONE;
+            
+        //     // Kích hoạt lại ngắt nhận byte mới để không bị "tịt"
+        //     HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
+		// 	return;
+    	// }
+
+		FingerPrint_UART_RxCallback(UART2_rx_data);
+      	// enable interrupt for the next time
+      	HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
+    }
+}
+
+void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
+{
+    /* 
+     * Nếu CPU nhảy vào hàm này, nghĩa là Task có tên nằm trong biến 
+     * 'pcTaskName' vừa bị tràn Stack.
+     */
+
+    /* Bước 1: Tắt toàn bộ ngắt hệ thống để ngăn chặn thảm họa lan rộng */
+    taskDISABLE_INTERRUPTS();
+
+    /* 
+     * Bước 2: Bác có thể đặt Breakpoint tại dòng for(;;) này khi Debug.
+     * Mở Watch window, xem biến pcTaskName để biết đích danh Task nào gây lỗi,
+     * sau đó vào code khởi tạo Task đó tăng cấu hình StackSize lên!
+     */
+    for( ;; )
+    {
+        // Gắn code bật LED sáng chói lóa lên ở đây để báo hiệu lỗi
+    }
+}
+
+void My_SEGGER_SYSVIEW_Conf(void)
+{
+#if (SEGGER_SYSVIEW_DEBUG_ENABLE == 1)
+	DWT_CTRL |= (1 << 0);
+	SEGGER_SYSVIEW_Conf();
+	
+    // 3. Bây giờ bạn có thể in log thoải mái (lúc này hàm thư viện sẽ tự động điền chuỗi ID "SEGGER RTT")
+    SEGGER_RTT_WriteString(0, "System Initialized Successfully!\n");
+#endif
 }
 /* USER CODE END 4 */
 
@@ -345,11 +486,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
+	/* User can add his own implementation to report the HAL error return state */
+	__disable_irq();
+	while (1) {
+	}
   /* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT

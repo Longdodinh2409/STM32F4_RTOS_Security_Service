@@ -121,7 +121,9 @@ void Error_Handler(void);
 #define MEMS_INT2_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
-
+#define LED_GREEN 		(LD4_Pin)
+#define LED_ORANGE 		(LD3_Pin)
+#define LED_RED 		(LD5_Pin)
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
