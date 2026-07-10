@@ -54,3 +54,6 @@ security_service_stm32\task_uart_fingerprint.o: ../3rdParty/FreeRTOS/include/lis
 security_service_stm32\task_uart_fingerprint.o: ../3rdParty/SEGGER/SEGGER/SEGGER_RTT.h
 security_service_stm32\task_uart_fingerprint.o: ../3rdParty/SEGGER/Config/SEGGER_RTT_Conf.h
 security_service_stm32\task_uart_fingerprint.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+security_service_stm32\task_uart_fingerprint.o: ..\Core\Src\Task_FingerPrint\../Task_Display/gui.h
+security_service_stm32\task_uart_fingerprint.o: ..\Core\Src\Task_FingerPrint\../Task_Display/fonts.h
+security_service_stm32\task_uart_fingerprint.o: ..\Core\Src\Task_FingerPrint\../Task_Display/ssd1306.h

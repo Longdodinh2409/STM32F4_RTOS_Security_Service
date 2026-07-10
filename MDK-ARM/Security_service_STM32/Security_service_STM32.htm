@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Security_service_STM32\Security_service_STM32.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Security_service_STM32\Security_service_STM32.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Jul 10 10:02:55 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Jul 10 15:01:08 2026
 <BR><P>
 <H3>Maximum Stack Usage =        676 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -525,12 +525,12 @@ Global Symbols
 <P><STRONG><a name="[84]"></a>__aeabi_memcpy</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_memcpy_v6.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCopyDataToQueue
 <LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCopyDataFromQueue
-<LI><a href="#[100]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteNoCheck
-<LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteBlocking
 <LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SSD1306_SavePrevBitmapAnimation
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Fingerprint_SendCommand
 <LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteSkipNoLock
 <LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_ReadNoLock
+<LI><a href="#[100]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteNoCheck
+<LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_WriteBlocking
 </UL>
 
 <P><STRONG><a name="[76]"></a>__rt_memcpy</STRONG> (Thumb, 138 bytes, Stack size 0 bytes, rt_memcpy_v6.o(.text), UNUSED)
@@ -1161,12 +1161,11 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
-<P><STRONG><a name="[7f]"></a>ProcessDisplay</STRONG> (Thumb, 94 bytes, Stack size 8 bytes, gui.o(i.ProcessDisplay))
+<P><STRONG><a name="[7f]"></a>ProcessDisplay</STRONG> (Thumb, 104 bytes, Stack size 8 bytes, gui.o(i.ProcessDisplay))
 <BR><BR>[Stack]<UL><LI>Max Depth = 676 + Unknown Stack Size
 <LI>Call Chain = ProcessDisplay &rArr; ProcessDisplayScanning &rArr; SSD1306_UpdateScreen &rArr; ssd1306_I2C_WriteMulti &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SSD1306_Clear
-<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetDisplayState
 <LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplayTempLock
 <LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplayStandby
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplayScanning
@@ -1175,6 +1174,7 @@ Global Symbols
 <LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplayInfLock
 <LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplayFail
 <LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetDisplayState
+<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetDisplayState
 </UL>
 <BR>[Called By]<UL><LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
@@ -1268,13 +1268,14 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplay
 </UL>
 
-<P><STRONG><a name="[86]"></a>ProcessFingerPrintApplication</STRONG> (Thumb, 464 bytes, Stack size 24 bytes, task_uart_fingerprint.o(i.ProcessFingerPrintApplication))
+<P><STRONG><a name="[86]"></a>ProcessFingerPrintApplication</STRONG> (Thumb, 642 bytes, Stack size 24 bytes, task_uart_fingerprint.o(i.ProcessFingerPrintApplication))
 <BR><BR>[Stack]<UL><LI>Max Depth = 372 + Unknown Stack Size
 <LI>Call Chain = ProcessFingerPrintApplication &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_SYSVIEW_PrintfTarget
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskNotifyWait
+<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetDisplayState
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Fingerprint_SendCommand
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 </UL>
@@ -1300,8 +1301,8 @@ Global Symbols
 <P><STRONG><a name="[fc]"></a>SEGGER_RTT_ReadNoLock</STRONG> (Thumb, 148 bytes, Stack size 48 bytes, segger_rtt.o(i.SEGGER_RTT_ReadNoLock))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
-<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+<BR>[Calls]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_HandleIncomingPacket
 </UL>
@@ -1309,8 +1310,8 @@ Global Symbols
 <P><STRONG><a name="[fd]"></a>SEGGER_RTT_Write</STRONG> (Thumb, 68 bytes, Stack size 24 bytes, segger_rtt.o(i.SEGGER_RTT_Write))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = SEGGER_RTT_Write &rArr; SEGGER_RTT_WriteNoLock &rArr; _WriteNoCheck
 </UL>
-<BR>[Calls]<UL><LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
-<LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
+<BR>[Calls]<UL><LI><a href="#[fe]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteNoLock
+<LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_DoInit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SEGGER_RTT_WriteString
 </UL>
@@ -1760,6 +1761,7 @@ Global Symbols
 
 <P><STRONG><a name="[e9]"></a>SetDisplayState</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, gui.o(i.SetDisplayState))
 <BR><BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplay
+<LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintApplication
 </UL>
 
 <P><STRONG><a name="[13]"></a>SysTick_Handler</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, port.o(i.SysTick_Handler))

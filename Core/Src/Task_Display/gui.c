@@ -7,6 +7,7 @@
 extern char msg[128];
 
 static E_SCREEN_STATE s_u8ScreenState;
+static bool bIsInitScanBackground = false;
 
 const unsigned char garfield_128x64 [] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -223,6 +224,11 @@ void ProcessDisplay(void)
 	{
 		SSD1306_Clear();
 		s_u8PrevScreenState = u8CurrentState;
+
+		if (u8CurrentState == SCREEN_STATE_PROCESSING)
+		{
+			bIsInitScanBackground = true;
+		}
 	}
 
 	  switch(u8CurrentState)
@@ -320,11 +326,10 @@ void ProcessDisplayStandby()
 
 void ProcessDisplayScanning()
 {
-	static bool bIsInitThisLayout = true;
 	static uint16_t u16CurrentStep = 0;
 	uint16_t u16CurrentY;
 
-	if (bIsInitThisLayout == true)
+	if (bIsInitScanBackground == true)
 	{
 //		SSD1306_Clear();
 		SSD1306_DrawBitmap(2, 0, fingerprint_bitmap, 128, 64, SSD1306_COLOR_WHITE);
@@ -332,7 +337,7 @@ void ProcessDisplayScanning()
 		SSD1306_SavePrevBitmapAnimation();
 		
 		u16CurrentStep = 0;
-		bIsInitThisLayout = false;
+		bIsInitScanBackground = false;
 	}
 
 	u16CurrentY = START_Y_SCANNING_BAR + (u16CurrentStep * WIDTH_EACH_STEP_SCANNING_ANIMATION);
