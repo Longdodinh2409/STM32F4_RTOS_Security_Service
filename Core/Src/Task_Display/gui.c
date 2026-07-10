@@ -280,7 +280,7 @@ void ProcessDisplayInit()
 {
 	SSD1306_DrawBitmap(2, 0, garfield_128x64, 128, 64, SSD1306_COLOR_WHITE);
 	SSD1306_UpdateScreen();
-	vTaskDelay(pdMS_TO_TICKS(1000));
+	vTaskDelay(pdMS_TO_TICKS(2000));
 }
 
 void ProcessDisplayStandby()
