@@ -2,6 +2,7 @@
 #include "SEGGER_RTT.h"
 #include "../Task_Display/gui.h"
 #include "stdbool.h"
+#include "task.h"
 
 extern UART_HandleTypeDef huart2;
 extern uint8_t UART2_rx_data;
@@ -208,6 +209,7 @@ void ProcessFingerPrintApplication(void)
 
 						// Display
 						SetDisplayState(SCREEN_STATE_PROCESSING);
+						taskYIELD();
 					}
 					else
 					{
@@ -224,6 +226,7 @@ void ProcessFingerPrintApplication(void)
 
 						// Display
 						SetDisplayState(SCREEN_STATE_STANDBY);
+						taskYIELD();
 					}
 				}
 			}
