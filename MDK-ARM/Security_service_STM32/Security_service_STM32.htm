@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Security_service_STM32\Security_service_STM32.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Security_service_STM32\Security_service_STM32.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Jul 10 15:18:05 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Jul 10 15:45:19 2026
 <BR><P>
 <H3>Maximum Stack Usage =        676 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1161,7 +1161,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
-<P><STRONG><a name="[7f]"></a>ProcessDisplay</STRONG> (Thumb, 104 bytes, Stack size 8 bytes, gui.o(i.ProcessDisplay))
+<P><STRONG><a name="[7f]"></a>ProcessDisplay</STRONG> (Thumb, 116 bytes, Stack size 8 bytes, gui.o(i.ProcessDisplay))
 <BR><BR>[Stack]<UL><LI>Max Depth = 676 + Unknown Stack Size
 <LI>Call Chain = ProcessDisplay &rArr; ProcessDisplayScanning &rArr; SSD1306_UpdateScreen &rArr; ssd1306_I2C_WriteMulti &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
@@ -1243,7 +1243,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplay
 </UL>
 
-<P><STRONG><a name="[ea]"></a>ProcessDisplayStandby</STRONG> (Thumb, 142 bytes, Stack size 8 bytes, gui.o(i.ProcessDisplayStandby))
+<P><STRONG><a name="[ea]"></a>ProcessDisplayStandby</STRONG> (Thumb, 146 bytes, Stack size 8 bytes, gui.o(i.ProcessDisplayStandby))
 <BR><BR>[Stack]<UL><LI>Max Depth = 652 + Unknown Stack Size
 <LI>Call Chain = ProcessDisplayStandby &rArr; SSD1306_UpdateScreen &rArr; ssd1306_I2C_WriteMulti &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>

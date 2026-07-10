@@ -8,6 +8,7 @@ extern char msg[128];
 
 static E_SCREEN_STATE s_u8ScreenState;
 static bool bIsInitScanBackground = false;
+static bool bIsInitStandbyLayout = true;
 
 const unsigned char garfield_128x64 [] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -229,6 +230,10 @@ void ProcessDisplay(void)
 		{
 			bIsInitScanBackground = true;
 		}
+		else if (u8CurrentState == SCREEN_STATE_STANDBY)
+		{
+			bIsInitStandbyLayout = true;
+		}
 	}
 
 	switch(u8CurrentState)
@@ -291,19 +296,18 @@ void ProcessDisplayInit()
 
 void ProcessDisplayStandby()
 {
-	static bool bIsInitThisLayout = true;
-	static bool bIsColonBlink = true;
+	static bool bIsReadyStrBlink = true;
 
-	if (bIsInitThisLayout == true)
+	if (bIsInitStandbyLayout == true)
 	{
-//		SSD1306_Clear();
-		bIsInitThisLayout = false;
+		bIsReadyStrBlink = true;
+		bIsInitStandbyLayout = false;
 	}
 
 	SSD1306_GotoXY(15, 30);
 	SSD1306_Puts("June 9th, 2026", &Font_7x10, SSD1306_COLOR_WHITE);
 
-	if (bIsColonBlink == true)
+	if (bIsReadyStrBlink == true)
 	{
 		SSD1306_GotoXY(37, 9);
 		SSD1306_Puts("10:45", &Font_11x18, SSD1306_COLOR_WHITE);
@@ -320,7 +324,7 @@ void ProcessDisplayStandby()
 
 	SSD1306_UpdateScreen();
 
-	bIsColonBlink ^= 1;
+	bIsReadyStrBlink ^= 1;
 	vTaskDelay(pdMS_TO_TICKS(500));
 }
 

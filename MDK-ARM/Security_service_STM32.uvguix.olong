@@ -3615,7 +3615,7 @@
       </Doc>
       <Doc>
         <Name>..\Core\Src\Task_Display\gui.c</Name>
-        <ColumnNumber>1</ColumnNumber>
+        <ColumnNumber>0</ColumnNumber>
         <TopLine>213</TopLine>
         <CurrentLine>218</CurrentLine>
         <Folding>1</Folding>
