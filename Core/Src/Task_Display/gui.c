@@ -231,55 +231,55 @@ void ProcessDisplay(void)
 		}
 	}
 
-	  switch(u8CurrentState)
-	  {
-		  case SCREEN_STATE_INIT:
-		  {
-			  ProcessDisplayInit();
-			  SetDisplayState(SCREEN_STATE_STANDBY);
-		  }
-		  break;
+	switch(u8CurrentState)
+	{
+		case SCREEN_STATE_INIT:
+		{
+			ProcessDisplayInit();
+			SetDisplayState(SCREEN_STATE_STANDBY);
+		}
+		break;
 
-		  case SCREEN_STATE_STANDBY:
-		  {
-			  ProcessDisplayStandby();
-		  }
-		  break;
+		case SCREEN_STATE_STANDBY:
+		{
+			ProcessDisplayStandby();
+		}
+		break;
 
-		  case SCREEN_STATE_PROCESSING:
-		  {
-			  ProcessDisplayScanning();
-		  }
-		  break;
+		case SCREEN_STATE_PROCESSING:
+		{
+			ProcessDisplayScanning();
+		}
+		break;
 
-		  case SCREEN_STATE_PASS:
-		  {
-			  ProcessDisplayPass();
-		  }
-		  break;
+		case SCREEN_STATE_PASS:
+		{
+			ProcessDisplayPass();
+		}
+		break;
 
-		  case SCREEN_STATE_FAIL:
-		  {
-			  ProcessDisplayFail();
-		  }
-		  break;
+		case SCREEN_STATE_FAIL:
+		{
+			ProcessDisplayFail();
+		}
+		break;
 
-		  case SCREEN_STATE_TEMP_LOCK:
-		  {
-			  ProcessDisplayTempLock();
-		  }
-		  break;
+		case SCREEN_STATE_TEMP_LOCK:
+		{
+			ProcessDisplayTempLock();
+		}
+		break;
 
-		  case SCREEN_STATE_INFINITY_LOCK:
-		  {
-			  ProcessDisplayInfLock();
-		  }
-		  break;
+		case SCREEN_STATE_INFINITY_LOCK:
+		{
+			ProcessDisplayInfLock();
+		}
+		break;
 
 
-		  default:
-			  break;
-	  }
+		default:
+			break;
+	}
 }
 
 void ProcessDisplayInit()

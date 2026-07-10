@@ -149,7 +149,7 @@ void ProcessFingerPrintApplication(void)
 	uint8_t u8confirmstate;
 	uint16_t u16matchedID = 0;
 	uint16_t u16matchScore = 0;
-	static uint32_t u32TaskNotifyValue = 0;
+	static uint32_t s_u32TaskNotifyValue = 0;
 
 	// DEBUG: Initialize state machine on first call
 	if (g_FingerState == FSM_NONE) {
@@ -193,9 +193,9 @@ void ProcessFingerPrintApplication(void)
 
 		case FSM_FINGER_WAIT_GENIMG:
 		{
-			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &u32TaskNotifyValue, pdMS_TO_TICKS(1000)) == pdTRUE)	
+			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(1000)) == pdTRUE)	
 			{
-				if (u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
+				if (s_u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
 				{
 					sprintf(msg, "[My Debug] WAIT_GENIMG receive data\n");
 					SEGGER_SYSVIEW_PrintfTarget(msg);
@@ -208,17 +208,22 @@ void ProcessFingerPrintApplication(void)
 
 						// Display
 						SetDisplayState(SCREEN_STATE_PROCESSING);
+					}
+					else
+					{
+						if (u8confirmstate == 0x02) // 0x02: Không có ngón tay trên kính
+						{
+							// Không có ngón tay thì nghỉ 1 lát (VD: 100ms) rồi quét lại
+							g_FingerState = FSM_FINGER_DELAY;
+						} 
+						else 
+						{
+							// Lỗi khác (chụp lỗi, bẩn kính...), quét lại từ đầu
+							g_FingerState = FSM_FINGER_SEND_GENIMG;
+						}
 
-					} 
-					else if (u8confirmstate == 0x02) // 0x02: Không có ngón tay trên kính
-					{
-						// Không có ngón tay thì nghỉ 1 lát (VD: 100ms) rồi quét lại
-						g_FingerState = FSM_FINGER_DELAY;
-					} 
-					else 
-					{
-						// Lỗi khác (chụp lỗi, bẩn kính...), quét lại từ đầu
-						g_FingerState = FSM_FINGER_SEND_GENIMG;
+						// Display
+						SetDisplayState(SCREEN_STATE_STANDBY);
 					}
 				}
 			}
@@ -248,9 +253,9 @@ void ProcessFingerPrintApplication(void)
 
 		case FSM_FINGER_WAIT_IMG2TZ:
 		{
-			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &u32TaskNotifyValue, pdMS_TO_TICKS(1000)) == pdTRUE)	
+			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(1000)) == pdTRUE)	
 			{
-				if (u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
+				if (s_u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
 				{
 					u8confirmstate = g_stFingerPrintRXData.payload[0];
 					
@@ -285,9 +290,9 @@ void ProcessFingerPrintApplication(void)
 
 		case FSM_FINGER_WAIT_SEARCH:
 		{
-			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &u32TaskNotifyValue, pdMS_TO_TICKS(1000)) == pdTRUE)	
+			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(1000)) == pdTRUE)	
 			{
-				if (u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
+				if (s_u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
 				{
 					u8confirmstate = g_stFingerPrintRXData.payload[0];
 
