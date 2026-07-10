@@ -34,7 +34,7 @@ typedef enum {
 void SetDisplayState(E_SCREEN_STATE eState);
 E_SCREEN_STATE GetDisplayState(void);
 
-void InitScreen(void);
+void InitOLEDScreen(void);
 void ProcessDisplay(void);
 void ProcessDisplayInit(void);
 void ProcessDisplayStandby(void);

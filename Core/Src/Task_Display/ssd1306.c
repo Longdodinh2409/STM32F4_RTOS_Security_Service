@@ -175,14 +175,36 @@ void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16
 
 uint8_t SSD1306_Init(void) {
 
-	/* Init I2C */
-	ssd1306_I2C_Init();
+	uint32_t start_time = HAL_GetTick();
+	uint32_t timeout_ms = 100; // Tổng thời gian chờ tối đa
+	HAL_StatusTypeDef status = HAL_ERROR;
 
 	/* Check if LCD connected to I2C */
-	if (HAL_I2C_IsDeviceReady(&hi2c1, SSD1306_I2C_ADDR, 1, 20000) != HAL_OK) {
-		/* Return false */
-		return 0;
+	while ((HAL_GetTick() - start_time) < timeout_ms) 
+	{
+		// Chỉ cho phép hàm HAL block tối đa 1ms (kiểm tra 1 lần)
+		status = HAL_I2C_IsDeviceReady(&hi2c1, SSD1306_I2C_ADDR, 1, 1);
+		
+		if (status == HAL_OK) {
+			break; // Thiết bị đã sẵn sàng
+		}
+
+		HAL_Delay(5);
 	}
+
+	if (status != HAL_OK)
+	{
+		for(;;){}	// stuck here
+	}
+
+	/* Init I2C */
+	// ssd1306_I2C_Init();
+
+	
+	// if (HAL_I2C_IsDeviceReady(&hi2c1, SSD1306_I2C_ADDR, 1, 20000) != HAL_OK) {
+	// 	/* Return false */
+	// 	return 0;
+	// }
 
 	/* A little delay */
 	uint32_t p = 2500;

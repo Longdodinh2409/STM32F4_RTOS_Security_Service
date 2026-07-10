@@ -205,7 +205,7 @@ E_SCREEN_STATE GetDisplayState(void)
 	return s_u8ScreenState;
 }
 
-void InitScreen()
+void InitOLEDScreen()
 {
 	SSD1306_Init();
 	SetDisplayState(SCREEN_STATE_INIT);
