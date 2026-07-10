@@ -33,6 +33,7 @@
 // Task System
 #include "Task_FingerPrint/task_uart_FingerPrint.h"
 #include "Task_ParsingData/task_ParsingData.h"
+#include "Task_Display/gui.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,11 +54,13 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+I2C_HandleTypeDef hi2c1;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 TaskHandle_t task1_handler, task2_handler;
-TaskHandle_t task_FP_handler, task_PD_handler;
+TaskHandle_t task_FP_handler, task_PD_handler, task_Display_handler;
 uint8_t UART2_rx_data;
 char msg[128];
 /* USER CODE END PV */
@@ -66,6 +69,7 @@ char msg[128];
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 void task1_handler_func(void *para);
 void task2_handler_func(void *para);
@@ -108,6 +112,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   
   	/****************************** SEGGER AREA  ******************************/
@@ -121,8 +126,9 @@ int main(void)
 
 	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
   	// xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
-	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
   	xTaskCreate(ParsingRXData_Task,       		"Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
+	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
+	xTaskCreate(Display_Task,  				"Task_Display",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_Display_handler);
 
 #if (SEGGER_SYSVIEW_DEBUG_ENABLE == 1)
 	SEGGER_SYSVIEW_Start();
@@ -185,6 +191,40 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 400000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
 }
 
 /**
@@ -351,14 +391,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(OTG_FS_OverCurrent_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Audio_SCL_Pin Audio_SDA_Pin */
-  GPIO_InitStruct.Pin = Audio_SCL_Pin|Audio_SDA_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
   /* USER CODE END MX_GPIO_Init_2 */
@@ -366,19 +398,21 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void task1_handler_func(void *para) {
-	while (1) {
-    HAL_GPIO_TogglePin(GPIOD, LED_ORANGE);
-		// printf("%s \n", (char*) para);
-    SEGGER_RTT_printf(0, "%s \n", (char*) para);
+	while (1) 
+	{
+		HAL_GPIO_TogglePin(GPIOD, LED_ORANGE);
+			// printf("%s \n", (char*) para);
+		SEGGER_RTT_printf(0, "%s \n", (char*) para);
 		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }
 
 void task2_handler_func(void *para) {
-	while (1) {
-    HAL_GPIO_TogglePin(GPIOD, LED_RED);
-		// printf("%s \n", (char*) para);
-    SEGGER_RTT_printf(0, "%s \n", (char*) para);
+	while (1) 
+	{
+		HAL_GPIO_TogglePin(GPIOD, LED_RED);
+			// printf("%s \n", (char*) para);
+		SEGGER_RTT_printf(0, "%s \n", (char*) para);
 		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }
@@ -422,6 +456,25 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
       	// enable interrupt for the next time
       	HAL_UART_Receive_IT(&huart2, &UART2_rx_data, 1);
     }
+}
+
+void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c)
+{
+	if (hi2c->Instance == I2C1)
+	{
+		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+		xTaskNotifyFromISR(task_Display_handler, TX_I2C_TASK_NOTIFY_BIT, eSetBits, &xHigherPriorityTaskWoken);
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	}
+}
+
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c) {
+    if (hi2c->Instance == I2C1)
+	{
+		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+		xTaskNotifyFromISR(task_Display_handler, TX_I2C_TASK_NOTIFY_BIT, eSetBits, &xHigherPriorityTaskWoken);
+		portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	}
 }
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
