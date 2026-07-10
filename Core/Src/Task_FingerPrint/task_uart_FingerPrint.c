@@ -1,10 +1,18 @@
 #include "task_uart_FingerPrint.h"
 #include "SEGGER_RTT.h"
+#include "../Task_Display/gui.h"
+#include "stdbool.h"
 
 extern UART_HandleTypeDef huart2;
 extern uint8_t UART2_rx_data;
 extern TaskHandle_t task_PD_handler, task_FP_handler;
 extern char msg[128];
+
+static uint8_t s_u8CountFPOK = 0;
+static bool s_u8CountFPOKEnableFlag = false;
+static uint8_t s_u8CountFPBAD = 0;
+static bool s_u8CountFPBADEnableFlag = false;
+static bool s_u8BackToStandByFlag = false;
 
 RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
 
@@ -150,6 +158,13 @@ void ProcessFingerPrintApplication(void)
 		sprintf(msg, "[My Debug] Init...\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 
+		// Reset counter Display
+		s_u8CountFPOK = 0;
+		s_u8CountFPOKEnableFlag = false;
+		s_u8CountFPBAD = 0;
+		s_u8CountFPBADEnableFlag = false;
+		s_u8BackToStandByFlag = false;
+
 		// initialize FingerPrint sensor
 		g_FingerState = FSM_FINGER_SEND_GENIMG;
 	}
@@ -161,6 +176,12 @@ void ProcessFingerPrintApplication(void)
 		// ---------------------------------------------------------
 		case FSM_FINGER_SEND_GENIMG:
 		{
+			if (s_u8BackToStandByFlag == true)
+			{
+				s_u8BackToStandByFlag = false;
+				SetDisplayState(SCREEN_STATE_STANDBY);
+			}
+
 			// Gửi lệnh 01H (Không cần tham số data)
 			sprintf(msg, "[My Debug] Send GEN_IMG - 01H\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
@@ -184,6 +205,10 @@ void ProcessFingerPrintApplication(void)
 					if (u8confirmstate == 0x00) // 0x00: Có ngón tay & chụp thành công
 					{
 						g_FingerState = FSM_FINGER_SEND_IMG2TZ; // Đi tiếp bước 2
+
+						// Display
+						SetDisplayState(SCREEN_STATE_PROCESSING);
+
 					} 
 					else if (u8confirmstate == 0x02) // 0x02: Không có ngón tay trên kính
 					{
@@ -277,20 +302,55 @@ void ProcessFingerPrintApplication(void)
 						sprintf(msg, "[Conclusion] Xac thuc thanh cong! ID cua ban la: %d, Diem khop: %d\n", u16matchedID, u16matchScore);
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 
-						// Display Found!!!
-						// notify Task OLED or send data to OLED module
+						// Display
+						s_u8CountFPOKEnableFlag = true;
+						s_u8CountFPOK = 0;
 					}
 					else if (u8confirmstate == 0x17)
 					{
 						// printf("Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! \n");
 						sprintf(msg, "[Conclusion] Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! (neu muon) \n");
 						SEGGER_SYSVIEW_PrintfTarget(msg);
+
+						if (s_u8CountFPOKEnableFlag)
+						{
+							s_u8CountFPOK++;
+							if (s_u8CountFPOK >= MAX_CONFIRMATION_CNT_FINGER_PRINT)
+							{
+								s_u8CountFPOK = 0;
+								s_u8CountFPOKEnableFlag = false;
+
+								SetDisplayState(SCREEN_STATE_PASS);
+								vTaskDelay(pdMS_TO_TICKS(2000));
+
+								s_u8BackToStandByFlag = true;
+							}
+						}
+
+						if (s_u8CountFPBADEnableFlag)
+						{
+							s_u8CountFPBAD++;
+							if (s_u8CountFPBAD >= MAX_CONFIRMATION_CNT_FINGER_PRINT)
+							{
+								s_u8CountFPBAD = 0;
+								s_u8CountFPBADEnableFlag = false;
+								
+								SetDisplayState(SCREEN_STATE_FAIL);
+								vTaskDelay(pdMS_TO_TICKS(2000));
+
+								s_u8BackToStandByFlag = true;
+							}
+						}
 					}
 					else if (u8confirmstate == 0x09) // 0x09: KHÔNG TÌM THẤY (Ngón tay lạ)
 					{
 						// printf("Van tay sai! Khong tim thay trong thu vien.\n");
 						sprintf(msg, "[Conclusion] Van tay sai! Khong tim thay trong thu vien.\n");
 						SEGGER_SYSVIEW_PrintfTarget(msg);
+
+						// Display
+						s_u8CountFPBADEnableFlag = true;
+						s_u8CountFPBAD = 0;
 					}
 
 					// Xử lý xong, bắt buộc phải đợi 1 lát (chờ người dùng rút ngón tay ra)

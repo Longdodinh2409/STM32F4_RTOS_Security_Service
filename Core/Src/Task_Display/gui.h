@@ -20,6 +20,8 @@ typedef enum {
 
 #define INVALID_CMD				(99)
 
+#define MAX_CONFIRMATION_CNT_FINGER_PRINT	(3)
+
 // Scanning animation
 #define FIXED_X_SCANNING_BAR	(2)
 #define START_Y_SCANNING_BAR	(2)
