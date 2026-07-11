@@ -6,10 +6,12 @@
 #include "Comm_BBB.h"
 #include "stm32f4xx_hal_def.h"
 #include "SEGGER_RTT.h"
+#include "../Task_FingerPrint/task_uart_FingerPrint.h"
 
 #define DEFAULT_CMD_VALUE 	(99)
 
-extern UART_HandleTypeDef huart1;;
+extern UART_HandleTypeDef huart1;
+
 uint8_t rx_data;
 char rx_buffer[50];
 uint8_t rx_index = 0;
@@ -17,7 +19,14 @@ volatile uint8_t data_ready = 0;
 volatile uint8_t processing = 0;
 uint8_t cmd;
 
-void InitUARTBBB()
+char acTxBBBBuffer[64];
+
+static uint16_t CommBBB_GetFrameLength(const char *pFrame)
+{
+	return (uint16_t)strlen(pFrame);
+}
+
+void InitUARTBBB(void)
 {
 	HAL_UART_Receive_IT(&huart1, &rx_data, 1);
 
@@ -28,7 +37,7 @@ void InitUARTBBB()
 	cmd = DEFAULT_CMD_VALUE;
 }
 
-uint8_t ProcessBBB()
+uint8_t ProcessBBB(void)
 {
 	if (data_ready == 1)
 	{
@@ -65,32 +74,56 @@ uint8_t ProcessBBB()
 	return DEFAULT_CMD_VALUE;
 }
 
-int _write(int file, char *ptr, int len) {
-    // HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
-	// Send to BBB
-	HAL_UART_Transmit_IT(&huart1, (uint8_t *)ptr, len);
-	// Debug on RTT Viewwe (Terminal 0)
-	SEGGER_RTT_WriteString(0, ptr);
-    return len;
-}
+void CommBBB_SendStateInfo(uint8_t u8State, uint16_t u16MatchedID, uint8_t u16ConfirmState)
+{
+	char acTxSEGGER[64];
+	uint16_t u16ReportID = u16MatchedID;
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    if (huart->Instance == USART1) 
+	if (u8State == (uint8_t)FSM_FINGER_WAIT_SEARCH) 
 	{
-        // Check if this byte is end of data
-        if (rx_data == '\n' || rx_data == '\r') {
-            // Only set data ready when there's no data or in processing
-            if (rx_index > 0 && !processing) {
-                rx_buffer[rx_index] = '\0'; // confirm it's end
-                data_ready = 1;             // handle in main() loop
-            }
-            // reset index to handle next data string
-            rx_index = 0;
-        } else if ((rx_data >= '0' && rx_data <= '9') || rx_data == '-' || rx_data == '+') {
-                rx_buffer[rx_index++] = rx_data;
-        }
+		if (u16ConfirmState == 0x09)
+		{
+			u16ReportID = 0xFE;
+		} 
+		else if (u16ConfirmState == 0x17)
+		{
+			u16ReportID = 0xFF;
+		}
 
-        // enable interrupt for the next time
-        HAL_UART_Receive_IT(&huart1, &rx_data, 1);
-    }
+		sprintf(acTxBBBBuffer, "#State=%d,#ID=%d\n", u8State, u16ReportID);
+	} 
+	else 
+	{
+		sprintf(acTxBBBBuffer, "#State=%d\n", u8State);
+	}
+
+	uint16_t u16FrameLen = CommBBB_GetFrameLength(acTxBBBBuffer);
+	HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart1, (uint8_t *)acTxBBBBuffer, u16FrameLen);
+	
+	sprintf(acTxSEGGER, "TX status = %d\n", (uint8_t)status);
+	SEGGER_RTT_WriteString(0, acTxSEGGER);
+
+	// Debug on RTT Viewer (Terminal 0)
+	SEGGER_RTT_WriteString(0, acTxBBBBuffer);
 }
+
+// void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+//     if (huart->Instance == USART1) 
+// 	{
+//         // Check if this byte is end of data
+//         if (rx_data == '\n' || rx_data == '\r') {
+//             // Only set data ready when there's no data or in processing
+//             if (rx_index > 0 && !processing) {
+//                 rx_buffer[rx_index] = '\0'; // confirm it's end
+//                 data_ready = 1;             // handle in main() loop
+//             }
+//             // reset index to handle next data string
+//             rx_index = 0;
+//         } else if ((rx_data >= '0' && rx_data <= '9') || rx_data == '-' || rx_data == '+') {
+//                 rx_buffer[rx_index++] = rx_data;
+//         }
+
+//         // enable interrupt for the next time
+//         HAL_UART_Receive_IT(&huart1, &rx_data, 1);
+//     }
+// }

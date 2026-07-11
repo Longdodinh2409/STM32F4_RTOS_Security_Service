@@ -37,6 +37,7 @@
 "security_service_stm32\fonts.o"
 "security_service_stm32\gui.o"
 "security_service_stm32\ssd1306.o"
+"security_service_stm32\comm_bbb.o"
 "security_service_stm32\segger_sysview_config_freertos.o"
 "security_service_stm32\segger_sysview_freertos.o"
 "security_service_stm32\segger_rtt.o"

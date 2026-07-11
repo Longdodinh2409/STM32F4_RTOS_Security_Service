@@ -3,6 +3,7 @@
 #include "../Task_Display/gui.h"
 #include "stdbool.h"
 #include "task.h"
+#include "../Comm_BBB/Comm_BBB.h"
 
 extern UART_HandleTypeDef huart2;
 extern uint8_t UART2_rx_data;
@@ -364,6 +365,9 @@ void ProcessFingerPrintApplication(void)
 					// Xử lý xong, bắt buộc phải đợi 1 lát (chờ người dùng rút ngón tay ra)
 					g_FingerState = FSM_FINGER_DELAY;
 				}
+
+				// Comm BBB
+				CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u16matchScore);
 			}
 		}
 		break;
@@ -389,6 +393,12 @@ void Fingerprint_StateMachine_Task(void* param)
 {
 	while (1)
 	{
+		// Comm BBB
+		if (g_FingerState != FSM_FINGER_WAIT_SEARCH)
+		{
+			CommBBB_SendStateInfo((uint8_t)g_FingerState, NONE_MATCHED_FP_ID, NONE_MATCHED_FP_SCORE);
+		}
+		
 		ProcessFingerPrintApplication();
 
 		// --------------- End of function ---------------

@@ -36,7 +36,7 @@
 #include "Task_Display/gui.h"
 
 // Others
-#include "Comm_BBB.h"
+#include "Comm_BBB/Comm_BBB.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -457,19 +457,34 @@ void task2_handler_func(void *para) {
 }
 
 // UART 2
+// int _write(int file, char *ptr, int len) {
+//     for (int i = 0; i < len; i++) {
+//         ITM_SendChar((*ptr++));
+//     }
+//     return len;
+// }
+
 int _write(int file, char *ptr, int len) {
-    for (int i = 0; i < len; i++) {
-        ITM_SendChar((*ptr++));
-    }
+    // HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+	// Send to BBB
+	HAL_UART_Transmit_IT(&huart1, (uint8_t *)ptr, len);
+	// Debug on RTT Viewer (Terminal 0)
+	SEGGER_RTT_WriteString(0, ptr);
     return len;
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if (huart->Instance == USART2)
+	if (huart->Instance == USART2)	// FingerPrint
 	{
 		// For debugging
 		sprintf(msg, "[My Debug] Send FingerPrint TX data done!\n");
+		SEGGER_SYSVIEW_PrintfTarget(msg);
+	}
+	else if (huart->Instance == USART1)	// BBB
+	{
+		// For debugging
+		sprintf(msg, "[My Debug] Send BBB TX data done!\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 	}
 }
