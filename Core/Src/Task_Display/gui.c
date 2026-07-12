@@ -270,11 +270,11 @@ void ClearAllDisplayState(void)
 	bIsInitStandbyLayout = false;
 	bIsClearStandbyLayoutByNewTS = false;
 
-	s_u8StandbyDay = 0;
-	s_u8StandbyMonth = 0;
-	s_u16StandbyYear = 0;
-	s_u8StandbyHour = 0;
-	s_u8StandbyMinute = 0;
+	s_u8StandbyDay = DEFAULT_DAY;
+	s_u8StandbyMonth = DEFAULT_MONTH;
+	s_u16StandbyYear = DEFAULT_YEAR;
+	s_u8StandbyHour = DEFAULT_HOUR;
+	s_u8StandbyMinute = DEFAULT_MINUTE;
 }
 
 void InitOLEDScreen(void)

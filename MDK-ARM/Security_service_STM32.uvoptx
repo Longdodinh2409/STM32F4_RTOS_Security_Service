@@ -156,18 +156,18 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>177</LineNumber>
+          <LineNumber>205</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134218592</Address>
+          <Address>134237438</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>startup_stm32f411xe.s</Filename>
+          <Filename>..\Core\Src\Task_ParsingData\task_ParsingData.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Security_service_STM32\startup_stm32f411xe.s\177</Expression>
+          <Expression>\\Security_service_STM32\../Core/Src/Task_ParsingData/task_ParsingData.c\205</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

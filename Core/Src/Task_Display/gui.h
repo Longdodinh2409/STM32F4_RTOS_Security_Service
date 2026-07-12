@@ -24,6 +24,14 @@ typedef enum {
 #define MAX_CONFIRMATION_CNT_FINGER_PRINT	(3)
 #define MAX_LIMIT_NO_FINGER_CNT					(2)
 
+#define NOTI_ENTER_STANDBY_DISPLAY_STATE		(uint32_t)(0x01)
+
+#define DEFAULT_DAY				(1)
+#define DEFAULT_MONTH			(1)
+#define DEFAULT_YEAR			(2026)
+#define DEFAULT_HOUR			(0)
+#define DEFAULT_MINUTE			(0)
+
 // Scanning animation
 #define FIXED_X_SCANNING_BAR	(2)
 #define START_Y_SCANNING_BAR	(2)
