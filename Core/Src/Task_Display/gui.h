@@ -1,6 +1,7 @@
 #ifndef DEF_GUI_H
 #define DEF_GUI_H
 
+#include <stdint.h>
 #include "fonts.h"
 #include "ssd1306.h"
 
@@ -36,6 +37,17 @@ typedef enum {
 
 void SetDisplayState(E_SCREEN_STATE eState);
 E_SCREEN_STATE GetDisplayState(void);
+
+void SetStandbyDay(uint8_t day);
+uint8_t GetStandbyDay(void);
+void SetStandbyMonth(uint8_t month);
+uint8_t GetStandbyMonth(void);
+void SetStandbyYear(uint16_t year);
+uint16_t GetStandbyYear(void);
+void SetStandbyHour(uint8_t hour);
+uint8_t GetStandbyHour(void);
+void SetStandbyMinute(uint8_t minute);
+uint8_t GetStandbyMinute(void);
 
 void InitOLEDScreen(void);
 void ProcessDisplay(void);

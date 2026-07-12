@@ -1,5 +1,6 @@
 security_service_stm32\gui.o: ..\Core\Src\Task_Display\gui.c
 security_service_stm32\gui.o: ..\Core\Src\Task_Display\gui.h
+security_service_stm32\gui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 security_service_stm32\gui.o: ..\Core\Src\Task_Display\fonts.h
 security_service_stm32\gui.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 security_service_stm32\gui.o: ../Core/Inc/stm32f4xx_hal_conf.h
@@ -8,7 +9,6 @@ security_service_stm32\gui.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_
 security_service_stm32\gui.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
 security_service_stm32\gui.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h
 security_service_stm32\gui.o: ../Drivers/CMSIS/Include/core_cm4.h
-security_service_stm32\gui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 security_service_stm32\gui.o: ../Drivers/CMSIS/Include/cmsis_version.h
 security_service_stm32\gui.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
 security_service_stm32\gui.o: ../Drivers/CMSIS/Include/cmsis_armcc.h

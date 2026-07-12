@@ -3,6 +3,7 @@
 #include "../Task_Display/gui.h"
 #include "stdbool.h"
 #include "task.h"
+#include "../Task_ParsingData/task_ParsingData.h"
 #include "../Comm_BBB/Comm_BBB.h"
 
 extern UART_HandleTypeDef huart2;
@@ -128,7 +129,7 @@ void FingerPrint_UART_RxCallback(uint8_t rx_byte) {
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
 			BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-			xTaskNotifyFromISR(task_PD_handler, 0, eNoAction, &xHigherPriorityTaskWoken);
+			xTaskNotifyFromISR(task_PD_handler, PARSING_DATA_SRC_FINGERPRINT_BIT, eSetBits, &xHigherPriorityTaskWoken);
 			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 			
 			bDataReady = true;

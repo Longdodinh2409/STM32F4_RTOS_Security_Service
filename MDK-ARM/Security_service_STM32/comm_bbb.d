@@ -56,3 +56,4 @@ security_service_stm32\comm_bbb.o: ../3rdParty/FreeRTOS/include/FreeRTOS.h
 security_service_stm32\comm_bbb.o: ../3rdParty/FreeRTOS/include/mpu_wrappers.h
 security_service_stm32\comm_bbb.o: ../3rdParty/FreeRTOS/include/task.h
 security_service_stm32\comm_bbb.o: ../3rdParty/FreeRTOS/include/list.h
+security_service_stm32\comm_bbb.o: ..\Core\Src\Comm_BBB\../Task_ParsingData/task_ParsingData.h

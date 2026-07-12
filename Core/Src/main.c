@@ -65,6 +65,7 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 TaskHandle_t task1_handler, task2_handler;
 TaskHandle_t task_FP_handler, task_PD_handler, task_Display_handler;
+uint8_t UART1_rx_data;
 uint8_t UART2_rx_data;
 char msg[128];
 /* USER CODE END PV */
@@ -127,6 +128,7 @@ int main(void)
 	
 	/****************************** SYSTEM AREA  ******************************/
 	vSetVarulMaxPRIGROUPValue();
+	Init_UART1_FingerPrint();
 	Init_UART2_FingerPrint();
 	/****************************** SYSTEM AREA  ******************************/
 
@@ -489,7 +491,16 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 	}
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) 
+{
+	if (huart->Instance == USART1)
+	{
+		BBB_UART_RxCpltCallback(UART1_rx_data);
+
+		/* enable interrupt for the next byte */
+		HAL_UART_Receive_IT(&huart1, &UART1_rx_data, 1);
+	}
+
     if (huart->Instance == USART2)
 	{
 		// if (huart->ErrorCode & HAL_UART_ERROR_ORE) 

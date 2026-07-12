@@ -7,17 +7,23 @@
 #include "stm32f4xx_hal_def.h"
 #include "SEGGER_RTT.h"
 #include "../Task_FingerPrint/task_uart_FingerPrint.h"
+#include "../Task_ParsingData/task_ParsingData.h"
 
 #define DEFAULT_CMD_VALUE 	(99)
 
 extern UART_HandleTypeDef huart1;
+extern uint8_t UART1_rx_data;
+extern TaskHandle_t task_PD_handler;
 
 uint8_t rx_data;
-char rx_buffer[50];
+char rx_buffer[BBB_RX_MAX_LEN];
 uint8_t rx_index = 0;
 volatile uint8_t data_ready = 0;
 volatile uint8_t processing = 0;
 uint8_t cmd;
+
+/* Global parsed value from BBB UART (sequence of ASCII digits -> uint32_t) */
+volatile uint32_t g_u32BBBReceivedValue = 0;
 
 char acTxBBBBuffer[64];
 
@@ -123,23 +129,43 @@ void CommBBB_SendStateInfo(uint8_t u8State, uint16_t u16MatchedID, uint8_t u8Con
 	SEGGER_RTT_WriteString(0, acTxBBBBuffer);
 }
 
-// void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-//     if (huart->Instance == USART1) 
-// 	{
-//         // Check if this byte is end of data
-//         if (rx_data == '\n' || rx_data == '\r') {
-//             // Only set data ready when there's no data or in processing
-//             if (rx_index > 0 && !processing) {
-//                 rx_buffer[rx_index] = '\0'; // confirm it's end
-//                 data_ready = 1;             // handle in main() loop
-//             }
-//             // reset index to handle next data string
-//             rx_index = 0;
-//         } else if ((rx_data >= '0' && rx_data <= '9') || rx_data == '-' || rx_data == '+') {
-//                 rx_buffer[rx_index++] = rx_data;
-//         }
+void Init_UART1_FingerPrint(void)
+{
+	HAL_UART_Receive_IT(&huart1, &UART1_rx_data, 1);
+}
 
-//         // enable interrupt for the next time
-//         HAL_UART_Receive_IT(&huart1, &rx_data, 1);
-//     }
-// }
+void BBB_UART_RxCpltCallback(uint8_t rx_data)
+{
+	/* Append printable digits to buffer, ignore CR, on LF parse value */
+	if (rx_data >= '0' && rx_data <= '9')
+	{
+		if (rx_index < (sizeof(rx_buffer) - 1))
+		{
+			rx_buffer[rx_index++] = (char)rx_data;
+			rx_buffer[rx_index] = '\0';
+		}
+	}
+	else if (rx_data == 0x0D)
+	{
+		return;
+	}
+	else if (rx_data == '\n')
+	{
+		/* End of line received - parse and store */
+		if (rx_index > 0)
+		{
+			/* Convert ASCII digits to uint32_t */
+			uint32_t val = (uint32_t)strtoul(rx_buffer, NULL, 10);
+			g_u32BBBReceivedValue = val;
+			// data_ready = 1; /* keep compatibility with ProcessBBB() */
+
+			BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+			xTaskNotifyFromISR(task_PD_handler, PARSING_DATA_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWoken);
+			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+		}
+		/* reset buffer for next frame */
+		memset(rx_buffer, 0, sizeof(rx_buffer));
+		rx_index = 0;
+	}
+	/* ignore carriage return and other bytes */
+}

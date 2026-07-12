@@ -1,4 +1,7 @@
 #include "task_ParsingData.h"
+#include "../Comm_BBB/Comm_BBB.h"
+#include "SEGGER_RTT.h"
+#include "../Task_Display/gui.h"
 
 // Global RX
 extern Fingerprint_Packet_t g_stFingerPrintRXData;
@@ -14,30 +17,42 @@ void ParsingRXData_Task(void* param) {
 
 	while(1)
 	{
-		if (xTaskNotifyWait(0, 0, NULL, portMAX_DELAY) == pdTRUE)
+		uint32_t ulNotificationValue = 0;
+		if (xTaskNotifyWait(0, 0xFFFFFFFF, &ulNotificationValue, portMAX_DELAY) == pdTRUE)
 		{
-			bDataReady = false;
+			/* Only handle notifications originating from FingerPrint RX */
+			if (ulNotificationValue & PARSING_DATA_SRC_FINGERPRINT_BIT) 
+			{
+				bDataReady = false;
 	
-			__disable_irq();
-			bIsItGood = ParsingData_FP_ExtractPacketFromRingBuffer(g_au8RXFingerPrintBuffer, 
-																g_au8RXFingerPrintBufferSize,
-																&g_stFingerPrintRXData);
-			__enable_irq();
-	
-			if (bIsItGood == false) {
-				// printf("/n failed extract./n ");
-				return;
+				__disable_irq();
+				bIsItGood = ParsingData_FP_ExtractPacketFromRingBuffer(g_au8RXFingerPrintBuffer, 
+																	g_au8RXFingerPrintBufferSize,
+																	&g_stFingerPrintRXData);
+				__enable_irq();
+		
+				if (bIsItGood == false) {
+					// printf("/n failed extract./n ");
+					SEGGER_RTT_WriteString(0, "/n Parsing FP data failed extract./n ");
+					// return;
+				}
+		
+				// 2. Checksum
+				if (ParsingData_FP_VerifyChecksum(&g_stFingerPrintRXData) == false) {
+					// printf("/n wrong checksum./n ");
+					SEGGER_RTT_WriteString(0, "/n Parsing FP data wrong checksum /n ");
+					// return;
+				}
+		
+				/* ------------- Important flag -------------*/
+				/* Notify fingerprint state machine that a new packet is ready */
+				xTaskNotify(task_FP_handler, FINGERPRINT_RX_NEW_PACKET_VALUE, eSetBits);
 			}
-	
-			// 2. Checksum
-			if (ParsingData_FP_VerifyChecksum(&g_stFingerPrintRXData) == false) {
-				// printf("/n wrong checksum./n ");
-				return;
+
+			if (ulNotificationValue & PARSING_DATA_SRC_BBB_BIT)
+			{
+				ProcessParsingTimeStamp(g_u32BBBReceivedValue, GMT_7);
 			}
-	
-			/* ------------- Important flag -------------*/
-			xTaskNotify(task_FP_handler, FINGERPRINT_RX_NEW_PACKET_VALUE, eSetBits);
-			/* ------------- -------------- -------------*/
 		}
 	}
 }
@@ -126,4 +141,67 @@ bool ParsingData_FP_VerifyChecksum(const Fingerprint_Packet_t *packet) {
 
 	// 6. Compare lower 16-bit of calculated_sum with received_checksum
 	return ((calculated_sum & 0xFFFF) == received_checksum);
+}
+
+int is_leap_year(int year) 
+{
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+}
+
+void ProcessParsingTimeStamp(uint32_t timestamp, int timezone_offset_hours) 
+{
+    char acTimeStamp[64];
+
+    // Bước 1: Cộng bù múi giờ (Ví dụ VN là +7, mỗi giờ có 3600 giây)
+    timestamp += (timezone_offset_hours * 3600);
+
+    // Bước 2: Tách lấy Tổng số ngày và Số giây lẻ trong ngày
+    uint32_t total_days = timestamp / 86400;
+    uint32_t seconds_in_day = timestamp % 86400;
+
+    // Bước 3: Tính Giờ, Phút, Giây
+    int hour = seconds_in_day / 3600;
+    int minute = (seconds_in_day % 3600) / 60;
+    int second = seconds_in_day % 60;
+
+    // Bước 4: Tính Năm
+    int year = 1970;
+    while (1) {
+        int days_in_this_year = is_leap_year(year) ? 366 : 365;
+        if (total_days >= days_in_this_year) {
+            total_days -= days_in_this_year; // Trừ bớt số ngày của năm nay
+            year++;                          // Tiến lên năm tiếp theo
+        } else {
+            break; // Nếu số ngày còn lại không đủ một năm, thoát vòng lặp
+        }
+    }
+
+    // Bước 5: Tính Tháng
+    int month = 1;
+    // Mảng lưu số ngày của 12 tháng (index 0 bỏ trống để dùng index 1-12 cho trực quan)
+    int days_in_month[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    
+    // Nếu là năm nhuận, tháng 2 có 29 ngày
+    if (is_leap_year(year)) {
+        days_in_month[2] = 29;
+    }
+
+    while (total_days >= days_in_month[month]) {
+        total_days -= days_in_month[month]; // Trừ bớt số ngày của tháng này
+        month++;                            // Tiến lên tháng tiếp theo
+    }
+
+    // Bước 6: Tính Ngày (Phải cộng thêm 1 vì total_days là số ngày "đã trôi qua" tính từ ngày mùng 1)
+    int day = total_days + 1;
+
+    SetStandbyDay((uint8_t)day);
+    SetStandbyMonth((uint8_t)month);
+    SetStandbyYear((uint16_t)year);
+    SetStandbyHour((uint8_t)hour);
+    SetStandbyMinute((uint8_t)minute);
+
+    // In kết quả
+    // printf("Ket qua thu cong: %02d/%02d/%d %02d:%02d:%02d\n", day, month, year, hour, minute, second);
+	sprintf(acTimeStamp, "%02d/%02d/%d %02d:%02d:%02d\n", day, month, year, hour, minute, second);
+	SEGGER_RTT_WriteString(0, acTimeStamp);
 }
