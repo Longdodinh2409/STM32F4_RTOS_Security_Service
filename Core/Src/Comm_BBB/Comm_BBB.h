@@ -3,6 +3,8 @@
 
 #define NONE_MATCHED_FP_ID		(99)
 #define NONE_MATCHED_FP_SCORE	(0)
+#define UNKNOWN_FINGER_ID		(254)
+#define RECONFIRM_FINGER_ID		(255)
 
 void InitUARTBBB(void);
 uint8_t ProcessBBB(void);

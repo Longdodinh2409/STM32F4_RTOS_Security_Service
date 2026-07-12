@@ -74,21 +74,25 @@ uint8_t ProcessBBB(void)
 	return DEFAULT_CMD_VALUE;
 }
 
-void CommBBB_SendStateInfo(uint8_t u8State, uint16_t u16MatchedID, uint8_t u16ConfirmState)
+void CommBBB_SendStateInfo(uint8_t u8State, uint16_t u16MatchedID, uint8_t u8ConfirmState)
 {
 	char acTxSEGGER[64];
-	uint16_t u16ReportID = u16MatchedID;
+	uint16_t u16ReportID = NONE_MATCHED_FP_ID;
 
 	if (u8State == (uint8_t)FSM_FINGER_WAIT_SEARCH) 
 	{
-		if (u16ConfirmState == 0x09)
+		if (u8ConfirmState == 0x00)		// Found finger!!!
 		{
-			u16ReportID = 0xFE;
-		} 
-		else if (u16ConfirmState == 0x17)
-		{
-			u16ReportID = 0xFF;
+			u16ReportID = u16MatchedID;
 		}
+		else if (u8ConfirmState == 0x17)	// same finger (after get valid/invalid finger)
+		{
+			u16ReportID = RECONFIRM_FINGER_ID;
+		}
+		else // if (u8ConfirmState == 0x09)		// Unknown finger
+		{
+			u16ReportID = UNKNOWN_FINGER_ID;
+		} 
 
 		sprintf(acTxBBBBuffer, "#State=%d,#ID=%d\n", u8State, u16ReportID);
 	} 
@@ -98,10 +102,22 @@ void CommBBB_SendStateInfo(uint8_t u8State, uint16_t u16MatchedID, uint8_t u16Co
 	}
 
 	uint16_t u16FrameLen = CommBBB_GetFrameLength(acTxBBBBuffer);
-	HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart1, (uint8_t *)acTxBBBBuffer, u16FrameLen);
+	// HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart1, (uint8_t *)acTxBBBBuffer, u16FrameLen);
 	
-	sprintf(acTxSEGGER, "TX status = %d\n", (uint8_t)status);
-	SEGGER_RTT_WriteString(0, acTxSEGGER);
+	// sprintf(acTxSEGGER, "TX status = %d\n", (uint8_t)status);
+	// SEGGER_RTT_WriteString(0, acTxSEGGER);
+
+	if (huart1.gState == HAL_UART_STATE_READY) 
+	{
+		HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart1, (uint8_t *)acTxBBBBuffer, u16FrameLen);
+		sprintf(acTxSEGGER, "TX BBB status = %d\n", (uint8_t)status);
+		SEGGER_RTT_WriteString(0, acTxSEGGER);
+	} 
+	else 
+	{
+		sprintf(acTxSEGGER, "TX BBB is BUSY. Packet dropped!\n");
+		SEGGER_RTT_WriteString(0, acTxSEGGER);
+	}
 
 	// Debug on RTT Viewer (Terminal 0)
 	SEGGER_RTT_WriteString(0, acTxBBBBuffer);

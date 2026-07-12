@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Security_service_STM32\Security_service_STM32.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Security_service_STM32\Security_service_STM32.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Jul 11 23:20:06 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sun Jul 12 10:21:27 2026
 <BR><P>
 <H3>Maximum Stack Usage =        676 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -643,7 +643,7 @@ Global Symbols
 <P><STRONG><a name="[e]"></a>BusFault_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f4xx_it.o(i.BusFault_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f411xe.o(RESET)
 </UL>
-<P><STRONG><a name="[81]"></a>CommBBB_SendStateInfo</STRONG> (Thumb, 108 bytes, Stack size 96 bytes, comm_bbb.o(i.CommBBB_SendStateInfo))
+<P><STRONG><a name="[81]"></a>CommBBB_SendStateInfo</STRONG> (Thumb, 138 bytes, Stack size 96 bytes, comm_bbb.o(i.CommBBB_SendStateInfo))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216 + Unknown Stack Size
 <LI>Call Chain = CommBBB_SendStateInfo &rArr; __2sprintf &rArr; _printf_char_common &rArr; __printf
 </UL>
@@ -652,8 +652,7 @@ Global Symbols
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommBBB_GetFrameLength
 <LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 </UL>
-<BR>[Called By]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Fingerprint_StateMachine_Task
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintApplication
+<BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintApplication
 </UL>
 
 <P><STRONG><a name="[11]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f4xx_it.o(i.DebugMon_Handler))
@@ -694,12 +693,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintApplication
 </UL>
 
-<P><STRONG><a name="[55]"></a>Fingerprint_StateMachine_Task</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, task_uart_fingerprint.o(i.Fingerprint_StateMachine_Task))
+<P><STRONG><a name="[55]"></a>Fingerprint_StateMachine_Task</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, task_uart_fingerprint.o(i.Fingerprint_StateMachine_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 372 + Unknown Stack Size
 <LI>Call Chain = Fingerprint_StateMachine_Task &rArr; ProcessFingerPrintApplication &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
-<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CommBBB_SendStateInfo
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintApplication
+<BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessFingerPrintApplication
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
@@ -1285,7 +1283,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplay
 </UL>
 
-<P><STRONG><a name="[8a]"></a>ProcessFingerPrintApplication</STRONG> (Thumb, 694 bytes, Stack size 24 bytes, task_uart_fingerprint.o(i.ProcessFingerPrintApplication))
+<P><STRONG><a name="[8a]"></a>ProcessFingerPrintApplication</STRONG> (Thumb, 734 bytes, Stack size 24 bytes, task_uart_fingerprint.o(i.ProcessFingerPrintApplication))
 <BR><BR>[Stack]<UL><LI>Max Depth = 372 + Unknown Stack Size
 <LI>Call Chain = ProcessFingerPrintApplication &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>

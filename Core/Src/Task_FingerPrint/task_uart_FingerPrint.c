@@ -206,10 +206,14 @@ void ProcessFingerPrintApplication(void)
 	
 					if (u8confirmstate == 0x00) // 0x00: Có ngón tay & chụp thành công
 					{
-						g_FingerState = FSM_FINGER_SEND_IMG2TZ; // Đi tiếp bước 2
-
+						// Comm BBB: There's a Finger!!!
+						CommBBB_SendStateInfo((uint8_t)g_FingerState, NONE_MATCHED_FP_ID, NONE_MATCHED_FP_SCORE);
+						
 						// Display
 						SetDisplayState(SCREEN_STATE_PROCESSING);
+
+						g_FingerState = FSM_FINGER_SEND_IMG2TZ; // Đi tiếp bước 2
+
 						taskYIELD();
 					}
 					else
@@ -311,6 +315,9 @@ void ProcessFingerPrintApplication(void)
 						sprintf(msg, "[Conclusion] Xac thuc thanh cong! ID cua ban la: %d, Diem khop: %d\n", u16matchedID, u16matchScore);
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 
+						// Comm BBB: result of Finger: Valid or not?!?
+						CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
+
 						// Display
 						s_u8CountFPOKEnableFlag = true;
 						s_u8CountFPOK = 0;
@@ -320,6 +327,9 @@ void ProcessFingerPrintApplication(void)
 						// printf("Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! \n");
 						sprintf(msg, "[Conclusion] Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! (neu muon) \n");
 						SEGGER_SYSVIEW_PrintfTarget(msg);
+
+						// Comm BBB: result of Finger: Valid or not?!?
+						CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
 
 						if (s_u8CountFPOKEnableFlag)
 						{
@@ -357,6 +367,9 @@ void ProcessFingerPrintApplication(void)
 						sprintf(msg, "[Conclusion] Van tay sai! Khong tim thay trong thu vien.\n");
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 
+						// Comm BBB: result of Finger: Valid or not?!?
+						CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
+
 						// Display
 						s_u8CountFPBADEnableFlag = true;
 						s_u8CountFPBAD = 0;
@@ -365,9 +378,6 @@ void ProcessFingerPrintApplication(void)
 					// Xử lý xong, bắt buộc phải đợi 1 lát (chờ người dùng rút ngón tay ra)
 					g_FingerState = FSM_FINGER_DELAY;
 				}
-
-				// Comm BBB
-				CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u16matchScore);
 			}
 		}
 		break;
@@ -393,12 +403,6 @@ void Fingerprint_StateMachine_Task(void* param)
 {
 	while (1)
 	{
-		// Comm BBB
-		if (g_FingerState != FSM_FINGER_WAIT_SEARCH)
-		{
-			CommBBB_SendStateInfo((uint8_t)g_FingerState, NONE_MATCHED_FP_ID, NONE_MATCHED_FP_SCORE);
-		}
-		
 		ProcessFingerPrintApplication();
 
 		// --------------- End of function ---------------
