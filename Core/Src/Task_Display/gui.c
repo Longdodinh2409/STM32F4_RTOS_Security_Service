@@ -8,7 +8,8 @@ extern char msg[128];
 
 static E_SCREEN_STATE s_u8ScreenState;
 static bool bIsInitScanBackground = false;
-static bool bIsInitStandbyLayout = true;
+static bool bIsInitStandbyLayout = false;
+bool bIsClearStandbyLayoutByNewTS = false;
 
 static uint8_t s_u8StandbyDay = 0;
 static uint8_t s_u8StandbyMonth = 0;
@@ -263,9 +264,25 @@ uint8_t GetStandbyMinute(void)
 	return s_u8StandbyMinute;
 }
 
-void InitOLEDScreen()
+void ClearAllDisplayState(void)
+{
+	bIsInitScanBackground = false;
+	bIsInitStandbyLayout = false;
+	bIsClearStandbyLayoutByNewTS = false;
+
+	s_u8StandbyDay = 0;
+	s_u8StandbyMonth = 0;
+	s_u16StandbyYear = 0;
+	s_u8StandbyHour = 0;
+	s_u8StandbyMinute = 0;
+}
+
+void InitOLEDScreen(void)
 {
 	SSD1306_Init();
+
+	ClearAllDisplayState();
+
 	SetDisplayState(SCREEN_STATE_INIT);
 //	SSD1306_DrawBitmap(2, 0, garfield_128x64, 128, 64, SSD1306_COLOR_WHITE);
 //	SSD1306_UpdateScreen();
@@ -352,10 +369,7 @@ void ProcessDisplayInit()
 
 static const char* GetMonthName(uint8_t month)
 {
-	static const char* monthNames[] = {
-		"", "January", "February", "March", "April", "May", "June",
-		"July", "August", "September", "October", "November", "December"
-	};
+	static const char* monthNames[] = {"", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
 	if (month >= 1 && month <= 12)
 	{
@@ -385,6 +399,8 @@ static const char* GetDayOrdinalSuffix(uint8_t day)
 void ProcessDisplayStandby()
 {
 	static bool bIsReadyStrBlink = true;
+	char dateBuffer[16];
+	char timeBuffer[8];
 
 	if (bIsInitStandbyLayout == true)
 	{
@@ -392,8 +408,11 @@ void ProcessDisplayStandby()
 		bIsInitStandbyLayout = false;
 	}
 
-	char dateBuffer[32];
-	char timeBuffer[16];
+	if (bIsClearStandbyLayoutByNewTS == true)
+	{
+		SSD1306_Clear();
+		bIsClearStandbyLayoutByNewTS = false;
+	}
 
 	uint8_t day = GetStandbyDay();
 	uint8_t month = GetStandbyMonth();
@@ -544,6 +563,8 @@ void ProcessDisplayInfLock()
 
 void Display_Task(void* param)
 {
+	InitOLEDScreen();
+
 	while(1)
 	{
 		ProcessDisplay();

@@ -173,7 +173,7 @@ void SSD1306_DrawBitmap(int16_t x, int16_t y, const unsigned char* bitmap, int16
 
 
 
-uint8_t SSD1306_Init(void) {
+void SSD1306_Init(void) {
 
 	uint32_t start_time = HAL_GetTick();
 	uint32_t timeout_ms = 100; // Tổng thời gian chờ tối đa
@@ -189,7 +189,7 @@ uint8_t SSD1306_Init(void) {
 			break; // Thiết bị đã sẵn sàng
 		}
 
-		HAL_Delay(5);
+		vTaskDelay(pdMS_TO_TICKS(2));
 	}
 
 	if (status != HAL_OK)
@@ -207,9 +207,10 @@ uint8_t SSD1306_Init(void) {
 	// }
 
 	/* A little delay */
-	uint32_t p = 2500;
-	while(p>0)
-		p--;
+	// uint32_t p = 2500;
+	// while(p>0)
+	// 	p--;
+	vTaskDelay(pdMS_TO_TICKS(2));
 
 	/* Init LCD */
 	SSD1306_WRITECOMMAND(0xAE); //display off
@@ -258,7 +259,7 @@ uint8_t SSD1306_Init(void) {
 	SSD1306.Initialized = 1;
 
 	/* Return OK */
-	return 1;
+	// return 1;
 }
 
 void SSD1306_UpdateScreen(void) {

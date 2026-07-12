@@ -37,6 +37,7 @@ typedef enum {
 
 void SetDisplayState(E_SCREEN_STATE eState);
 E_SCREEN_STATE GetDisplayState(void);
+void ClearAllDisplayState(void);
 
 void SetStandbyDay(uint8_t day);
 uint8_t GetStandbyDay(void);

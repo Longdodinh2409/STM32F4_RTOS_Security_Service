@@ -11,6 +11,7 @@ extern volatile uint8_t g_au8RXFingerPrintBuffer[RX_BUFFER_SIZE];
 extern volatile bool bDataReady;
 
 extern TaskHandle_t task_FP_handler;
+extern bool bIsClearStandbyLayoutByNewTS;
 
 void ParsingRXData_Task(void* param) {
 	bool bIsItGood = false;
@@ -199,6 +200,11 @@ void ProcessParsingTimeStamp(uint32_t timestamp, int timezone_offset_hours)
     SetStandbyYear((uint16_t)year);
     SetStandbyHour((uint8_t)hour);
     SetStandbyMinute((uint8_t)minute);
+
+	if (GetDisplayState() == SCREEN_STATE_STANDBY)
+	{
+		bIsClearStandbyLayoutByNewTS = true;
+	}
 
     // In kết quả
     // printf("Ket qua thu cong: %02d/%02d/%d %02d:%02d:%02d\n", day, month, year, hour, minute, second);
