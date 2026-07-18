@@ -13,9 +13,6 @@ extern char g_acRXBufferBBB[BBB_RX_MAX_LEN];
 extern char g_acMemberNameDisplay[MAX_LENGTH_NAME_MEMBER_DISPLAY];
 // Data Ready flag
 extern volatile bool bDataReady;
-// FingerPrint Check Confirmation
-extern bool g_bConfirmFPOKFlag;
-extern bool g_bConfirmFPBADFlag;
 
 extern TaskHandle_t task_FP_handler;
 extern bool bIsClearStandbyLayoutByNewTS;
@@ -24,12 +21,13 @@ uint32_t g_u32TimeStamp = 0;
 uint8_t g_u8SearchMemberStepID = 0;
 char g_acMemberNameBuffer[MAX_LENGTH_NAME_MEMBER_BUFFER];
 
+uint32_t ulNotificationValue = 0;
+
 void ParsingRXData_Task(void* param) {
 	bool bIsItGood = false;
 
 	while(1)
 	{
-		uint32_t ulNotificationValue = 0;
 		if (xTaskNotifyWait(0, 0xFFFFFFFF, &ulNotificationValue, portMAX_DELAY) == pdTRUE)
 		{
 			/* Only handle notifications originating from FingerPrint RX */
@@ -244,23 +242,13 @@ void ProcessParsingMemberName(void)
 {
 	int parsed_count;
 
-	parsed_count = sscanf(g_acRXBufferBBB, "#ID=%hhu,#Name=%15s", &g_u8SearchMemberStepID, g_acMemberNameBuffer);
+	parsed_count = sscanf(g_acRXBufferBBB, "#State=%hhu,#Name=%15s", &g_u8SearchMemberStepID, g_acMemberNameBuffer);
 
 	if ((parsed_count == 2) && (g_u8SearchMemberStepID == (uint8_t)FSM_FINGER_WAIT_SEARCH))
 	{
-		ProcessDisplayMemberName();
-	}
-}
-
-void ProcessDisplayMemberName(void)
-{
-	if (g_bConfirmFPOKFlag == true)
-	{
-		memcpy(g_acMemberNameDisplay, (void *)g_acMemberNameBuffer, MAX_LENGTH_NAME_MEMBER_BUFFER);
-		SetDisplayState(SCREEN_STATE_PASS);
-	}
-	else
-	{
-		SetDisplayState(SCREEN_STATE_FAIL);
+		if (strcmp(g_acMemberNameBuffer, "Unknown") != 0)	// other name than "Unknown"
+		{
+			memcpy(g_acMemberNameDisplay, (void *)g_acMemberNameBuffer, MAX_LENGTH_NAME_MEMBER_BUFFER);
+		}
 	}
 }

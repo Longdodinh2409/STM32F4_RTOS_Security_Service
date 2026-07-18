@@ -508,7 +508,7 @@ void ProcessDisplayPass(const char *pcMemberNameBuffer)
 
 	SSD1306_UpdateScreen();
 
-	// vTaskDelay(pdMS_TO_TICKS(3000));
+	vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
 void ProcessDisplayFail()
@@ -521,7 +521,7 @@ void ProcessDisplayFail()
 
 	SSD1306_UpdateScreen();
 
-	// vTaskDelay(pdMS_TO_TICKS(3000));
+	vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
 void ProcessDisplayTempLock()

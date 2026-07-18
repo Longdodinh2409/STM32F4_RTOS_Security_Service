@@ -135,12 +135,14 @@ void Init_UART1_FingerPrint(void)
 void BBB_UART_RxCpltCallback(uint8_t rx_data)
 {
 	/* Append printable digits to buffer, ignore CR, on LF parse value */
-	if (rx_data == '\n')
+	if (rx_data == ';')
 	{
 		/* End of line received - parse and store */
 		if (rx_index > 0)
 		{
-			strncpy(g_acRXBufferBBB, rx_buffer, BBB_RX_MAX_LEN);
+			// memset(g_acRXBufferBBB, 0, BBB_RX_MAX_LEN);
+			// strncpy(g_acRXBufferBBB, rx_buffer, BBB_RX_MAX_LEN);
+			strcpy(g_acRXBufferBBB, rx_buffer);
 			
 			if (!strncmp(g_acRXBufferBBB, "#TS", 3))
 			{
@@ -150,7 +152,7 @@ void BBB_UART_RxCpltCallback(uint8_t rx_data)
 			}
 			else
 			{
-				if (!strncmp(g_acRXBufferBBB, "#ID", 3))
+				if (!strncmp(g_acRXBufferBBB, "#State", 6))
 				{
 					BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 					xTaskNotifyFromISR(task_PD_handler, PARSING_MEMBER_NAME_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWoken);

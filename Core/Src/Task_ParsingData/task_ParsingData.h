@@ -25,6 +25,5 @@ int is_leap_year(int year);
 void ProcessParsingTimeStamp(void);
 void ProcessParsingTimeDisplay(uint32_t timestamp, int timezone_offset_hours);
 void ProcessParsingMemberName(void);
-void ProcessDisplayMemberName(void);
 
 #endif // TASK_PARSINGDATA_H

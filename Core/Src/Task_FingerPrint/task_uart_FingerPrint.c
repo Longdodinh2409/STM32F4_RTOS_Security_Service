@@ -13,11 +13,9 @@ extern char msg[128];
 
 static uint8_t s_u8CountFPOK = 0;
 static bool s_u8CountFPOKEnableFlag = false;
-bool g_bConfirmFPOKFlag = false;
 
 static uint8_t s_u8CountFPBAD = 0;
 static bool s_u8CountFPBADEnableFlag = false;
-bool g_bConfirmFPBADFlag = false;
 
 static bool s_u8BackToStandByFlag = false;
 
@@ -168,9 +166,7 @@ void ProcessFingerPrintApplication(void)
 		// Reset counter Display
 		s_u8CountFPOK = 0;
 		s_u8CountFPOKEnableFlag = false;
-		g_bConfirmFPOKFlag = false;
 		s_u8CountFPBAD = 0;
-		g_bConfirmFPBADFlag = false;
 		s_u8CountFPBADEnableFlag = false;
 		s_u8BackToStandByFlag = false;
 
@@ -214,7 +210,7 @@ void ProcessFingerPrintApplication(void)
 					if (u8confirmstate == 0x00) // 0x00: Có ngón tay & chụp thành công
 					{
 						// Comm BBB: There's a Finger!!!
-						CommBBB_SendStateInfo((uint8_t)g_FingerState, NONE_MATCHED_FP_ID, NONE_MATCHED_FP_SCORE);
+						// CommBBB_SendStateInfo((uint8_t)g_FingerState, NONE_MATCHED_FP_ID, NONE_MATCHED_FP_SCORE);
 						
 						// Display
 						SetDisplayState(SCREEN_STATE_PROCESSING);
@@ -336,7 +332,7 @@ void ProcessFingerPrintApplication(void)
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 
 						// Comm BBB: result of Finger: Valid or not?!?
-						CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
+						// CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
 
 						if (s_u8CountFPOKEnableFlag)
 						{
@@ -346,8 +342,7 @@ void ProcessFingerPrintApplication(void)
 								s_u8CountFPOK = 0;
 								s_u8CountFPOKEnableFlag = false;
 
-								// SetDisplayState(SCREEN_STATE_PASS);
-								g_bConfirmFPOKFlag = true;
+								SetDisplayState(SCREEN_STATE_PASS);
 								vTaskDelay(pdMS_TO_TICKS(2900));
 
 								s_u8BackToStandByFlag = true;
@@ -362,8 +357,7 @@ void ProcessFingerPrintApplication(void)
 								s_u8CountFPBAD = 0;
 								s_u8CountFPBADEnableFlag = false;
 								
-								// SetDisplayState(SCREEN_STATE_FAIL);
-								g_bConfirmFPBADFlag = true;
+								SetDisplayState(SCREEN_STATE_FAIL);
 								vTaskDelay(pdMS_TO_TICKS(2900));
 
 								s_u8BackToStandByFlag = true;
