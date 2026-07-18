@@ -57,3 +57,5 @@ security_service_stm32\task_uart_fingerprint.o: C:\Keil_v5\ARM\ARMCC\Bin\..\incl
 security_service_stm32\task_uart_fingerprint.o: ..\Core\Src\Task_FingerPrint\../Task_Display/gui.h
 security_service_stm32\task_uart_fingerprint.o: ..\Core\Src\Task_FingerPrint\../Task_Display/fonts.h
 security_service_stm32\task_uart_fingerprint.o: ..\Core\Src\Task_FingerPrint\../Task_Display/ssd1306.h
+security_service_stm32\task_uart_fingerprint.o: ..\Core\Src\Task_FingerPrint\../Task_ParsingData/task_ParsingData.h
+security_service_stm32\task_uart_fingerprint.o: ..\Core\Src\Task_FingerPrint\../Comm_BBB/Comm_BBB.h

@@ -5,10 +5,18 @@
 #include <stdio.h>
 
 extern char msg[128];
+char g_acMemberNameDisplay[MAX_LENGTH_NAME_MEMBER_DISPLAY];
 
 static E_SCREEN_STATE s_u8ScreenState;
 static bool bIsInitScanBackground = false;
-static bool bIsInitStandbyLayout = true;
+static bool bIsInitStandbyLayout = false;
+bool bIsClearStandbyLayoutByNewTS = false;
+
+static uint8_t s_u8StandbyDay = 0;
+static uint8_t s_u8StandbyMonth = 0;
+static uint16_t s_u16StandbyYear = 0;
+static uint8_t s_u8StandbyHour = 0;
+static uint8_t s_u8StandbyMinute = 0;
 
 const unsigned char garfield_128x64 [] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -207,9 +215,75 @@ E_SCREEN_STATE GetDisplayState(void)
 	return s_u8ScreenState;
 }
 
-void InitOLEDScreen()
+void SetStandbyDay(uint8_t day)
+{
+	s_u8StandbyDay = day;
+}
+
+uint8_t GetStandbyDay(void)
+{
+	return s_u8StandbyDay;
+}
+
+void SetStandbyMonth(uint8_t month)
+{
+	s_u8StandbyMonth = month;
+}
+
+uint8_t GetStandbyMonth(void)
+{
+	return s_u8StandbyMonth;
+}
+
+void SetStandbyYear(uint16_t year)
+{
+	s_u16StandbyYear = year;
+}
+
+uint16_t GetStandbyYear(void)
+{
+	return s_u16StandbyYear;
+}
+
+void SetStandbyHour(uint8_t hour)
+{
+	s_u8StandbyHour = hour;
+}
+
+uint8_t GetStandbyHour(void)
+{
+	return s_u8StandbyHour;
+}
+
+void SetStandbyMinute(uint8_t minute)
+{
+	s_u8StandbyMinute = minute;
+}
+
+uint8_t GetStandbyMinute(void)
+{
+	return s_u8StandbyMinute;
+}
+
+void ClearAllDisplayState(void)
+{
+	bIsInitScanBackground = false;
+	bIsInitStandbyLayout = false;
+	bIsClearStandbyLayoutByNewTS = false;
+
+	s_u8StandbyDay = DEFAULT_DAY;
+	s_u8StandbyMonth = DEFAULT_MONTH;
+	s_u16StandbyYear = DEFAULT_YEAR;
+	s_u8StandbyHour = DEFAULT_HOUR;
+	s_u8StandbyMinute = DEFAULT_MINUTE;
+}
+
+void InitOLEDScreen(void)
 {
 	SSD1306_Init();
+
+	ClearAllDisplayState();
+
 	SetDisplayState(SCREEN_STATE_INIT);
 //	SSD1306_DrawBitmap(2, 0, garfield_128x64, 128, 64, SSD1306_COLOR_WHITE);
 //	SSD1306_UpdateScreen();
@@ -259,7 +333,7 @@ void ProcessDisplay(void)
 
 		case SCREEN_STATE_PASS:
 		{
-			ProcessDisplayPass();
+			ProcessDisplayPass(g_acMemberNameDisplay);
 		}
 		break;
 
@@ -294,9 +368,40 @@ void ProcessDisplayInit()
 	vTaskDelay(pdMS_TO_TICKS(2000));
 }
 
+static const char* GetMonthName(uint8_t month)
+{
+	static const char* monthNames[] = {"", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+	if (month >= 1 && month <= 12)
+	{
+		return monthNames[month];
+	}
+
+	return "";
+}
+
+static const char* GetDayOrdinalSuffix(uint8_t day)
+{
+	uint8_t mod100 = day % 100;
+	if (mod100 >= 11 && mod100 <= 13)
+	{
+		return "th";
+	}
+
+	switch (day % 10)
+	{
+		case 1: return "st";
+		case 2: return "nd";
+		case 3: return "rd";
+		default: return "th";
+	}
+}
+
 void ProcessDisplayStandby()
 {
 	static bool bIsReadyStrBlink = true;
+	char dateBuffer[16];
+	char timeBuffer[8];
 
 	if (bIsInitStandbyLayout == true)
 	{
@@ -304,20 +409,40 @@ void ProcessDisplayStandby()
 		bIsInitStandbyLayout = false;
 	}
 
+	if (bIsClearStandbyLayoutByNewTS == true)
+	{
+		SSD1306_Clear();
+		bIsClearStandbyLayoutByNewTS = false;
+	}
+
+	uint8_t day = GetStandbyDay();
+	uint8_t month = GetStandbyMonth();
+	uint16_t year = GetStandbyYear();
+	uint8_t hour = GetStandbyHour();
+	uint8_t minute = GetStandbyMinute();
+
+	const char* monthName = GetMonthName(month);
+	const char* daySuffix = GetDayOrdinalSuffix(day);
+	sprintf(dateBuffer, "%s %u%s, %04u", monthName, day, daySuffix, year);
+
 	SSD1306_GotoXY(15, 30);
-	SSD1306_Puts("June 9th, 2026", &Font_7x10, SSD1306_COLOR_WHITE);
+	SSD1306_Puts(dateBuffer, &Font_7x10, SSD1306_COLOR_WHITE);
 
 	if (bIsReadyStrBlink == true)
 	{
+		sprintf(timeBuffer, "%02d:%02d", hour, minute);
 		SSD1306_GotoXY(37, 9);
-		SSD1306_Puts("10:45", &Font_11x18, SSD1306_COLOR_WHITE);
+		SSD1306_Puts(timeBuffer, &Font_11x18, SSD1306_COLOR_WHITE);
+
 		SSD1306_GotoXY(4, 50);
 		SSD1306_Puts("- READY TO SCAN -", &Font_7x10, SSD1306_COLOR_WHITE);
 	}
 	else
 	{
+		sprintf(timeBuffer, "%02d %02d", hour, minute);
 		SSD1306_GotoXY(37, 9);
-		SSD1306_Puts("10 45", &Font_11x18, SSD1306_COLOR_WHITE);
+		SSD1306_Puts(timeBuffer, &Font_11x18, SSD1306_COLOR_WHITE);
+
 		SSD1306_GotoXY(4, 50);
 		SSD1306_Puts("-               -", &Font_7x10, SSD1306_COLOR_WHITE);
 	}
@@ -371,17 +496,19 @@ void ProcessDisplayScanning()
 	vTaskDelay(pdMS_TO_TICKS(75));
 }
 
-void ProcessDisplayPass()
+void ProcessDisplayPass(const char *pcMemberNameBuffer)
 {
 //	SSD1306_Clear();
+	char acStringDisplay[32];
 
 	SSD1306_DrawBitmap(40, 0, pass_access_bitmap, 48, 48, SSD1306_COLOR_WHITE);
 	SSD1306_GotoXY(5, 53);
-	SSD1306_Puts("Welcome, Thomas!", &Font_7x10, SSD1306_COLOR_WHITE);
+	sprintf(acStringDisplay, "Welcome, %s!", pcMemberNameBuffer);
+	SSD1306_Puts(acStringDisplay, &Font_7x10, SSD1306_COLOR_WHITE);
 
 	SSD1306_UpdateScreen();
 
-	vTaskDelay(pdMS_TO_TICKS(1000));
+	vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
 void ProcessDisplayFail()
@@ -394,7 +521,7 @@ void ProcessDisplayFail()
 
 	SSD1306_UpdateScreen();
 
-	vTaskDelay(pdMS_TO_TICKS(1000));
+	vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
 void ProcessDisplayTempLock()
@@ -439,6 +566,8 @@ void ProcessDisplayInfLock()
 
 void Display_Task(void* param)
 {
+	InitOLEDScreen();
+
 	while(1)
 	{
 		ProcessDisplay();

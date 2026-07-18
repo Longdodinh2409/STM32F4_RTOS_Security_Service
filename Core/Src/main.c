@@ -34,6 +34,9 @@
 #include "Task_FingerPrint/task_uart_FingerPrint.h"
 #include "Task_ParsingData/task_ParsingData.h"
 #include "Task_Display/gui.h"
+
+// Others
+#include "Comm_BBB/Comm_BBB.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,11 +59,13 @@
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 TaskHandle_t task1_handler, task2_handler;
 TaskHandle_t task_FP_handler, task_PD_handler, task_Display_handler;
+uint8_t UART1_rx_data;
 uint8_t UART2_rx_data;
 char msg[128];
 /* USER CODE END PV */
@@ -70,6 +75,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void task1_handler_func(void *para);
 void task2_handler_func(void *para);
@@ -113,6 +119,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   
   	/****************************** SEGGER AREA  ******************************/
@@ -121,6 +128,7 @@ int main(void)
 	
 	/****************************** SYSTEM AREA  ******************************/
 	vSetVarulMaxPRIGROUPValue();
+	Init_UART1_FingerPrint();
 	Init_UART2_FingerPrint();
 	/****************************** SYSTEM AREA  ******************************/
 
@@ -224,6 +232,39 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
 
 }
 
@@ -418,24 +459,48 @@ void task2_handler_func(void *para) {
 }
 
 // UART 2
+// int _write(int file, char *ptr, int len) {
+//     for (int i = 0; i < len; i++) {
+//         ITM_SendChar((*ptr++));
+//     }
+//     return len;
+// }
+
 int _write(int file, char *ptr, int len) {
-    for (int i = 0; i < len; i++) {
-        ITM_SendChar((*ptr++));
-    }
+    // HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+	// Send to BBB
+	HAL_UART_Transmit_IT(&huart1, (uint8_t *)ptr, len);
+	// Debug on RTT Viewer (Terminal 0)
+	SEGGER_RTT_WriteString(0, ptr);
     return len;
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if (huart->Instance == USART2)
+	if (huart->Instance == USART2)	// FingerPrint
 	{
 		// For debugging
 		sprintf(msg, "[My Debug] Send FingerPrint TX data done!\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 	}
+	else if (huart->Instance == USART1)	// BBB
+	{
+		// For debugging
+		sprintf(msg, "[My Debug] Send BBB TX data done!\n");
+		SEGGER_SYSVIEW_PrintfTarget(msg);
+	}
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) 
+{
+	if (huart->Instance == USART1)
+	{
+		BBB_UART_RxCpltCallback(UART1_rx_data);
+
+		/* enable interrupt for the next byte */
+		HAL_UART_Receive_IT(&huart1, &UART1_rx_data, 1);
+	}
+
     if (huart->Instance == USART2)
 	{
 		// if (huart->ErrorCode & HAL_UART_ERROR_ORE) 

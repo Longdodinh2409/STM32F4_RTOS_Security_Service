@@ -52,3 +52,10 @@ security_service_stm32\task_parsingdata.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/s
 security_service_stm32\task_parsingdata.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 security_service_stm32\task_parsingdata.o: ../3rdParty/FreeRTOS/include/task.h
 security_service_stm32\task_parsingdata.o: ../3rdParty/FreeRTOS/include/list.h
+security_service_stm32\task_parsingdata.o: ..\Core\Src\Task_ParsingData\../Comm_BBB/Comm_BBB.h
+security_service_stm32\task_parsingdata.o: ../3rdParty/SEGGER/SEGGER/SEGGER_RTT.h
+security_service_stm32\task_parsingdata.o: ../3rdParty/SEGGER/Config/SEGGER_RTT_Conf.h
+security_service_stm32\task_parsingdata.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+security_service_stm32\task_parsingdata.o: ..\Core\Src\Task_ParsingData\../Task_Display/gui.h
+security_service_stm32\task_parsingdata.o: ..\Core\Src\Task_ParsingData\../Task_Display/fonts.h
+security_service_stm32\task_parsingdata.o: ..\Core\Src\Task_ParsingData\../Task_Display/ssd1306.h

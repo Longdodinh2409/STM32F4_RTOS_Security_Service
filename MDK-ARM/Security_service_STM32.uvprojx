@@ -713,6 +713,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Comm_BBB</GroupName>
+          <Files>
+            <File>
+              <FileName>Comm_BBB.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\Comm_BBB\Comm_BBB.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>SEGGER_RECORD</GroupName>
           <Files>
             <File>

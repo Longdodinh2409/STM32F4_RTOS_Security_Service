@@ -3,6 +3,8 @@
 #include "../Task_Display/gui.h"
 #include "stdbool.h"
 #include "task.h"
+#include "../Task_ParsingData/task_ParsingData.h"
+#include "../Comm_BBB/Comm_BBB.h"
 
 extern UART_HandleTypeDef huart2;
 extern uint8_t UART2_rx_data;
@@ -11,8 +13,10 @@ extern char msg[128];
 
 static uint8_t s_u8CountFPOK = 0;
 static bool s_u8CountFPOKEnableFlag = false;
+
 static uint8_t s_u8CountFPBAD = 0;
 static bool s_u8CountFPBADEnableFlag = false;
+
 static bool s_u8BackToStandByFlag = false;
 
 RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
@@ -127,7 +131,7 @@ void FingerPrint_UART_RxCallback(uint8_t rx_byte) {
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
 			BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-			xTaskNotifyFromISR(task_PD_handler, 0, eNoAction, &xHigherPriorityTaskWoken);
+			xTaskNotifyFromISR(task_PD_handler, PARSING_DATA_SRC_FINGERPRINT_BIT, eSetBits, &xHigherPriorityTaskWoken);
 			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 			
 			bDataReady = true;
@@ -205,10 +209,14 @@ void ProcessFingerPrintApplication(void)
 	
 					if (u8confirmstate == 0x00) // 0x00: Có ngón tay & chụp thành công
 					{
-						g_FingerState = FSM_FINGER_SEND_IMG2TZ; // Đi tiếp bước 2
-
+						// Comm BBB: There's a Finger!!!
+						// CommBBB_SendStateInfo((uint8_t)g_FingerState, NONE_MATCHED_FP_ID, NONE_MATCHED_FP_SCORE);
+						
 						// Display
 						SetDisplayState(SCREEN_STATE_PROCESSING);
+
+						g_FingerState = FSM_FINGER_SEND_IMG2TZ; // Đi tiếp bước 2
+
 						taskYIELD();
 					}
 					else
@@ -310,6 +318,9 @@ void ProcessFingerPrintApplication(void)
 						sprintf(msg, "[Conclusion] Xac thuc thanh cong! ID cua ban la: %d, Diem khop: %d\n", u16matchedID, u16matchScore);
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 
+						// Comm BBB: result of Finger: Valid or not?!?
+						CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
+
 						// Display
 						s_u8CountFPOKEnableFlag = true;
 						s_u8CountFPOK = 0;
@@ -320,6 +331,9 @@ void ProcessFingerPrintApplication(void)
 						sprintf(msg, "[Conclusion] Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! (neu muon) \n");
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 
+						// Comm BBB: result of Finger: Valid or not?!?
+						// CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
+
 						if (s_u8CountFPOKEnableFlag)
 						{
 							s_u8CountFPOK++;
@@ -329,7 +343,7 @@ void ProcessFingerPrintApplication(void)
 								s_u8CountFPOKEnableFlag = false;
 
 								SetDisplayState(SCREEN_STATE_PASS);
-								vTaskDelay(pdMS_TO_TICKS(2000));
+								vTaskDelay(pdMS_TO_TICKS(2900));
 
 								s_u8BackToStandByFlag = true;
 							}
@@ -344,7 +358,7 @@ void ProcessFingerPrintApplication(void)
 								s_u8CountFPBADEnableFlag = false;
 								
 								SetDisplayState(SCREEN_STATE_FAIL);
-								vTaskDelay(pdMS_TO_TICKS(2000));
+								vTaskDelay(pdMS_TO_TICKS(2900));
 
 								s_u8BackToStandByFlag = true;
 							}
@@ -355,6 +369,9 @@ void ProcessFingerPrintApplication(void)
 						// printf("Van tay sai! Khong tim thay trong thu vien.\n");
 						sprintf(msg, "[Conclusion] Van tay sai! Khong tim thay trong thu vien.\n");
 						SEGGER_SYSVIEW_PrintfTarget(msg);
+
+						// Comm BBB: result of Finger: Valid or not?!?
+						CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
 
 						// Display
 						s_u8CountFPBADEnableFlag = true;

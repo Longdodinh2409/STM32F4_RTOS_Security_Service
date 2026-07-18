@@ -59,3 +59,4 @@ security_service_stm32\main.o: ../Core/Src/Task_ParsingData/task_ParsingData.h
 security_service_stm32\main.o: ../Core/Src/Task_Display/gui.h
 security_service_stm32\main.o: ../Core/Src/Task_Display/fonts.h
 security_service_stm32\main.o: ../Core/Src/Task_Display/ssd1306.h
+security_service_stm32\main.o: ../Core/Src/Comm_BBB/Comm_BBB.h
