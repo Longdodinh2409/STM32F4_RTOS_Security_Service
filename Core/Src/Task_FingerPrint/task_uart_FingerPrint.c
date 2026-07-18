@@ -13,8 +13,12 @@ extern char msg[128];
 
 static uint8_t s_u8CountFPOK = 0;
 static bool s_u8CountFPOKEnableFlag = false;
+bool g_bConfirmFPOKFlag = false;
+
 static uint8_t s_u8CountFPBAD = 0;
 static bool s_u8CountFPBADEnableFlag = false;
+bool g_bConfirmFPBADFlag = false;
+
 static bool s_u8BackToStandByFlag = false;
 
 RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
@@ -164,7 +168,9 @@ void ProcessFingerPrintApplication(void)
 		// Reset counter Display
 		s_u8CountFPOK = 0;
 		s_u8CountFPOKEnableFlag = false;
+		g_bConfirmFPOKFlag = false;
 		s_u8CountFPBAD = 0;
+		g_bConfirmFPBADFlag = false;
 		s_u8CountFPBADEnableFlag = false;
 		s_u8BackToStandByFlag = false;
 
@@ -340,8 +346,9 @@ void ProcessFingerPrintApplication(void)
 								s_u8CountFPOK = 0;
 								s_u8CountFPOKEnableFlag = false;
 
-								SetDisplayState(SCREEN_STATE_PASS);
-								vTaskDelay(pdMS_TO_TICKS(2000));
+								// SetDisplayState(SCREEN_STATE_PASS);
+								g_bConfirmFPOKFlag = true;
+								vTaskDelay(pdMS_TO_TICKS(2900));
 
 								s_u8BackToStandByFlag = true;
 							}
@@ -355,8 +362,9 @@ void ProcessFingerPrintApplication(void)
 								s_u8CountFPBAD = 0;
 								s_u8CountFPBADEnableFlag = false;
 								
-								SetDisplayState(SCREEN_STATE_FAIL);
-								vTaskDelay(pdMS_TO_TICKS(2000));
+								// SetDisplayState(SCREEN_STATE_FAIL);
+								g_bConfirmFPBADFlag = true;
+								vTaskDelay(pdMS_TO_TICKS(2900));
 
 								s_u8BackToStandByFlag = true;
 							}

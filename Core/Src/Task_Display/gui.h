@@ -21,6 +21,8 @@ typedef enum {
 
 #define INVALID_CMD				(99)
 
+#define MAX_LENGTH_NAME_MEMBER_DISPLAY	(16)
+
 #define MAX_CONFIRMATION_CNT_FINGER_PRINT	(3)
 #define MAX_LIMIT_NO_FINGER_CNT					(2)
 
@@ -63,7 +65,7 @@ void ProcessDisplay(void);
 void ProcessDisplayInit(void);
 void ProcessDisplayStandby(void);
 void ProcessDisplayScanning(void);
-void ProcessDisplayPass(void);
+void ProcessDisplayPass(const char *pcMemberNameBuffer);
 void ProcessDisplayFail(void);
 void ProcessDisplayTempLock(void);
 void ProcessDisplayInfLock(void);

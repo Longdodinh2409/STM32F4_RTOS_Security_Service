@@ -17,13 +17,11 @@ extern TaskHandle_t task_PD_handler;
 
 uint8_t rx_data;
 char rx_buffer[BBB_RX_MAX_LEN];
+char g_acRXBufferBBB[BBB_RX_MAX_LEN];
 uint8_t rx_index = 0;
 volatile uint8_t data_ready = 0;
 volatile uint8_t processing = 0;
 uint8_t cmd;
-
-/* Global parsed value from BBB UART (sequence of ASCII digits -> uint32_t) */
-volatile uint32_t g_u32RXTimeStampValue = 0;
 
 char acTxBBBBuffer[64];
 
@@ -136,21 +134,30 @@ void Init_UART1_FingerPrint(void)
 
 void BBB_UART_RxCpltCallback(uint8_t rx_data)
 {
-	int parsed_count;
-
 	/* Append printable digits to buffer, ignore CR, on LF parse value */
 	if (rx_data == '\n')
 	{
 		/* End of line received - parse and store */
 		if (rx_index > 0)
 		{
-			parsed_count = sscanf(rx_buffer, "#TS=%u", &g_u32RXTimeStampValue);
-			if (parsed_count == 1)
+			strncpy(g_acRXBufferBBB, rx_buffer, BBB_RX_MAX_LEN);
+			
+			if (!strncmp(g_acRXBufferBBB, "#TS", 3))
 			{
 				BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 				xTaskNotifyFromISR(task_PD_handler, PARSING_TIMESTAMP_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWoken);
 				portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 			}
+			else
+			{
+				if (!strncmp(g_acRXBufferBBB, "#ID", 3))
+				{
+					BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+					xTaskNotifyFromISR(task_PD_handler, PARSING_MEMBER_NAME_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWoken);
+					portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+				}
+			}
+
 		}
 		/* reset buffer for next frame */
 		memset(rx_buffer, 0, sizeof(rx_buffer));

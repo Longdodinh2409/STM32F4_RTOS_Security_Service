@@ -6,6 +6,7 @@
 #define NONE_MATCHED_FP_SCORE	(0)
 #define UNKNOWN_FINGER_ID		(254)
 #define RECONFIRM_FINGER_ID		(255)
+#define MAX_LENGTH_NAME_MEMBER_BUFFER	(16)
 
 void InitUARTBBB(void);
 uint8_t ProcessBBB(void);
@@ -16,9 +17,6 @@ void CommBBB_SendStateInfo(uint8_t state, uint16_t matchedID, uint8_t confirmSta
 
 void Init_UART1_FingerPrint(void);
 void BBB_UART_RxCpltCallback(uint8_t rx_data);
-
-/* Parsed 32-bit value received from BBB (digits ASCII), e.g. "1783850592" */
-extern volatile uint32_t g_u32RXTimeStampValue;
 
 #define BBB_RX_MAX_LEN 	(64)
 

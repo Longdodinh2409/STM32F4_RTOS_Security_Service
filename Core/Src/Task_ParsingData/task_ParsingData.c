@@ -7,11 +7,22 @@
 extern Fingerprint_Packet_t g_stFingerPrintRXData;
 extern volatile uint8_t g_au8RXFingerPrintBufferSize;
 extern volatile uint8_t g_au8RXFingerPrintBuffer[RX_BUFFER_SIZE];
+extern char g_acRXBufferBBB[BBB_RX_MAX_LEN];
+
+// Display
+extern char g_acMemberNameDisplay[MAX_LENGTH_NAME_MEMBER_DISPLAY];
 // Data Ready flag
 extern volatile bool bDataReady;
+// FingerPrint Check Confirmation
+extern bool g_bConfirmFPOKFlag;
+extern bool g_bConfirmFPBADFlag;
 
 extern TaskHandle_t task_FP_handler;
 extern bool bIsClearStandbyLayoutByNewTS;
+
+uint32_t g_u32TimeStamp = 0;
+uint8_t g_u8SearchMemberStepID = 0;
+char g_acMemberNameBuffer[MAX_LENGTH_NAME_MEMBER_BUFFER];
 
 void ParsingRXData_Task(void* param) {
 	bool bIsItGood = false;
@@ -52,7 +63,12 @@ void ParsingRXData_Task(void* param) {
 
 			if (ulNotificationValue & PARSING_TIMESTAMP_SRC_BBB_BIT)
 			{
-				ProcessParsingTimeStamp(g_u32RXTimeStampValue, GMT_7);
+				ProcessParsingTimeStamp();
+			}
+
+			if (ulNotificationValue & PARSING_MEMBER_NAME_SRC_BBB_BIT)
+			{
+				ProcessParsingMemberName();
 			}
 		}
 	}
@@ -149,7 +165,19 @@ int is_leap_year(int year)
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
-void ProcessParsingTimeStamp(uint32_t timestamp, int timezone_offset_hours) 
+void ProcessParsingTimeStamp(void) 
+{
+	int parsed_count;
+
+	parsed_count = sscanf(g_acRXBufferBBB, "#TS=%u", &g_u32TimeStamp);
+
+	if (parsed_count == 1)
+	{
+		ProcessParsingTimeDisplay(g_u32TimeStamp, GMT_7);
+	}
+}
+
+void ProcessParsingTimeDisplay(uint32_t timestamp, int timezone_offset_hours) 
 {
     char acTimeStamp[64];
 
@@ -210,4 +238,29 @@ void ProcessParsingTimeStamp(uint32_t timestamp, int timezone_offset_hours)
     // printf("Ket qua thu cong: %02d/%02d/%d %02d:%02d:%02d\n", day, month, year, hour, minute, second);
 	sprintf(acTimeStamp, "%02d/%02d/%d %02d:%02d:%02d\n", day, month, year, hour, minute, second);
 	SEGGER_RTT_WriteString(0, acTimeStamp);
+}
+
+void ProcessParsingMemberName(void)
+{
+	int parsed_count;
+
+	parsed_count = sscanf(g_acRXBufferBBB, "#ID=%hhu,#Name=%15s", &g_u8SearchMemberStepID, g_acMemberNameBuffer);
+
+	if ((parsed_count == 2) && (g_u8SearchMemberStepID == (uint8_t)FSM_FINGER_WAIT_SEARCH))
+	{
+		ProcessDisplayMemberName();
+	}
+}
+
+void ProcessDisplayMemberName(void)
+{
+	if (g_bConfirmFPOKFlag == true)
+	{
+		memcpy(g_acMemberNameDisplay, (void *)g_acMemberNameBuffer, MAX_LENGTH_NAME_MEMBER_BUFFER);
+		SetDisplayState(SCREEN_STATE_PASS);
+	}
+	else
+	{
+		SetDisplayState(SCREEN_STATE_FAIL);
+	}
 }

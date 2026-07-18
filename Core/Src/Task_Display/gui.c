@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 extern char msg[128];
+char g_acMemberNameDisplay[MAX_LENGTH_NAME_MEMBER_DISPLAY];
 
 static E_SCREEN_STATE s_u8ScreenState;
 static bool bIsInitScanBackground = false;
@@ -332,7 +333,7 @@ void ProcessDisplay(void)
 
 		case SCREEN_STATE_PASS:
 		{
-			ProcessDisplayPass();
+			ProcessDisplayPass(g_acMemberNameDisplay);
 		}
 		break;
 
@@ -495,17 +496,19 @@ void ProcessDisplayScanning()
 	vTaskDelay(pdMS_TO_TICKS(75));
 }
 
-void ProcessDisplayPass()
+void ProcessDisplayPass(const char *pcMemberNameBuffer)
 {
 //	SSD1306_Clear();
+	char acStringDisplay[32];
 
 	SSD1306_DrawBitmap(40, 0, pass_access_bitmap, 48, 48, SSD1306_COLOR_WHITE);
 	SSD1306_GotoXY(5, 53);
-	SSD1306_Puts("Welcome, Thomas!", &Font_7x10, SSD1306_COLOR_WHITE);
+	sprintf(acStringDisplay, "Welcome, %s!", pcMemberNameBuffer);
+	SSD1306_Puts(acStringDisplay, &Font_7x10, SSD1306_COLOR_WHITE);
 
 	SSD1306_UpdateScreen();
 
-	vTaskDelay(pdMS_TO_TICKS(1000));
+	// vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
 void ProcessDisplayFail()
@@ -518,7 +521,7 @@ void ProcessDisplayFail()
 
 	SSD1306_UpdateScreen();
 
-	vTaskDelay(pdMS_TO_TICKS(1000));
+	// vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
 void ProcessDisplayTempLock()
