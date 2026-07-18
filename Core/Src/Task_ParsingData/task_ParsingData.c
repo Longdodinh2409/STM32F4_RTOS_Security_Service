@@ -50,9 +50,9 @@ void ParsingRXData_Task(void* param) {
 				xTaskNotify(task_FP_handler, FINGERPRINT_RX_NEW_PACKET_VALUE, eSetBits);
 			}
 
-			if (ulNotificationValue & PARSING_DATA_SRC_BBB_BIT)
+			if (ulNotificationValue & PARSING_TIMESTAMP_SRC_BBB_BIT)
 			{
-				ProcessParsingTimeStamp(g_u32BBBReceivedValue, GMT_7);
+				ProcessParsingTimeStamp(g_u32RXTimeStampValue, GMT_7);
 			}
 		}
 	}

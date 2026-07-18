@@ -18,7 +18,7 @@ void Init_UART1_FingerPrint(void);
 void BBB_UART_RxCpltCallback(uint8_t rx_data);
 
 /* Parsed 32-bit value received from BBB (digits ASCII), e.g. "1783850592" */
-extern volatile uint32_t g_u32BBBReceivedValue;
+extern volatile uint32_t g_u32RXTimeStampValue;
 
 #define BBB_RX_MAX_LEN 	(64)
 

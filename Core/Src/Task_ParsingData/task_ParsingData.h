@@ -9,7 +9,7 @@
 #include "task.h"
 
 #define PARSING_DATA_SRC_FINGERPRINT_BIT	(0x01)
-#define PARSING_DATA_SRC_BBB_BIT			(0x02)
+#define PARSING_TIMESTAMP_SRC_BBB_BIT			(0x02)
 
 #define GMT_7								(7)
 

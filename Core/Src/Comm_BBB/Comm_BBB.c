@@ -23,7 +23,7 @@ volatile uint8_t processing = 0;
 uint8_t cmd;
 
 /* Global parsed value from BBB UART (sequence of ASCII digits -> uint32_t) */
-volatile uint32_t g_u32BBBReceivedValue = 0;
+volatile uint32_t g_u32RXTimeStampValue = 0;
 
 char acTxBBBBuffer[64];
 
@@ -136,36 +136,33 @@ void Init_UART1_FingerPrint(void)
 
 void BBB_UART_RxCpltCallback(uint8_t rx_data)
 {
+	int parsed_count;
+
 	/* Append printable digits to buffer, ignore CR, on LF parse value */
-	if (rx_data >= '0' && rx_data <= '9')
+	if (rx_data == '\n')
+	{
+		/* End of line received - parse and store */
+		if (rx_index > 0)
+		{
+			parsed_count = sscanf(rx_buffer, "#TS=%u", &g_u32RXTimeStampValue);
+			if (parsed_count == 1)
+			{
+				BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+				xTaskNotifyFromISR(task_PD_handler, PARSING_TIMESTAMP_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWoken);
+				portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+			}
+		}
+		/* reset buffer for next frame */
+		memset(rx_buffer, 0, sizeof(rx_buffer));
+		rx_index = 0;
+	}
+	else
 	{
 		if (rx_index < (sizeof(rx_buffer) - 1))
 		{
 			rx_buffer[rx_index++] = (char)rx_data;
 			rx_buffer[rx_index] = '\0';
 		}
-	}
-	else if (rx_data == 0x0D)
-	{
-		return;
-	}
-	else if (rx_data == '\n')
-	{
-		/* End of line received - parse and store */
-		if (rx_index > 0)
-		{
-			/* Convert ASCII digits to uint32_t */
-			uint32_t val = (uint32_t)strtoul(rx_buffer, NULL, 10);
-			g_u32BBBReceivedValue = val;
-			// data_ready = 1; /* keep compatibility with ProcessBBB() */
-
-			BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-			xTaskNotifyFromISR(task_PD_handler, PARSING_DATA_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWoken);
-			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-		}
-		/* reset buffer for next frame */
-		memset(rx_buffer, 0, sizeof(rx_buffer));
-		rx_index = 0;
 	}
 	/* ignore carriage return and other bytes */
 }

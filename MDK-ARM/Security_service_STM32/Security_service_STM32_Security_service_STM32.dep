@@ -56,7 +56,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5EC7840C)
 I (../Core/Src/Task_FingerPrint/task_uart_FingerPrint.h)(0x6A536F8A)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5EC78414)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5EC78406)
-I (../Core/Src/Task_ParsingData/task_ParsingData.h)(0x6A537370)
+I (../Core/Src/Task_ParsingData/task_ParsingData.h)(0x6A5B459C)
 I (../Core/Src/Task_Display/gui.h)(0x6A53BE78)
 I (../Core/Src/Task_Display/fonts.h)(0x6A50B453)
 I (../Core/Src/Task_Display/ssd1306.h)(0x6A53B066)
@@ -1017,10 +1017,10 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x5EC7840C)
 I (..\Core\Src\Task_FingerPrint\../Task_Display/gui.h)(0x6A53BE78)
 I (..\Core\Src\Task_FingerPrint\../Task_Display/fonts.h)(0x6A50B453)
 I (..\Core\Src\Task_FingerPrint\../Task_Display/ssd1306.h)(0x6A53B066)
-I (..\Core\Src\Task_FingerPrint\../Task_ParsingData/task_ParsingData.h)(0x6A537370)
+I (..\Core\Src\Task_FingerPrint\../Task_ParsingData/task_ParsingData.h)(0x6A5B459C)
 I (..\Core\Src\Task_FingerPrint\../Comm_BBB/Comm_BBB.h)(0x6A5373D2)
-F (..\Core\Src\Task_ParsingData\task_ParsingData.c)(0x6A53BEE4)(--c99 -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../3rdParty/FreeRTOS/include -I ../Core/Inc/Task_FingerPrint -I ../3rdParty/FreeRTOS/portable/RVDS/ARM_CM4F -I ../3rdParty/SEGGER/Config -I ../3rdParty/SEGGER/OS -I ../3rdParty/SEGGER/SEGGER -I ../3rdParty/SEGGER/SEGGER/Syscalls-I.\RTE\_Security_service_STM32-IC:\Users\olong\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F411xE -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F411xE-o security_service_stm32\task_parsingdata.o --omf_browse security_service_stm32\task_parsingdata.crf --depend security_service_stm32\task_parsingdata.d)
-I (..\Core\Src\Task_ParsingData\task_ParsingData.h)(0x6A537370)
+F (..\Core\Src\Task_ParsingData\task_ParsingData.c)(0x6A5B459C)(--c99 -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../3rdParty/FreeRTOS/include -I ../Core/Inc/Task_FingerPrint -I ../3rdParty/FreeRTOS/portable/RVDS/ARM_CM4F -I ../3rdParty/SEGGER/Config -I ../3rdParty/SEGGER/OS -I ../3rdParty/SEGGER/SEGGER -I ../3rdParty/SEGGER/SEGGER/Syscalls-I.\RTE\_Security_service_STM32-IC:\Users\olong\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F411xE -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F411xE-o security_service_stm32\task_parsingdata.o --omf_browse security_service_stm32\task_parsingdata.crf --depend security_service_stm32\task_parsingdata.d)
+I (..\Core\Src\Task_ParsingData\task_ParsingData.h)(0x6A5B459C)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5EC7840C)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5EC78414)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5EC78406)
@@ -1219,7 +1219,7 @@ I (../3rdParty/FreeRTOS/portable/RVDS/ARM_CM4F/portmacro.h)(0x6A4F0CB8)
 I (../3rdParty/FreeRTOS/include/mpu_wrappers.h)(0x6A4F0CB8)
 I (../3rdParty/FreeRTOS/include/task.h)(0x6A4F0CB8)
 I (../3rdParty/FreeRTOS/include/list.h)(0x6A4F0CB8)
-F (..\Core\Src\Comm_BBB\Comm_BBB.c)(0x6A537846)(--c99 -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../3rdParty/FreeRTOS/include -I ../Core/Inc/Task_FingerPrint -I ../3rdParty/FreeRTOS/portable/RVDS/ARM_CM4F -I ../3rdParty/SEGGER/Config -I ../3rdParty/SEGGER/OS -I ../3rdParty/SEGGER/SEGGER -I ../3rdParty/SEGGER/SEGGER/Syscalls-I.\RTE\_Security_service_STM32-IC:\Users\olong\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F411xE -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F411xE-o security_service_stm32\comm_bbb.o --omf_browse security_service_stm32\comm_bbb.crf --depend security_service_stm32\comm_bbb.d)
+F (..\Core\Src\Comm_BBB\Comm_BBB.c)(0x6A5B459C)(--c99 -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../3rdParty/FreeRTOS/include -I ../Core/Inc/Task_FingerPrint -I ../3rdParty/FreeRTOS/portable/RVDS/ARM_CM4F -I ../3rdParty/SEGGER/Config -I ../3rdParty/SEGGER/OS -I ../3rdParty/SEGGER/SEGGER -I ../3rdParty/SEGGER/SEGGER/Syscalls-I.\RTE\_Security_service_STM32-IC:\Users\olong\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F411xE -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F411xE-o security_service_stm32\comm_bbb.o --omf_browse security_service_stm32\comm_bbb.crf --depend security_service_stm32\comm_bbb.d)
 I (../Core/Inc/main.h)(0x6A4F0CB8)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x6A130CFE)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x6A50B453)
@@ -1275,7 +1275,7 @@ I (../3rdParty/FreeRTOS/portable/RVDS/ARM_CM4F/portmacro.h)(0x6A4F0CB8)
 I (../3rdParty/FreeRTOS/include/mpu_wrappers.h)(0x6A4F0CB8)
 I (../3rdParty/FreeRTOS/include/task.h)(0x6A4F0CB8)
 I (../3rdParty/FreeRTOS/include/list.h)(0x6A4F0CB8)
-I (..\Core\Src\Comm_BBB\../Task_ParsingData/task_ParsingData.h)(0x6A537370)
+I (..\Core\Src\Comm_BBB\../Task_ParsingData/task_ParsingData.h)(0x6A5B459C)
 F (..\3rdParty\SEGGER\Config\SEGGER_SYSVIEW_Config_FreeRTOS.c)(0x6A4F0CB8)(--c99 -c --cpu Cortex-M4.fp.sp -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../3rdParty/FreeRTOS/include -I ../Core/Inc/Task_FingerPrint -I ../3rdParty/FreeRTOS/portable/RVDS/ARM_CM4F -I ../3rdParty/SEGGER/Config -I ../3rdParty/SEGGER/OS -I ../3rdParty/SEGGER/SEGGER -I ../3rdParty/SEGGER/SEGGER/Syscalls-I.\RTE\_Security_service_STM32-IC:\Users\olong\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-D__UVISION_VERSION="531" -D_RTE_ -DSTM32F411xE -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F411xE-o security_service_stm32\segger_sysview_config_freertos.o --omf_browse security_service_stm32\segger_sysview_config_freertos.crf --depend security_service_stm32\segger_sysview_config_freertos.d)
 I (../3rdParty/FreeRTOS/include/FreeRTOS.h)(0x6A4F0CB8)
 I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5EC7840C)
