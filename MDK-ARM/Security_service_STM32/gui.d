@@ -54,3 +54,6 @@ security_service_stm32\gui.o: ../3rdParty/FreeRTOS/include/task.h
 security_service_stm32\gui.o: ../3rdParty/FreeRTOS/include/list.h
 security_service_stm32\gui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 security_service_stm32\gui.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+security_service_stm32\gui.o: ..\Core\Src\Task_Display\../Task_FingerPrint/task_uart_FingerPrint.h
+security_service_stm32\gui.o: ..\Core\Src\Task_Display\../Task_ParsingData/task_ParsingData.h
+security_service_stm32\gui.o: ..\Core\Src\Task_Display\../Comm_BBB/Comm_BBB.h
