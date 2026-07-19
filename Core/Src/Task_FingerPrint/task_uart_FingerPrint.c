@@ -11,11 +11,12 @@ extern uint8_t UART2_rx_data;
 extern TaskHandle_t task_PD_handler, task_FP_handler;
 extern char msg[128];
 
-static uint8_t s_u8CountFPOK = 0;
-static bool s_u8CountFPOKEnableFlag = false;
+static uint8_t s_u8CountConfirmFPOK = 0;
+static bool s_u8CountConfirmFPOKEnableFlag = false;
 
+static uint8_t s_u8CountConfirmFPBAD = 0;
+static bool s_u8CountConfirmFPBADEnableFlag = false;
 static uint8_t s_u8CountFPBAD = 0;
-static bool s_u8CountFPBADEnableFlag = false;
 
 static bool s_u8BackToStandByFlag = false;
 
@@ -164,10 +165,10 @@ void ProcessFingerPrintApplication(void)
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 
 		// Reset counter Display
-		s_u8CountFPOK = 0;
-		s_u8CountFPOKEnableFlag = false;
-		s_u8CountFPBAD = 0;
-		s_u8CountFPBADEnableFlag = false;
+		s_u8CountConfirmFPOK = 0;
+		s_u8CountConfirmFPOKEnableFlag = false;
+		s_u8CountConfirmFPBAD = 0;
+		s_u8CountConfirmFPBADEnableFlag = false;
 		s_u8BackToStandByFlag = false;
 
 		// initialize FingerPrint sensor
@@ -322,8 +323,8 @@ void ProcessFingerPrintApplication(void)
 						CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
 
 						// Display
-						s_u8CountFPOKEnableFlag = true;
-						s_u8CountFPOK = 0;
+						s_u8CountConfirmFPOKEnableFlag = true;
+						s_u8CountConfirmFPOK = 0;
 					}
 					else if (u8confirmstate == 0x17)
 					{
@@ -334,13 +335,13 @@ void ProcessFingerPrintApplication(void)
 						// Comm BBB: result of Finger: Valid or not?!?
 						// CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
 
-						if (s_u8CountFPOKEnableFlag)
+						if (s_u8CountConfirmFPOKEnableFlag)
 						{
-							s_u8CountFPOK++;
-							if (s_u8CountFPOK >= MAX_CONFIRMATION_CNT_FINGER_PRINT)
+							s_u8CountConfirmFPOK++;
+							if (s_u8CountConfirmFPOK >= MAX_CONFIRMATION_CNT_FINGER_PRINT)
 							{
-								s_u8CountFPOK = 0;
-								s_u8CountFPOKEnableFlag = false;
+								s_u8CountConfirmFPOK = 0;
+								s_u8CountConfirmFPOKEnableFlag = false;
 
 								SetDisplayState(SCREEN_STATE_PASS);
 								vTaskDelay(pdMS_TO_TICKS(2900));
@@ -349,13 +350,13 @@ void ProcessFingerPrintApplication(void)
 							}
 						}
 
-						if (s_u8CountFPBADEnableFlag)
+						if (s_u8CountConfirmFPBADEnableFlag)
 						{
-							s_u8CountFPBAD++;
-							if (s_u8CountFPBAD >= MAX_CONFIRMATION_CNT_FINGER_PRINT)
+							s_u8CountConfirmFPBAD++;
+							if (s_u8CountConfirmFPBAD >= MAX_CONFIRMATION_CNT_FINGER_PRINT)
 							{
-								s_u8CountFPBAD = 0;
-								s_u8CountFPBADEnableFlag = false;
+								s_u8CountConfirmFPBAD = 0;
+								s_u8CountConfirmFPBADEnableFlag = false;
 								
 								SetDisplayState(SCREEN_STATE_FAIL);
 								vTaskDelay(pdMS_TO_TICKS(2900));
@@ -374,8 +375,8 @@ void ProcessFingerPrintApplication(void)
 						CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
 
 						// Display
-						s_u8CountFPBADEnableFlag = true;
-						s_u8CountFPBAD = 0;
+						s_u8CountConfirmFPBADEnableFlag = true;
+						s_u8CountConfirmFPBAD = 0;
 					}
 
 					// Xử lý xong, bắt buộc phải đợi 1 lát (chờ người dùng rút ngón tay ra)
