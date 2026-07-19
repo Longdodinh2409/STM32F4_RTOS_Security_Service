@@ -34,6 +34,7 @@
 #include "Task_FingerPrint/task_uart_FingerPrint.h"
 #include "Task_ParsingData/task_ParsingData.h"
 #include "Task_Display/gui.h"
+#include "Task_UserButton/task_userbutton.h"
 
 // Others
 #include "Comm_BBB/Comm_BBB.h"
@@ -64,7 +65,7 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 TaskHandle_t task1_handler, task2_handler;
-TaskHandle_t task_FP_handler, task_PD_handler, task_Display_handler;
+TaskHandle_t task_FP_handler, task_PD_handler, task_Display_handler, task_UsetBtn_handler;
 uint8_t UART1_rx_data;
 uint8_t UART2_rx_data;
 char msg[128];
@@ -135,7 +136,8 @@ int main(void)
 
 	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
   	// xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
-  	xTaskCreate(ParsingRXData_Task,       		"Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
+  	xTaskCreate(ButtonTask,       				"Task_UB",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_UsetBtn_handler);
+	xTaskCreate(ParsingRXData_Task,       		"Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
 	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
 	xTaskCreate(Display_Task,  				"Task_Display",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_Display_handler);
 
@@ -366,11 +368,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
   HAL_GPIO_Init(PDM_OUT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PA0 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0;
-  GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
+  /*Configure GPIO pin : USER_BTN_Pin */
+  GPIO_InitStruct.Pin = USER_BTN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  HAL_GPIO_Init(USER_BTN_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : I2S3_WS_Pin */
   GPIO_InitStruct.Pin = I2S3_WS_Pin;
