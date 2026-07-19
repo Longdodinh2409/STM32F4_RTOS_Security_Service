@@ -430,6 +430,7 @@ void ProcessFingerPrintApplication(void)
 			SetDisplayState(SCREEN_STATE_TEMP_LOCK);
 			vTaskDelay(pdMS_TO_TICKS(5 * 60 * 1000));
 			g_FingerState = FSM_FINGER_SEND_GENIMG; // Quay lại từ đầu
+			s_u8BackToStandByFlag = true;
 		}
 		break;
 
@@ -441,6 +442,7 @@ void ProcessFingerPrintApplication(void)
 			SetDisplayState(SCREEN_STATE_TEMP_LOCK);
 			vTaskDelay(pdMS_TO_TICKS(10 * 60 * 1000));
 			g_FingerState = FSM_FINGER_SEND_GENIMG; // Quay lại từ đầu
+			s_u8BackToStandByFlag = true;
 		}
 		break;
 
@@ -457,6 +459,7 @@ void ProcessFingerPrintApplication(void)
 				SEGGER_SYSVIEW_PrintfTarget(msg);
 
 				g_FingerState = FSM_FINGER_SEND_GENIMG;	// Quay lại từ đầu
+				s_u8BackToStandByFlag = true;
 			}
 		}
 		break;

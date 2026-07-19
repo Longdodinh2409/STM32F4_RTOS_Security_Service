@@ -389,11 +389,11 @@ void ProcessDisplay(void)
 			
 			if (u32RemainingTimeSec == 0)
 			{
-				SetDisplayState(SCREEN_STATE_STANDBY);
+				// SetDisplayState(SCREEN_STATE_STANDBY);
 			}
 			else
 			{
-				ProcessDisplayTempLock(s_u8BlockMin, s_u8BlockSec);
+				ProcessDisplayTempLock(s_u8BlockMin, s_u8BlockSec, u32RemainingTimeSec, s_u32TempLockDurationSec);
 			}
 		}
 		break;
@@ -573,7 +573,32 @@ void ProcessDisplayFail()
 	vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
-void ProcessDisplayTempLock(uint8_t u8BlockMin, uint8_t u8BlockSec)
+static void DrawTempLockProgressBar(uint32_t u32RemainingTimeSec, uint32_t u32TotalDurationSec)
+{
+	const uint16_t barX = 3;
+	const uint16_t barY = 54;
+	const uint16_t barWidth = 118;
+	const uint16_t barHeight = 5;
+	uint16_t u16FilledWidth = 0;
+
+	if (u32TotalDurationSec > 0)
+	{
+		if (u32RemainingTimeSec >= u32TotalDurationSec)
+		{
+			u16FilledWidth = barWidth;
+		}
+		else
+		{
+			u16FilledWidth = (uint16_t)(((uint64_t)u32RemainingTimeSec * barWidth) / u32TotalDurationSec);
+		}
+	}
+
+	SSD1306_DrawFilledRectangle(barX, barY, barWidth, barHeight, SSD1306_COLOR_BLACK);
+	SSD1306_DrawFilledRectangle(barX, barY, u16FilledWidth, barHeight, SSD1306_COLOR_WHITE);
+	SSD1306_DrawRectangle(barX, barY, barWidth, barHeight, SSD1306_COLOR_WHITE);
+}
+
+void ProcessDisplayTempLock(uint8_t u8BlockMin, uint8_t u8BlockSec, uint32_t u32RemainingTimeSec, uint32_t u32TotalDurationSec)
 {
 	char acBlockTime[8];
 
@@ -587,9 +612,7 @@ void ProcessDisplayTempLock(uint8_t u8BlockMin, uint8_t u8BlockSec)
 	sprintf(acBlockTime, "%02u:%02u", u8BlockMin, u8BlockSec);
 	SSD1306_Puts(acBlockTime, &Font_7x10, SSD1306_COLOR_WHITE);
 
-	SSD1306_DrawRectangle(3, 54, 118, 5, SSD1306_COLOR_WHITE);
-
-	//	SSD1306_DrawFilledRectangle();
+	DrawTempLockProgressBar(u32RemainingTimeSec, u32TotalDurationSec);
 
 	SSD1306_UpdateScreen();
 
