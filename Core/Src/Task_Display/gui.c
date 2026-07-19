@@ -2,9 +2,14 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
+#include "../Task_FingerPrint/task_uart_FingerPrint.h"
+#include "../Task_ParsingData/task_ParsingData.h"
 
 extern char msg[128];
+extern Fingerprint_State_t g_FingerState;
+extern uint32_t g_u32TimeStamp;
 char g_acMemberNameDisplay[MAX_LENGTH_NAME_MEMBER_DISPLAY];
 
 static E_SCREEN_STATE s_u8ScreenState;
@@ -17,6 +22,10 @@ static uint8_t s_u8StandbyMonth = 0;
 static uint16_t s_u16StandbyYear = 0;
 static uint8_t s_u8StandbyHour = 0;
 static uint8_t s_u8StandbyMinute = 0;
+// static uint8_t s_u8StandbySecond = 0;
+static bool s_bTempLockInitialized = false;
+static uint32_t s_u32TempLockStartTimeStamp = 0;
+static uint32_t s_u32TempLockDurationSec = 0;
 
 const unsigned char garfield_128x64 [] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -308,6 +317,10 @@ void ProcessDisplay(void)
 		{
 			bIsInitStandbyLayout = true;
 		}
+		else if (u8CurrentState == SCREEN_STATE_TEMP_LOCK)
+		{
+			s_bTempLockInitialized = false;
+		}
 	}
 
 	switch(u8CurrentState)
@@ -345,7 +358,43 @@ void ProcessDisplay(void)
 
 		case SCREEN_STATE_TEMP_LOCK:
 		{
-			ProcessDisplayTempLock();
+			static uint8_t s_u8BlockMin = 0, s_u8BlockSec = 0;
+			uint32_t u32ElapsedTimeSec = 0;
+			uint32_t u32RemainingTimeSec = 0;
+
+			if (s_bTempLockInitialized == false)
+			{
+				s_bTempLockInitialized = true;
+				s_u32TempLockStartTimeStamp = g_u32TimeStamp;
+
+				if (g_FingerState == FSM_FINGER_BLOCK_5M)
+				{
+					s_u32TempLockDurationSec = 5 * 60;
+				}
+				else if (g_FingerState == FSM_FINGER_BLOCK_10M)
+				{
+					s_u32TempLockDurationSec = 10 * 60;
+				}
+				else
+				{
+					s_u32TempLockDurationSec = 0;
+				}
+			}
+
+			u32ElapsedTimeSec = (g_u32TimeStamp > s_u32TempLockStartTimeStamp) ? (g_u32TimeStamp - s_u32TempLockStartTimeStamp) : 0;
+			u32RemainingTimeSec = (u32ElapsedTimeSec >= s_u32TempLockDurationSec) ? 0 : (s_u32TempLockDurationSec - u32ElapsedTimeSec);
+
+			s_u8BlockMin = (uint8_t)(u32RemainingTimeSec / 60);
+			s_u8BlockSec = (uint8_t)(u32RemainingTimeSec % 60);
+			
+			if (u32RemainingTimeSec == 0)
+			{
+				SetDisplayState(SCREEN_STATE_STANDBY);
+			}
+			else
+			{
+				ProcessDisplayTempLock(s_u8BlockMin, s_u8BlockSec);
+			}
 		}
 		break;
 
@@ -524,8 +573,10 @@ void ProcessDisplayFail()
 	vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
-void ProcessDisplayTempLock()
+void ProcessDisplayTempLock(uint8_t u8BlockMin, uint8_t u8BlockSec)
 {
+	char acBlockTime[8];
+
 //	SSD1306_Clear();
 
 	SSD1306_GotoXY(22, 10);
@@ -533,7 +584,8 @@ void ProcessDisplayTempLock()
 	SSD1306_GotoXY(13, 25);
 	SSD1306_Puts("Try again after", &Font_7x10, SSD1306_COLOR_WHITE);
 	SSD1306_GotoXY(50, 39);
-	SSD1306_Puts("5:00", &Font_7x10, SSD1306_COLOR_WHITE);	// timer count down
+	sprintf(acBlockTime, "%02u:%02u", u8BlockMin, u8BlockSec);
+	SSD1306_Puts(acBlockTime, &Font_7x10, SSD1306_COLOR_WHITE);
 
 	SSD1306_DrawRectangle(3, 54, 118, 5, SSD1306_COLOR_WHITE);
 

@@ -15,6 +15,7 @@
 #define FINGERPRINT_TIMEOUT_MS      (1000)
 
 #define FINGERPRINT_RX_NEW_PACKET_VALUE 	(uint32_t)(0x01)
+#define FINGERPRINT_TASK_UNLOCK_BY_BBB		(uint32_t)(0x02)
 
 // TX - RX frame
 #pragma pack(push, 1)
@@ -46,7 +47,11 @@ typedef enum {
     FSM_FINGER_SEND_SEARCH,     // Yêu cầu tìm kiếm 1:N trong thư viện Flash
     FSM_FINGER_WAIT_SEARCH,     // Đợi kết quả tìm kiếm
 
-    FSM_FINGER_DELAY            // Nghỉ 1 chút xíu nếu không thấy ngón tay rồi mới quét lại
+    FSM_FINGER_DELAY,            // Nghỉ 1 chút xíu nếu không thấy ngón tay rồi mới quét lại
+
+	FSM_FINGER_BLOCK_5M,		// Bị block 5 phút khi sai vân tay 5 lần
+	FSM_FINGER_BLOCK_10M,		// Bị block 10 phút khi sai vân tay 10 lần
+	FSM_FINGER_BLOCK_INF		// Bị block mãi mãi khi sai vân tay 15 lần, cho đến khi BBB unlock
 } Fingerprint_State_t;
 
 void Init_UART2_FingerPrint(void);

@@ -3,9 +3,9 @@
 <title>Static Call Graph - [Security_service_STM32\Security_service_STM32.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Security_service_STM32\Security_service_STM32.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sun Jul 19 00:11:53 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sun Jul 19 12:28:04 2026
 <BR><P>
-<H3>Maximum Stack Usage =        724 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        732 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 Display_Task &rArr; ProcessDisplay &rArr; ProcessDisplayStandby &rArr; SSD1306_Clear &rArr; SSD1306_UpdateScreen &rArr; ssd1306_I2C_WriteMulti &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 <P>
@@ -507,6 +507,7 @@ Global Symbols
 <LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_TxCpltCallback
 <LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_I2C_WriteMulti
 <LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_I2C_Write
+<LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplayTempLock
 <LI><a href="#[111]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplayStandby
 <LI><a href="#[113]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplayPass
 <LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessParsingTimeDisplay
@@ -842,7 +843,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f411xe.o(RESET)
 </UL>
 <P><STRONG><a name="[5b]"></a>Display_Task</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, gui.o(i.Display_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 724 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 732 + Unknown Stack Size
 <LI>Call Chain = Display_Task &rArr; ProcessDisplay &rArr; ProcessDisplayStandby &rArr; SSD1306_Clear &rArr; SSD1306_UpdateScreen &rArr; ssd1306_I2C_WriteMulti &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplay
@@ -1418,8 +1419,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
-<P><STRONG><a name="[a1]"></a>ProcessDisplay</STRONG> (Thumb, 118 bytes, Stack size 8 bytes, gui.o(i.ProcessDisplay))
-<BR><BR>[Stack]<UL><LI>Max Depth = 724 + Unknown Stack Size
+<P><STRONG><a name="[a1]"></a>ProcessDisplay</STRONG> (Thumb, 286 bytes, Stack size 16 bytes, gui.o(i.ProcessDisplay))
+<BR><BR>[Stack]<UL><LI>Max Depth = 732 + Unknown Stack Size
 <LI>Call Chain = ProcessDisplay &rArr; ProcessDisplayStandby &rArr; SSD1306_Clear &rArr; SSD1306_UpdateScreen &rArr; ssd1306_I2C_WriteMulti &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SSD1306_Clear
@@ -1522,8 +1523,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplay
 </UL>
 
-<P><STRONG><a name="[115]"></a>ProcessDisplayTempLock</STRONG> (Thumb, 86 bytes, Stack size 8 bytes, gui.o(i.ProcessDisplayTempLock))
-<BR><BR>[Stack]<UL><LI>Max Depth = 652 + Unknown Stack Size
+<P><STRONG><a name="[115]"></a>ProcessDisplayTempLock</STRONG> (Thumb, 102 bytes, Stack size 24 bytes, gui.o(i.ProcessDisplayTempLock))
+<BR><BR>[Stack]<UL><LI>Max Depth = 668 + Unknown Stack Size
 <LI>Call Chain = ProcessDisplayTempLock &rArr; SSD1306_UpdateScreen &rArr; ssd1306_I2C_WriteMulti &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
@@ -1531,11 +1532,12 @@ Global Symbols
 <LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SSD1306_Puts
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SSD1306_GotoXY
 <LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SSD1306_DrawRectangle
+<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ProcessDisplay
 </UL>
 
-<P><STRONG><a name="[a6]"></a>ProcessFingerPrintApplication</STRONG> (Thumb, 694 bytes, Stack size 24 bytes, task_uart_fingerprint.o(i.ProcessFingerPrintApplication))
+<P><STRONG><a name="[a6]"></a>ProcessFingerPrintApplication</STRONG> (Thumb, 916 bytes, Stack size 24 bytes, task_uart_fingerprint.o(i.ProcessFingerPrintApplication))
 <BR><BR>[Stack]<UL><LI>Max Depth = 372 + Unknown Stack Size
 <LI>Call Chain = ProcessFingerPrintApplication &rArr; SEGGER_SYSVIEW_PrintfTarget &rArr; _VPrintTarget &rArr; _PrintInt &rArr; _PrintUnsigned &rArr; _StoreChar &rArr; _SendPacket &rArr; _HandleIncomingPacket &rArr; SEGGER_RTT_ReadNoLock &rArr; _DoInit &rArr; strcpy
 </UL>

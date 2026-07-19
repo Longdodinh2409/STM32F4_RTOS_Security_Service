@@ -67,7 +67,7 @@ void ProcessDisplayStandby(void);
 void ProcessDisplayScanning(void);
 void ProcessDisplayPass(const char *pcMemberNameBuffer);
 void ProcessDisplayFail(void);
-void ProcessDisplayTempLock(void);
+void ProcessDisplayTempLock(uint8_t u8BlockMin, uint8_t u8BlockSec);
 void ProcessDisplayInfLock(void);
 
 void Display_Task(void* param);

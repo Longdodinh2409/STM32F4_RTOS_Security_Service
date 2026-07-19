@@ -167,8 +167,11 @@ void ProcessFingerPrintApplication(void)
 		// Reset counter Display
 		s_u8CountConfirmFPOK = 0;
 		s_u8CountConfirmFPOKEnableFlag = false;
+
 		s_u8CountConfirmFPBAD = 0;
 		s_u8CountConfirmFPBADEnableFlag = false;
+		s_u8CountFPBAD = 0;
+
 		s_u8BackToStandByFlag = false;
 
 		// initialize FingerPrint sensor
@@ -357,6 +360,24 @@ void ProcessFingerPrintApplication(void)
 							{
 								s_u8CountConfirmFPBAD = 0;
 								s_u8CountConfirmFPBADEnableFlag = false;
+
+								s_u8CountFPBAD++;
+								if (s_u8CountFPBAD == 15)
+								{
+									s_u8CountFPBAD = 0;
+									g_FingerState = FSM_FINGER_BLOCK_INF;
+									return;
+								}
+								else if (s_u8CountFPBAD == 10)
+								{
+									g_FingerState = FSM_FINGER_BLOCK_10M;
+									return;
+								}
+								else if (s_u8CountFPBAD == 5)
+								{
+									g_FingerState = FSM_FINGER_BLOCK_5M;
+									return;
+								}
 								
 								SetDisplayState(SCREEN_STATE_FAIL);
 								vTaskDelay(pdMS_TO_TICKS(2900));
@@ -398,6 +419,45 @@ void ProcessFingerPrintApplication(void)
 			// // Việc này giúp module rảnh rang không bị quá tải lệnh liên tục
 			g_FingerState = FSM_FINGER_SEND_GENIMG; // Quay lại từ đầu
 			vTaskDelay(pdMS_TO_TICKS(100));
+		}
+		break;
+
+		case FSM_FINGER_BLOCK_5M:
+		{
+			sprintf(msg, "[My Debug] FingerPrint TX-RX block 5 mins\n");
+			SEGGER_SYSVIEW_PrintfTarget(msg);
+
+			SetDisplayState(SCREEN_STATE_TEMP_LOCK);
+			vTaskDelay(pdMS_TO_TICKS(5 * 60 * 1000));
+			g_FingerState = FSM_FINGER_SEND_GENIMG; // Quay lại từ đầu
+		}
+		break;
+
+		case FSM_FINGER_BLOCK_10M:
+		{
+			sprintf(msg, "[My Debug] FingerPrint TX-RX block 10 mins\n");
+			SEGGER_SYSVIEW_PrintfTarget(msg);
+
+			SetDisplayState(SCREEN_STATE_TEMP_LOCK);
+			vTaskDelay(pdMS_TO_TICKS(10 * 60 * 1000));
+			g_FingerState = FSM_FINGER_SEND_GENIMG; // Quay lại từ đầu
+		}
+		break;
+
+		case FSM_FINGER_BLOCK_INF:
+		{
+			sprintf(msg, "[My Debug] FingerPrint TX-RX block infinity until BBB unlock\n");
+			SEGGER_SYSVIEW_PrintfTarget(msg);
+
+			SetDisplayState(SCREEN_STATE_INFINITY_LOCK);
+
+			if (xTaskNotifyWait(0, FINGERPRINT_TASK_UNLOCK_BY_BBB, &s_u32TaskNotifyValue, portMAX_DELAY) == pdTRUE)
+			{
+				sprintf(msg, "[My Debug] FingerPrint TX-RX run again by BBB unlock\n");
+				SEGGER_SYSVIEW_PrintfTarget(msg);
+
+				g_FingerState = FSM_FINGER_SEND_GENIMG;	// Quay lại từ đầu
+			}
 		}
 		break;
 	}

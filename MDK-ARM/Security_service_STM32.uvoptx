@@ -229,6 +229,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>g_bConfirmFPOKFlag</ItemText>
         </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>s_u8CountFPBAD,0x0A</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>
