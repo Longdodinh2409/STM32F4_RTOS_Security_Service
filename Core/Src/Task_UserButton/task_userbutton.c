@@ -6,8 +6,9 @@
 #include "task.h"
 #include "task_userbutton.h"
 #include "SEGGER_RTT.h"
+#include "../Task_FingerPrint/task_uart_FingerPrint.h"
 
-void ButtonTask(void* param)
+void Button_Task(void* param)
 {
     uint32_t press_time_ms = 0;
     const uint32_t LONG_PRESS_THRESHOLD = 3000; // 3 giây
@@ -24,6 +25,7 @@ void ButtonTask(void* param)
             {
                 // Đã giữ đủ 3 giây -> Chạy process của bạn ở đây
                 SEGGER_RTT_WriteString(0, "/n B1 User Button has been pressed for 3sec /n ");
+                Fingerprint_StartEnrollment(2);
                 
                 // Đợi người dùng thả nút ra để tránh trigger liên tục
                 while(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)

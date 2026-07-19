@@ -33,6 +33,9 @@ volatile bool bDataReady = false;
 
 // Biến toàn cục hoặc tĩnh quản lý FSM
 Fingerprint_State_t g_FingerState = FSM_NONE;
+EnrollState_t g_EnrollState = ENROLL_IDLE;
+static uint16_t s_u16EnrollID = 1;
+static bool s_bEnrollCommandSent = false;
 
 void Init_UART2_FingerPrint(void)
 {
@@ -147,6 +150,282 @@ void FingerPrint_UART_RxCallback(uint8_t rx_byte) {
 		// 4. Reset counter to prepare for next packet
 		byte_count = 0;
 		expected_total_length = 0;
+	}
+}
+
+void Fingerprint_StartEnrollment(uint16_t enrollID)
+{
+	if (g_EnrollState == ENROLL_IDLE) {
+		s_u16EnrollID = (enrollID == 0) ? 1 : enrollID;
+		g_EnrollState = ENROLL_START;
+		s_bEnrollCommandSent = false;
+		sprintf(msg, "[Enroll] Start new enrollment ID=%u\n", s_u16EnrollID);
+		SEGGER_SYSVIEW_PrintfTarget(msg);
+	}
+}
+
+void ProcessFingerPrintEnrollmentApplication(void)
+{
+	uint8_t u8confirmstate = 0;
+	static uint32_t s_u32TaskNotifyValue = 0;
+
+	if (g_EnrollState == ENROLL_START)
+	{
+		SetDisplayState(SCREEN_STATE_ENROLL);
+		g_EnrollState = ENROLL_GET_IMG_1;
+		s_bEnrollCommandSent = false;
+	}
+
+	switch (g_EnrollState)
+	{
+		case ENROLL_GET_IMG_1:
+		{
+			if (!s_bEnrollCommandSent)
+			{
+				sprintf(msg, "[Enroll] Send GEN_IMG for first capture\n");
+				SEGGER_SYSVIEW_PrintfTarget(msg);
+				Fingerprint_SendCommand(0x01, NULL, 0);
+				s_bEnrollCommandSent = true;
+			}
+
+			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(FINGERPRINT_TIMEOUT_MS)) == pdTRUE)
+			{
+				if (s_u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
+				{
+					u8confirmstate = g_stFingerPrintRXData.payload[0];
+					s_bEnrollCommandSent = false;
+					if (u8confirmstate == 0x00)
+					{
+						g_EnrollState = ENROLL_IMG2TZ_1;
+					}
+					else if (u8confirmstate == 0x02)
+					{
+						// No finger present, keep waiting for first finger
+						g_EnrollState = ENROLL_GET_IMG_1;
+					}
+					else
+					{
+						g_EnrollState = ENROLL_ERROR;
+					}
+				}
+			}
+		}
+		break;
+
+		case ENROLL_IMG2TZ_1:
+		{
+			if (!s_bEnrollCommandSent)
+			{
+				sprintf(msg, "[Enroll] Send IMG_2_TZ for buffer 1\n");
+				SEGGER_SYSVIEW_PrintfTarget(msg);
+				uint8_t params[1] = { 0x01 };
+				Fingerprint_SendCommand(0x02, params, 1);
+				s_bEnrollCommandSent = true;
+			}
+
+			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(FINGERPRINT_TIMEOUT_MS)) == pdTRUE)
+			{
+				if (s_u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
+				{
+					u8confirmstate = g_stFingerPrintRXData.payload[0];
+					s_bEnrollCommandSent = false;
+					if (u8confirmstate == 0x00)
+					{
+						g_EnrollState = ENROLL_WAIT_REMOVE;
+					}
+					else
+					{
+						g_EnrollState = ENROLL_ERROR;
+					}
+				}
+			}
+		}
+		break;
+
+		case ENROLL_WAIT_REMOVE:
+		{
+			if (!s_bEnrollCommandSent)
+			{
+				sprintf(msg, "[Enroll] Waiting for finger removal\n");
+				SEGGER_SYSVIEW_PrintfTarget(msg);
+				Fingerprint_SendCommand(0x01, NULL, 0);
+				s_bEnrollCommandSent = true;
+			}
+
+			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(FINGERPRINT_TIMEOUT_MS)) == pdTRUE)
+			{
+				if (s_u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
+				{
+					u8confirmstate = g_stFingerPrintRXData.payload[0];
+					s_bEnrollCommandSent = false;
+					if (u8confirmstate == 0x02)
+					{
+						g_EnrollState = ENROLL_GET_IMG_2;
+					}
+					else if (u8confirmstate == 0x00)
+					{
+						// Finger still present, wait again
+						g_EnrollState = ENROLL_WAIT_REMOVE;
+					}
+					else
+					{
+						g_EnrollState = ENROLL_ERROR;
+					}
+				}
+			}
+		}
+		break;
+
+		case ENROLL_GET_IMG_2:
+		{
+			if (!s_bEnrollCommandSent)
+			{
+				sprintf(msg, "[Enroll] Send GEN_IMG for second capture\n");
+				SEGGER_SYSVIEW_PrintfTarget(msg);
+				Fingerprint_SendCommand(0x01, NULL, 0);
+				s_bEnrollCommandSent = true;
+			}
+
+			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(FINGERPRINT_TIMEOUT_MS)) == pdTRUE)
+			{
+				if (s_u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
+				{
+					u8confirmstate = g_stFingerPrintRXData.payload[0];
+					s_bEnrollCommandSent = false;
+					if (u8confirmstate == 0x00)
+					{
+						g_EnrollState = ENROLL_IMG2TZ_2;
+					}
+					else if (u8confirmstate == 0x02)
+					{
+						g_EnrollState = ENROLL_GET_IMG_2;
+					}
+					else
+					{
+						g_EnrollState = ENROLL_ERROR;
+					}
+				}
+			}
+		}
+		break;
+
+		case ENROLL_IMG2TZ_2:
+		{
+			if (!s_bEnrollCommandSent)
+			{
+				sprintf(msg, "[Enroll] Send IMG_2_TZ for buffer 2\n");
+				SEGGER_SYSVIEW_PrintfTarget(msg);
+				uint8_t params[1] = { 0x02 };
+				Fingerprint_SendCommand(0x02, params, 1);
+				s_bEnrollCommandSent = true;
+			}
+
+			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(FINGERPRINT_TIMEOUT_MS)) == pdTRUE)
+			{
+				if (s_u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
+				{
+					u8confirmstate = g_stFingerPrintRXData.payload[0];
+					s_bEnrollCommandSent = false;
+					if (u8confirmstate == 0x00)
+					{
+						g_EnrollState = ENROLL_REG_MODEL;
+					}
+					else
+					{
+						g_EnrollState = ENROLL_ERROR;
+					}
+				}
+			}
+		}
+		break;
+
+		case ENROLL_REG_MODEL:
+		{
+			if (!s_bEnrollCommandSent)
+			{
+				sprintf(msg, "[Enroll] Send REG_MODEL\n");
+				SEGGER_SYSVIEW_PrintfTarget(msg);
+				Fingerprint_SendCommand(0x05, NULL, 0);
+				s_bEnrollCommandSent = true;
+			}
+
+			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(FINGERPRINT_TIMEOUT_MS)) == pdTRUE)
+			{
+				if (s_u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
+				{
+					u8confirmstate = g_stFingerPrintRXData.payload[0];
+					s_bEnrollCommandSent = false;
+					if (u8confirmstate == 0x00)
+					{
+						g_EnrollState = ENROLL_STORE_MODEL;
+					}
+					else
+					{
+						g_EnrollState = ENROLL_ERROR;
+					}
+				}
+			}
+		}
+		break;
+
+		case ENROLL_STORE_MODEL:
+		{
+			if (!s_bEnrollCommandSent)
+			{
+				sprintf(msg, "[Enroll] Send STORE_MODEL ID=%u\n", s_u16EnrollID);
+				SEGGER_SYSVIEW_PrintfTarget(msg);
+				uint8_t params[3] = { 0x01, (uint8_t)((s_u16EnrollID >> 8) & 0xFF), (uint8_t)(s_u16EnrollID & 0xFF) };
+				Fingerprint_SendCommand(0x06, params, 3);
+				s_bEnrollCommandSent = true;
+			}
+
+			if (xTaskNotifyWait(0, FINGERPRINT_RX_NEW_PACKET_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(FINGERPRINT_TIMEOUT_MS)) == pdTRUE)
+			{
+				if (s_u32TaskNotifyValue & FINGERPRINT_RX_NEW_PACKET_VALUE)
+				{
+					u8confirmstate = g_stFingerPrintRXData.payload[0];
+					s_bEnrollCommandSent = false;
+					if (u8confirmstate == 0x00)
+					{
+						g_EnrollState = ENROLL_SUCCESS;
+					}
+					else
+					{
+						g_EnrollState = ENROLL_ERROR;
+					}
+				}
+			}
+		}
+		break;
+
+		case ENROLL_SUCCESS:
+		{
+			SetDisplayState(SCREEN_STATE_PASS);
+			CommBBB_SendStateInfo((uint8_t)FSM_NEW_FINGERPRINT_ADDED, s_u16EnrollID, 0x00);
+			vTaskDelay(pdMS_TO_TICKS(1500));
+			g_EnrollState = ENROLL_IDLE;
+			s_bEnrollCommandSent = false;
+			g_FingerState = FSM_NONE;
+		}
+		break;
+
+		case ENROLL_ERROR:
+		{
+			SetDisplayState(SCREEN_STATE_FAIL);
+			CommBBB_SendStateInfo((uint8_t)g_EnrollState, s_u16EnrollID, 0xFF);
+			vTaskDelay(pdMS_TO_TICKS(1500));
+			g_EnrollState = ENROLL_IDLE;
+			s_bEnrollCommandSent = false;
+			g_FingerState = FSM_NONE;
+		}
+		break;
+
+		case ENROLL_IDLE:
+		default:
+		{
+			// idle until enrollment is started
+		}
+		break;
 	}
 }
 
@@ -475,9 +754,15 @@ void Fingerprint_StateMachine_Task(void* param)
 {
 	while (1)
 	{
-		ProcessFingerPrintApplication();
+		if (g_EnrollState != ENROLL_IDLE)
+		{
+			ProcessFingerPrintEnrollmentApplication();
+		}
+		else
+		{
+			ProcessFingerPrintApplication();
+		}
 
-		// --------------- End of function ---------------
-		// vTaskDelay(pdMS_TO_TICKS(10));
+		vTaskDelay(pdMS_TO_TICKS(10));
 	}
 }

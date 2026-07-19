@@ -52,3 +52,6 @@ security_service_stm32\task_userbutton.o: ..\Core\Src\Task_UserButton\task_userb
 security_service_stm32\task_userbutton.o: ../3rdParty/SEGGER/SEGGER/SEGGER_RTT.h
 security_service_stm32\task_userbutton.o: ../3rdParty/SEGGER/Config/SEGGER_RTT_Conf.h
 security_service_stm32\task_userbutton.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+security_service_stm32\task_userbutton.o: ..\Core\Src\Task_UserButton\../Task_FingerPrint/task_uart_FingerPrint.h
+security_service_stm32\task_userbutton.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+security_service_stm32\task_userbutton.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h

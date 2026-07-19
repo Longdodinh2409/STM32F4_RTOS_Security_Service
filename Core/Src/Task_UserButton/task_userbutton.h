@@ -1,6 +1,6 @@
 #ifndef TASK_USERBUTTON_H
 #define TASK_USERBUTTON_H
 
-void ButtonTask(void* param);
+void Button_Task(void* param);
 
 #endif // TASK_USERBUTTON_H

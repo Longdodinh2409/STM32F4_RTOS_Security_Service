@@ -85,7 +85,7 @@ void CommBBB_SendStateInfo(uint8_t u8State, uint16_t u16MatchedID, uint8_t u8Con
 
 	memset(acTxSEGGER, 0, 64);
 
-	if (u8State == (uint8_t)FSM_FINGER_WAIT_SEARCH) 
+	if ((u8State == (uint8_t)FSM_FINGER_WAIT_SEARCH) || (u8State == (uint8_t)FSM_NEW_FINGERPRINT_ADDED))
 	{
 		if (u8ConfirmState == 0x00)		// Found finger!!!
 		{
