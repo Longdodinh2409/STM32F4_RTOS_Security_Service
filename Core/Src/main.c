@@ -130,6 +130,7 @@ int main(void)
 	vSetVarulMaxPRIGROUPValue();
 	Init_UART1_FingerPrint();
 	Init_UART2_FingerPrint();
+	ClearAllDisplayState();
 	/****************************** SYSTEM AREA  ******************************/
 
 	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);

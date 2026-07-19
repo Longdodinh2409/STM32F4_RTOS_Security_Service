@@ -6,10 +6,13 @@
 #include <stdio.h>
 #include "../Task_FingerPrint/task_uart_FingerPrint.h"
 #include "../Task_ParsingData/task_ParsingData.h"
+#include "../Comm_BBB/Comm_BBB.h"
 
 extern char msg[128];
 extern Fingerprint_State_t g_FingerState;
 extern uint32_t g_u32TimeStamp;
+extern TaskHandle_t task_FP_handler;
+
 char g_acMemberNameDisplay[MAX_LENGTH_NAME_MEMBER_DISPLAY];
 
 static E_SCREEN_STATE s_u8ScreenState;
@@ -291,8 +294,6 @@ void InitOLEDScreen(void)
 {
 	SSD1306_Init();
 
-	ClearAllDisplayState();
-
 	SetDisplayState(SCREEN_STATE_INIT);
 //	SSD1306_DrawBitmap(2, 0, garfield_128x64, 128, 64, SSD1306_COLOR_WHITE);
 //	SSD1306_UpdateScreen();
@@ -319,7 +320,7 @@ void ProcessDisplay(void)
 		}
 		else if (u8CurrentState == SCREEN_STATE_TEMP_LOCK)
 		{
-			s_bTempLockInitialized = false;
+			s_bTempLockInitialized = true;
 		}
 	}
 
@@ -362,9 +363,9 @@ void ProcessDisplay(void)
 			uint32_t u32ElapsedTimeSec = 0;
 			uint32_t u32RemainingTimeSec = 0;
 
-			if (s_bTempLockInitialized == false)
+			if (s_bTempLockInitialized == true)
 			{
-				s_bTempLockInitialized = true;
+				s_bTempLockInitialized = false;
 				s_u32TempLockStartTimeStamp = g_u32TimeStamp;
 
 				if (g_FingerState == FSM_FINGER_BLOCK_5M)
@@ -390,6 +391,7 @@ void ProcessDisplay(void)
 			if (u32RemainingTimeSec == 0)
 			{
 				// SetDisplayState(SCREEN_STATE_STANDBY);
+				xTaskNotify(task_FP_handler, FINGERPRINT_DONE_BLOCK_BY_DISPLAY, eSetBits);
 			}
 			else
 			{
