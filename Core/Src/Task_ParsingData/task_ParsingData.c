@@ -249,6 +249,13 @@ void ProcessParsingMemberName(void)
 		if (strcmp(g_acMemberNameBuffer, "Unknown") != 0)	// other name than "Unknown"
 		{
 			memcpy(g_acMemberNameDisplay, (void *)g_acMemberNameBuffer, MAX_LENGTH_NAME_MEMBER_BUFFER);
+			// Display
+			Fingerprint_SetConfirmFPOKEnableFlag(true);
+		}
+		else
+		{
+			// Display
+			Fingerprint_SetConfirmFPBADEnableFlag(true);
 		}
 	}
 }

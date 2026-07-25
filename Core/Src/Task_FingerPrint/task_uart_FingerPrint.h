@@ -82,6 +82,11 @@ void ProcessFingerPrintEnrollmentApplication(void);
 void Fingerprint_StartEnrollment(uint16_t enrollID);
 void FingerPrint_UART_RxCallback(uint8_t rx_byte);
 
+bool Fingerprint_GetConfirmFPOKEnableFlag(void);
+void Fingerprint_SetConfirmFPOKEnableFlag(bool enable);
+bool Fingerprint_GetConfirmFPBADEnableFlag(void);
+void Fingerprint_SetConfirmFPBADEnableFlag(bool enable);
+
 void Fingerprint_StateMachine_Task(void* param);
 
 #endif // TASK_UART_FINGERPRINT_H

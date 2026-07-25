@@ -483,14 +483,14 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 	if (huart->Instance == USART2)	// FingerPrint
 	{
 		// For debugging
-		sprintf(msg, "[My Debug] Send FingerPrint TX data done!\n");
-		SEGGER_SYSVIEW_PrintfTarget(msg);
+		// sprintf(msg, "[My Debug] Send FingerPrint TX data done!\n");
+		// SEGGER_SYSVIEW_PrintfTarget(msg);
 	}
 	else if (huart->Instance == USART1)	// BBB
 	{
 		// For debugging
-		sprintf(msg, "[My Debug] Send BBB TX data done!\n");
-		SEGGER_SYSVIEW_PrintfTarget(msg);
+		// sprintf(msg, "[My Debug] Send BBB TX data done!\n");
+		// SEGGER_SYSVIEW_PrintfTarget(msg);
 	}
 }
 
