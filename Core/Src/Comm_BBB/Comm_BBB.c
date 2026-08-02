@@ -14,7 +14,6 @@
 extern UART_HandleTypeDef huart1;
 extern uint8_t UART1_rx_data;
 extern TaskHandle_t task_PD_handler;
-extern char g_acRXBufferBBB[BBB_RX_MAX_LEN];
 
 uint8_t rx_data;
 char rx_buffer[BBB_RX_MAX_LEN];
@@ -209,6 +208,12 @@ void BBB_UART_RxCpltCallback(uint8_t rx_data)
 					{
 						BaseType_t xHigherPriorityTaskWokenID = pdFALSE;
 						xTaskNotifyFromISR(task_PD_handler, PARSING_MEMBER_ID_AVAILABLE_TO_ADD_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWokenID);
+						portYIELD_FROM_ISR(xHigherPriorityTaskWokenID);
+					}
+					else if (u8BBBState == (uint8_t)FSM_FINGER_UNBLOCK)
+					{
+						BaseType_t xHigherPriorityTaskWokenID = pdFALSE;
+						xTaskNotifyFromISR(task_PD_handler, PARSING_END_BLOCK_INIFINITY_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWokenID);
 						portYIELD_FROM_ISR(xHigherPriorityTaskWokenID);
 					}
 				}

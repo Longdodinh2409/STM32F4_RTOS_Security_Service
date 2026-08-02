@@ -74,6 +74,11 @@ void ParsingRXData_Task(void* param) {
 			{
 				ProcessParsingMemberIDAvailableToAdd();
 			}
+
+			if (ulNotificationValue & PARSING_END_BLOCK_INIFINITY_SRC_BBB_BIT)
+			{
+				ProcessUnBlockInifinity();
+			}
 		}
 	}
 }
@@ -277,5 +282,18 @@ void ProcessParsingMemberIDAvailableToAdd(void)
 	{
 		Fingerprint_SetEnrollID(g_u16MemberIDAvailableToAdd);
 		xTaskNotify(task_FP_handler, FINGERPRINT_BBB_ASSIGN_ID_READY_VALUE, eSetBits);
+	}
+}
+
+void ProcessUnBlockInifinity(void)
+{
+	int parsed_count;
+	uint8_t parsed_state = 0;
+
+	parsed_count = sscanf(g_acRXBufferBBB, "#State=%hhu", &parsed_state);
+
+	if ((parsed_count == 1) && (parsed_state == (uint8_t)FSM_FINGER_UNBLOCK))
+	{
+		xTaskNotify(task_FP_handler, FINGERPRINT_END_BLOCK_INFINITY_VALUE, eSetBits);
 	}
 }

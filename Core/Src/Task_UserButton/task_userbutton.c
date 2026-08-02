@@ -25,7 +25,7 @@ void Button_Task(void* param)
             {
                 // Đã giữ đủ 3 giây -> Chạy process của bạn ở đây
                 SEGGER_RTT_WriteString(0, "/n B1 User Button has been pressed for 3sec /n ");
-                Fingerprint_StartEnrollment(NEW_MEMBER_ID);
+                Fingerprint_StartEnrollment();
                 
                 // Đợi người dùng thả nút ra để tránh trigger liên tục
                 while(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)

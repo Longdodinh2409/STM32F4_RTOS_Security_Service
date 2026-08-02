@@ -18,6 +18,7 @@
 #define FINGERPRINT_RX_NEW_PACKET_VALUE 	(uint32_t)(0x01)
 #define FINGERPRINT_DONE_BLOCK_BY_DISPLAY		(uint32_t)(0x02)
 #define FINGERPRINT_BBB_ASSIGN_ID_READY_VALUE 	(uint32_t)(0x04)
+#define FINGERPRINT_END_BLOCK_INFINITY_VALUE			(uint32_t)(0x08)
 
 // TX - RX frame
 #pragma pack(push, 1)
