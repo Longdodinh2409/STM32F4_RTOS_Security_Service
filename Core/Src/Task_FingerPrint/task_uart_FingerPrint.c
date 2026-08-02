@@ -10,6 +10,7 @@ extern UART_HandleTypeDef huart2;
 extern uint8_t UART2_rx_data;
 extern TaskHandle_t task_PD_handler, task_FP_handler;
 extern char msg[128];
+extern char g_acRXBufferBBB[BBB_RX_MAX_LEN];
 
 static uint8_t s_u8CountConfirmFPOK = 0;
 static bool s_u8CountConfirmFPOKEnableFlag = false;
@@ -56,8 +57,14 @@ volatile bool bDataReady = false;
 // Biến toàn cục hoặc tĩnh quản lý FSM
 Fingerprint_State_t g_FingerState = FSM_NONE;
 EnrollState_t g_EnrollState = ENROLL_IDLE;
-static uint16_t s_u16EnrollID = 1;
+static uint16_t s_u16EnrollID = 0;
 static bool s_bEnrollCommandSent = false;
+static uint32_t s_u32EnrollStartTick = 0;
+
+void Fingerprint_SetEnrollID(uint16_t enrollID)
+{
+	s_u16EnrollID = enrollID;
+}
 
 void Init_UART2_FingerPrint(void)
 {
@@ -175,13 +182,14 @@ void FingerPrint_UART_RxCallback(uint8_t rx_byte) {
 	}
 }
 
-void Fingerprint_StartEnrollment(uint16_t enrollID)
+void Fingerprint_StartEnrollment(void)
 {
 	if (g_EnrollState == ENROLL_IDLE) {
-		s_u16EnrollID = (enrollID == 0) ? 1 : enrollID;
+		s_u16EnrollID = 0;
 		g_EnrollState = ENROLL_START;
 		s_bEnrollCommandSent = false;
-		sprintf(msg, "[Enroll] Start new enrollment ID=%u\n", s_u16EnrollID);
+		s_u32EnrollStartTick = HAL_GetTick();
+		sprintf(msg, "[Enroll] Start new enrollment request (BBB will assign ID)\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 	}
 }
@@ -194,8 +202,40 @@ void ProcessFingerPrintEnrollmentApplication(void)
 	if (g_EnrollState == ENROLL_START)
 	{
 		SetDisplayState(SCREEN_STATE_ENROLL);
-		g_EnrollState = ENROLL_GET_IMG_1;
-		s_bEnrollCommandSent = false;
+
+		if (!s_bEnrollCommandSent)
+		{
+			CommBBB_RequestEnrollID();
+			s_bEnrollCommandSent = true;
+		}
+
+		if (xTaskNotifyWait(0, FINGERPRINT_BBB_ASSIGN_ID_READY_VALUE, &s_u32TaskNotifyValue, pdMS_TO_TICKS(ENROLL_START_TIMEOUT_MS)) == pdTRUE)
+		{
+			if (s_u32TaskNotifyValue & FINGERPRINT_BBB_ASSIGN_ID_READY_VALUE)
+			{
+				if (s_u16EnrollID != 0)
+				{
+					sprintf(msg, "[Enroll] Assigned new ID from BBB = %u\n", s_u16EnrollID);
+					SEGGER_SYSVIEW_PrintfTarget(msg);
+					g_EnrollState = ENROLL_GET_IMG_1;
+					s_bEnrollCommandSent = false;
+				}
+				else
+				{
+					sprintf(msg, "[Enroll] Received notify but ID is invalid, enter ENROLL_ERROR\n");
+					SEGGER_SYSVIEW_PrintfTarget(msg);
+					CommBBB_SendEnrollIDError(0xFF);
+					g_EnrollState = ENROLL_ERROR;
+				}
+			}
+		}
+		else
+		{
+			sprintf(msg, "[Enroll] Wait for BBB ID timeout, enter ENROLL_ERROR\n");
+			SEGGER_SYSVIEW_PrintfTarget(msg);
+			CommBBB_SendEnrollIDError(0xFF);
+			g_EnrollState = ENROLL_ERROR;
+		}
 	}
 
 	switch (g_EnrollState)

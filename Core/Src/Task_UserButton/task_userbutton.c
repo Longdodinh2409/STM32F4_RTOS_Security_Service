@@ -8,8 +8,6 @@
 #include "SEGGER_RTT.h"
 #include "../Task_FingerPrint/task_uart_FingerPrint.h"
 
-#define NEW_MEMBER_ID (4)
-
 void Button_Task(void* param)
 {
     uint32_t press_time_ms = 0;

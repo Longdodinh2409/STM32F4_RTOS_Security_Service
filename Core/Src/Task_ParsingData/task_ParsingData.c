@@ -19,6 +19,7 @@ extern bool bIsClearStandbyLayoutByNewTS;
 
 uint32_t g_u32TimeStamp = 0;
 uint8_t g_u8SearchMemberStepID = 0;
+uint16_t g_u16MemberIDAvailableToAdd = 0;
 char g_acMemberNameBuffer[MAX_LENGTH_NAME_MEMBER_BUFFER];
 
 uint32_t ulNotificationValue = 0;
@@ -67,6 +68,11 @@ void ParsingRXData_Task(void* param) {
 			if (ulNotificationValue & PARSING_MEMBER_NAME_SRC_BBB_BIT)
 			{
 				ProcessParsingMemberName();
+			}
+
+			if (ulNotificationValue & PARSING_MEMBER_ID_AVAILABLE_TO_ADD_SRC_BBB_BIT)
+			{
+				ProcessParsingMemberIDAvailableToAdd();
 			}
 		}
 	}
@@ -257,5 +263,19 @@ void ProcessParsingMemberName(void)
 			// Display
 			Fingerprint_SetConfirmFPBADEnableFlag(true);
 		}
+	}
+}
+
+void ProcessParsingMemberIDAvailableToAdd(void)
+{
+	int parsed_count;
+	uint8_t parsed_state = 0;
+
+	parsed_count = sscanf(g_acRXBufferBBB, "#State=%hhu,#ID=%hu", &parsed_state, &g_u16MemberIDAvailableToAdd);
+
+	if ((parsed_count == 2) && (parsed_state == (uint8_t)FSM_ENROLL_REQUEST_ID))
+	{
+		Fingerprint_SetEnrollID(g_u16MemberIDAvailableToAdd);
+		xTaskNotify(task_FP_handler, FINGERPRINT_BBB_ASSIGN_ID_READY_VALUE, eSetBits);
 	}
 }

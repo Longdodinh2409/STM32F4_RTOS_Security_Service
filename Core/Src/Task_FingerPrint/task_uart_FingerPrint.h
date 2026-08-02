@@ -13,9 +13,11 @@
 #define RX_BUFFER_SIZE 				(256)
 
 #define FINGERPRINT_TIMEOUT_MS      (1000)
+#define ENROLL_START_TIMEOUT_MS     (5000)
 
 #define FINGERPRINT_RX_NEW_PACKET_VALUE 	(uint32_t)(0x01)
 #define FINGERPRINT_DONE_BLOCK_BY_DISPLAY		(uint32_t)(0x02)
+#define FINGERPRINT_BBB_ASSIGN_ID_READY_VALUE 	(uint32_t)(0x04)
 
 // TX - RX frame
 #pragma pack(push, 1)
@@ -56,12 +58,15 @@ typedef enum {
 
 	FSM_SYSTEM_STM32F4_WAKEUP,
 
+	FSM_ENROLL_REQUEST_ID,      // STM32F4 yêu cầu BBB cấp ID mới cho enrollment
+	FSM_ENROLL_ID_ERROR,        // BBB không cấp được ID mới cho enrollment
 	FSM_NEW_FINGERPRINT_ADDED,
+	FSM_REMOVE_SPECIFIC_FINGERPRINT
 } Fingerprint_State_t;
 
 typedef enum {
     ENROLL_IDLE = 0,            // Trạng thái rảnh
-    ENROLL_START,               // Bắt đầu quá trình thêm vân tay (Khởi tạo ID cần lưu)
+    ENROLL_START,               // Bắt đầu quá trình thêm vân tay (chờ ID cần lưu từ phía BBB)
     ENROLL_GET_IMG_1,           // Chờ ngón tay chạm lần 1
     ENROLL_IMG2TZ_1,            // Đang xử lý ảnh lần 1
     ENROLL_WAIT_REMOVE,         // Yêu cầu nhấc ngón tay ra
@@ -79,7 +84,8 @@ void Fingerprint_SendCommand(uint8_t instructionCode, uint8_t *params, uint8_t p
 
 void ProcessFingerPrintApplication(void);
 void ProcessFingerPrintEnrollmentApplication(void);
-void Fingerprint_StartEnrollment(uint16_t enrollID);
+void Fingerprint_StartEnrollment(void);
+void Fingerprint_SetEnrollID(uint16_t enrollID);
 void FingerPrint_UART_RxCallback(uint8_t rx_byte);
 
 bool Fingerprint_GetConfirmFPOKEnableFlag(void);

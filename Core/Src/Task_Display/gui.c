@@ -344,7 +344,7 @@ static void ProcessDisplayEnrollStateScreen(EnrollState_t u8CurrEnrollState)
 			if (s_bBlinkState)
 			{
 				SSD1306_Clear();
-				DrawCenteredText("- ENROLL START -", 27);
+				DrawCenteredText("- ENROLL PREPARING -", 27);
 			}
 			else
 			{
