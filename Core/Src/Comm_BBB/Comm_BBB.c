@@ -14,6 +14,7 @@
 extern UART_HandleTypeDef huart1;
 extern uint8_t UART1_rx_data;
 extern TaskHandle_t task_PD_handler;
+extern char g_acRXBufferBBB[BBB_RX_MAX_LEN];
 
 uint8_t rx_data;
 char rx_buffer[BBB_RX_MAX_LEN];
@@ -85,7 +86,7 @@ void CommBBB_SendStateInfo(uint8_t u8State, uint16_t u16MatchedID, uint8_t u8Con
 
 	memset(acTxSEGGER, 0, 64);
 
-	if (u8State == (uint8_t)FSM_FINGER_WAIT_SEARCH) 
+	if ((u8State == (uint8_t)FSM_FINGER_WAIT_SEARCH) || (u8State == (uint8_t)FSM_NEW_FINGERPRINT_ADDED))
 	{
 		if (u8ConfirmState == 0x00)		// Found finger!!!
 		{
@@ -129,6 +130,45 @@ void CommBBB_SendStateInfo(uint8_t u8State, uint16_t u16MatchedID, uint8_t u8Con
 	SEGGER_RTT_WriteString(0, acTxBBBBuffer);
 }
 
+void CommBBB_RequestEnrollID(void)
+{
+	char acTxSEGGER[64];
+
+	CommBBB_SendStateInfo((uint8_t)FSM_ENROLL_REQUEST_ID, 0, 0);
+
+	if (huart1.gState == HAL_UART_STATE_READY)
+	{
+		SEGGER_RTT_WriteString(0, "Request ID sent via FSM state to BBB.\n");
+	} 
+	else 
+	{
+		SEGGER_RTT_WriteString(0, "Request ID TX BBB is BUSY. Packet dropped!\n");
+	}
+
+	sprintf(acTxSEGGER, "Request enroll ID state = %d\n", (uint8_t)FSM_ENROLL_REQUEST_ID);
+	SEGGER_RTT_WriteString(0, acTxSEGGER);
+}
+
+void CommBBB_SendEnrollIDError(uint8_t u8ErrorCode)
+{
+	char acTxSEGGER[64];
+
+	(void)u8ErrorCode;
+	CommBBB_SendStateInfo((uint8_t)FSM_ENROLL_ID_ERROR, 0, 0);
+
+	if (huart1.gState == HAL_UART_STATE_READY)
+	{
+		SEGGER_RTT_WriteString(0, "Enroll ID error sent via FSM state to BBB.\n");
+	}
+	else
+	{
+		SEGGER_RTT_WriteString(0, "Enroll ID error TX BBB is BUSY. Packet dropped!\n");
+	}
+
+	sprintf(acTxSEGGER, "Enroll ID error state = %d\n", (uint8_t)FSM_ENROLL_ID_ERROR);
+	SEGGER_RTT_WriteString(0, acTxSEGGER);
+}
+
 void Init_UART1_FingerPrint(void)
 {
 	HAL_UART_Receive_IT(&huart1, &UART1_rx_data, 1);
@@ -152,13 +192,25 @@ void BBB_UART_RxCpltCallback(uint8_t rx_data)
 				xTaskNotifyFromISR(task_PD_handler, PARSING_TIMESTAMP_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWoken);
 				portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 			}
-			else
+			else if (!strncmp(g_acRXBufferBBB, "#State", 6))
 			{
-				if (!strncmp(g_acRXBufferBBB, "#State", 6))
+				uint8_t u8BBBState = 0;
+				int parsed_state_count = sscanf(g_acRXBufferBBB, "#State=%hhu", &u8BBBState);
+
+				if (parsed_state_count == 1)
 				{
-					BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-					xTaskNotifyFromISR(task_PD_handler, PARSING_MEMBER_NAME_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWoken);
-					portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+					if (u8BBBState == (uint8_t)FSM_FINGER_WAIT_SEARCH)
+					{
+						BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+						xTaskNotifyFromISR(task_PD_handler, PARSING_MEMBER_NAME_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWoken);
+						portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+					}
+					else if (u8BBBState == (uint8_t)FSM_ENROLL_REQUEST_ID)
+					{
+						BaseType_t xHigherPriorityTaskWokenID = pdFALSE;
+						xTaskNotifyFromISR(task_PD_handler, PARSING_MEMBER_ID_AVAILABLE_TO_ADD_SRC_BBB_BIT, eSetBits, &xHigherPriorityTaskWokenID);
+						portYIELD_FROM_ISR(xHigherPriorityTaskWokenID);
+					}
 				}
 			}
 

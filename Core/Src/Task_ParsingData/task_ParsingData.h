@@ -11,6 +11,7 @@
 #define PARSING_DATA_SRC_FINGERPRINT_BIT		(0x01)
 #define PARSING_TIMESTAMP_SRC_BBB_BIT			(0x02)
 #define PARSING_MEMBER_NAME_SRC_BBB_BIT			(0x04)
+#define PARSING_MEMBER_ID_AVAILABLE_TO_ADD_SRC_BBB_BIT		(0x08)
 
 #define GMT_7								(7)
 
@@ -25,5 +26,6 @@ int is_leap_year(int year);
 void ProcessParsingTimeStamp(void);
 void ProcessParsingTimeDisplay(uint32_t timestamp, int timezone_offset_hours);
 void ProcessParsingMemberName(void);
+void ProcessParsingMemberIDAvailableToAdd(void);
 
 #endif // TASK_PARSINGDATA_H

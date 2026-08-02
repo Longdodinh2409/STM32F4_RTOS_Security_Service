@@ -713,6 +713,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Task_UserButton</GroupName>
+          <Files>
+            <File>
+              <FileName>task_userbutton.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\Task_UserButton\task_userbutton.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Comm_BBB</GroupName>
           <Files>
             <File>

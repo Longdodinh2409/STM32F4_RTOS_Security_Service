@@ -10,6 +10,7 @@
 
 extern char msg[128];
 extern Fingerprint_State_t g_FingerState;
+extern EnrollState_t g_EnrollState;
 extern uint32_t g_u32TimeStamp;
 extern TaskHandle_t task_FP_handler;
 
@@ -300,10 +301,143 @@ void InitOLEDScreen(void)
 //	vTaskDelay(pdMS_TO_TICKS(3000));
 }
 
+static void DrawCenteredText(const char *text, uint8_t y)
+{
+	uint8_t textWidth = (uint8_t)(strlen(text) * 7);
+	uint8_t x = (textWidth < SSD1306_WIDTH) ? (uint8_t)((SSD1306_WIDTH - textWidth) / 2) : 0;
+
+	SSD1306_GotoXY(x, y);
+	SSD1306_Puts((char *)text, &Font_7x10, SSD1306_COLOR_WHITE);
+}
+
+static void ProcessDisplayEnrollStateScreen(EnrollState_t u8CurrEnrollState)
+{
+	static EnrollState_t s_u8PrevEnrollState = ENROLL_IDLE;
+	static bool s_bBlinkState = true;
+
+	if (u8CurrEnrollState != s_u8PrevEnrollState)
+	{
+		s_u8PrevEnrollState = u8CurrEnrollState;
+		s_bBlinkState = true;
+
+		// if (u8CurrEnrollState != s_u8PrevEnrollState)
+		{
+			SSD1306_Clear();
+			s_u8PrevEnrollState = u8CurrEnrollState;
+
+			if ((u8CurrEnrollState == ENROLL_GET_IMG_1)
+				|| (u8CurrEnrollState == ENROLL_GET_IMG_2)
+				|| (u8CurrEnrollState == ENROLL_IMG2TZ_1)
+				|| (u8CurrEnrollState == ENROLL_IMG2TZ_2)
+				|| (u8CurrEnrollState == ENROLL_REG_MODEL)
+				|| (u8CurrEnrollState == ENROLL_STORE_MODEL))
+			{
+				bIsInitScanBackground = true;
+			}
+		}
+	}
+
+	switch (u8CurrEnrollState)
+	{
+		case ENROLL_START:
+		{
+			if (s_bBlinkState)
+			{
+				SSD1306_Clear();
+				DrawCenteredText("- ENROLL PREPARING -", 27);
+			}
+			else
+			{
+				SSD1306_Clear();
+			}
+
+			s_bBlinkState = !s_bBlinkState;
+			SSD1306_UpdateScreen();
+			vTaskDelay(pdMS_TO_TICKS(500));
+		}
+		break;
+
+		case ENROLL_GET_IMG_1:
+		case ENROLL_GET_IMG_2:
+		case ENROLL_IMG2TZ_1:
+		case ENROLL_IMG2TZ_2:
+		case ENROLL_REG_MODEL:
+		case ENROLL_STORE_MODEL:
+		{
+			ProcessDisplayScanning();
+		}
+		break;
+
+		case ENROLL_WAIT_REMOVE:
+		{
+			if (s_bBlinkState)
+			{
+				SSD1306_Clear();
+				DrawCenteredText("- REMOVE FINGER -", 20);
+				DrawCenteredText("Then place finger again", 38);
+			}
+			else
+			{
+				SSD1306_Clear();
+			}
+
+			s_bBlinkState = !s_bBlinkState;
+			SSD1306_UpdateScreen();
+			vTaskDelay(pdMS_TO_TICKS(500));
+		}
+		break;
+
+		case ENROLL_SUCCESS:
+		{
+			SSD1306_DrawBitmap(40, 0, pass_access_bitmap, 48, 48, SSD1306_COLOR_WHITE);
+			SSD1306_GotoXY(10, 53);
+			SSD1306_Puts("Enroll success", &Font_7x10, SSD1306_COLOR_WHITE);
+			SSD1306_UpdateScreen();
+			vTaskDelay(pdMS_TO_TICKS(1000));
+		}
+		break;
+
+		case ENROLL_ERROR:
+		{
+			SSD1306_DrawBitmap(40, 0, fail_access_bitmap, 48, 48, SSD1306_COLOR_WHITE);
+			SSD1306_GotoXY(18, 53);
+			SSD1306_Puts("Enroll failed", &Font_7x10, SSD1306_COLOR_WHITE);
+			SSD1306_UpdateScreen();
+			vTaskDelay(pdMS_TO_TICKS(1000));
+		}
+		break;
+
+		case ENROLL_IDLE:
+		default:
+		{
+			SSD1306_Clear();
+			DrawCenteredText("Enroll ready", 18);
+			DrawCenteredText("Stand by", 36);
+			SSD1306_UpdateScreen();
+			vTaskDelay(pdMS_TO_TICKS(1000));
+		}
+		break;
+	}
+}
+
 void ProcessDisplay(void)
 {
 	static E_SCREEN_STATE s_u8PrevScreenState = SCREEN_STATE_MAX_CNT;
 	E_SCREEN_STATE u8CurrentState = GetDisplayState();
+
+	if (g_EnrollState != ENROLL_IDLE)
+	{
+		if (u8CurrentState != SCREEN_STATE_ENROLL)
+		{
+			SetDisplayState(SCREEN_STATE_ENROLL);
+			return;
+		}
+	}
+	else if (u8CurrentState == SCREEN_STATE_ENROLL)
+	{
+		SetDisplayState(SCREEN_STATE_STANDBY);
+		return;
+	}
 
 	if (u8CurrentState != s_u8PrevScreenState)
 	{
@@ -342,6 +476,12 @@ void ProcessDisplay(void)
 		case SCREEN_STATE_PROCESSING:
 		{
 			ProcessDisplayScanning();
+		}
+		break;
+
+		case SCREEN_STATE_ENROLL:
+		{
+			ProcessDisplayEnrollStateScreen(g_EnrollState);
 		}
 		break;
 
