@@ -12,6 +12,7 @@
 #define PARSING_TIMESTAMP_SRC_BBB_BIT			(0x02)
 #define PARSING_MEMBER_NAME_SRC_BBB_BIT			(0x04)
 #define PARSING_MEMBER_ID_AVAILABLE_TO_ADD_SRC_BBB_BIT		(0x08)
+#define PARSING_END_BLOCK_INIFINITY_SRC_BBB_BIT				(0x10)
 
 #define GMT_7								(7)
 
@@ -27,5 +28,6 @@ void ProcessParsingTimeStamp(void);
 void ProcessParsingTimeDisplay(uint32_t timestamp, int timezone_offset_hours);
 void ProcessParsingMemberName(void);
 void ProcessParsingMemberIDAvailableToAdd(void);
+void ProcessUnBlockInifinity(void);
 
 #endif // TASK_PARSINGDATA_H

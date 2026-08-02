@@ -59,7 +59,7 @@ Fingerprint_State_t g_FingerState = FSM_NONE;
 EnrollState_t g_EnrollState = ENROLL_IDLE;
 static uint16_t s_u16EnrollID = 0;
 static bool s_bEnrollCommandSent = false;
-static uint32_t s_u32EnrollStartTick = 0;
+// static uint32_t s_u32EnrollStartTick = 0;
 
 void Fingerprint_SetEnrollID(uint16_t enrollID)
 {
@@ -188,7 +188,7 @@ void Fingerprint_StartEnrollment(void)
 		s_u16EnrollID = 0;
 		g_EnrollState = ENROLL_START;
 		s_bEnrollCommandSent = false;
-		s_u32EnrollStartTick = HAL_GetTick();
+		// s_u32EnrollStartTick = HAL_GetTick();
 		sprintf(msg, "[Enroll] Start new enrollment request (BBB will assign ID)\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 	}
@@ -695,13 +695,13 @@ void ProcessFingerPrintApplication(void)
 							Fingerprint_SetConfirmFPBADEnableFlag(false);
 
 								s_u8CountFPBAD++;
-								/*if (s_u8CountFPBAD == 15)
+								if (s_u8CountFPBAD == 15)
 								{
 									s_u8CountFPBAD = 0;
 									g_FingerState = FSM_FINGER_BLOCK_INF;
 									return;
 								}
-								else*/ if (s_u8CountFPBAD == 10)
+								else if (s_u8CountFPBAD == 10)
 								{
 									s_u8CountFPBAD = 0;
 									g_FingerState = FSM_FINGER_BLOCK_10M;
@@ -763,7 +763,7 @@ void ProcessFingerPrintApplication(void)
 			// Comm BBB: result of Finger: Valid or not?!?
 			CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
 
-			// Wait for wake up BBB
+			// Wait for Block time out
 			if (xTaskNotifyWait(0, FINGERPRINT_DONE_BLOCK_BY_DISPLAY, &s_u32TaskNotifyValue, portMAX_DELAY) == pdTRUE)	
 			{
 				if (s_u32TaskNotifyValue & FINGERPRINT_DONE_BLOCK_BY_DISPLAY)
@@ -771,7 +771,7 @@ void ProcessFingerPrintApplication(void)
 					CommBBB_SendStateInfo((uint8_t)FSM_FINGER_UNBLOCK, 0, 0);
 				}
 			}
-
+			
 			g_FingerState = FSM_FINGER_SEND_GENIMG; // Quay lại từ đầu
 			s_u8BackToStandByFlag = true;
 		}
@@ -784,13 +784,18 @@ void ProcessFingerPrintApplication(void)
 
 			SetDisplayState(SCREEN_STATE_INFINITY_LOCK);
 
-			if (xTaskNotifyWait(0, FINGERPRINT_DONE_BLOCK_BY_DISPLAY, &s_u32TaskNotifyValue, portMAX_DELAY) == pdTRUE)
-			{
-				sprintf(msg, "[My Debug] FingerPrint TX-RX run again by BBB unlock\n");
-				SEGGER_SYSVIEW_PrintfTarget(msg);
+			CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
 
-				g_FingerState = FSM_FINGER_SEND_GENIMG;	// Quay lại từ đầu
-				s_u8BackToStandByFlag = true;
+			if (xTaskNotifyWait(0, FINGERPRINT_END_BLOCK_INFINITY_VALUE, &s_u32TaskNotifyValue, portMAX_DELAY) == pdTRUE)
+			{
+				// sprintf(msg, "[My Debug] FingerPrint TX-RX run again by BBB unlock\n");
+				// SEGGER_SYSVIEW_PrintfTarget(msg);
+
+				if (s_u32TaskNotifyValue & FINGERPRINT_END_BLOCK_INFINITY_VALUE)
+				{
+					g_FingerState = FSM_FINGER_SEND_GENIMG;	// Quay lại từ đầu
+					s_u8BackToStandByFlag = true;
+				}
 			}
 		}
 		break;
