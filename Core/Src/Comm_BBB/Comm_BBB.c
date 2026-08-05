@@ -30,54 +30,6 @@ static uint16_t CommBBB_GetFrameLength(const char *pFrame)
 	return (uint16_t)strlen(pFrame);
 }
 
-void InitUARTBBB(void)
-{
-	HAL_UART_Receive_IT(&huart1, &rx_data, 1);
-
-	printf("STM32F411VE is ready! Enter your command: \r\n");
-	fflush(stdout);
-	memset(rx_buffer, 0, sizeof(rx_buffer));
-	rx_index = 0;
-	cmd = DEFAULT_CMD_VALUE;
-}
-
-uint8_t ProcessBBB(void)
-{
-	if (data_ready == 1)
-	{
-		processing = 1;  // set flag to avoid callback set data_ready again
-		data_ready = 0;
-
-	  // Processing
-//	  cmd = DEFAULT_CMD_VALUE;
-	  cmd = atoi(rx_buffer);
-	  memset(rx_buffer, 0, sizeof(rx_buffer));
-	  rx_index = 0;
-
-	  if (cmd != DEFAULT_CMD_VALUE)
-	  {
-		  if (cmd > 0)
-		  {
-			  printf("\nReceived '%d' \n", cmd);
-		  }
-		  else
-		  {
-			  printf("\n[Err] U just sent rubbish: '%s'. Try again!\n", rx_buffer);
-		  }
-
-		  printf("Enter your command: \r\n");
-		  //	fflush(stdout);
-		  processing = 0;
-
-		  return cmd;
-	  }
-
-
-	}
-	processing = 0;  // set flag off, callback can set data_ready again
-	return DEFAULT_CMD_VALUE;
-}
-
 void CommBBB_SendStateInfo(uint8_t u8State, uint16_t u16MatchedID, uint8_t u8ConfirmState)
 {
 	char acTxSEGGER[64];
@@ -107,14 +59,11 @@ void CommBBB_SendStateInfo(uint8_t u8State, uint16_t u16MatchedID, uint8_t u8Con
 		sprintf(acTxBBBBuffer, "#State=%d\n", u8State);
 	}
 
-	uint16_t u16FrameLen = CommBBB_GetFrameLength(acTxBBBBuffer);
-	// HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart1, (uint8_t *)acTxBBBBuffer, u16FrameLen);
 	
-	// sprintf(acTxSEGGER, "TX status = %d\n", (uint8_t)status);
-	// SEGGER_RTT_WriteString(0, acTxSEGGER);
-
 	if (huart1.gState == HAL_UART_STATE_READY) 
 	{
+		uint16_t u16FrameLen = CommBBB_GetFrameLength(acTxBBBBuffer);
+
 		HAL_StatusTypeDef status = HAL_UART_Transmit_IT(&huart1, (uint8_t *)acTxBBBBuffer, u16FrameLen);
 		sprintf(acTxSEGGER, "TX BBB status = %d\n", (uint8_t)status);
 		SEGGER_RTT_WriteString(0, acTxSEGGER);

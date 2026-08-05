@@ -691,6 +691,7 @@ void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t* data, uint16_
 	{
 		if (u32NotificationValue & TX_I2C_TASK_NOTIFY_BIT)
 		{
+			// Debug SEGGER
 			sprintf(msg, "[My Debug] Send OLED Screen TX data done!\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 		}
@@ -699,11 +700,10 @@ void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t* data, uint16_
 	{
 		HAL_I2C_Master_Transmit_IT(&hi2c1, address, dt, count+1);	// resend
 
+		// Debug SEGGER
 		sprintf(msg, "[My Debug] Send OLED Screen TX data failed! Resent it!\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 	}
-
-	
 }
 
 
@@ -721,6 +721,7 @@ void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data) {
 	{
 		if (u32NotificationValue & TX_I2C_TASK_NOTIFY_BIT)
 		{
+			// Debug SEGGER
 			sprintf(msg, "[My Debug] Send OLED Screen TX data done!\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 		}
@@ -729,6 +730,7 @@ void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data) {
 	{
 		HAL_I2C_Master_Transmit_IT(&hi2c1, address, dt, 2);	// resend
 
+		// Debug SEGGER
 		sprintf(msg, "[My Debug] Send OLED Screen TX data failed! Resent it!\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 	}
