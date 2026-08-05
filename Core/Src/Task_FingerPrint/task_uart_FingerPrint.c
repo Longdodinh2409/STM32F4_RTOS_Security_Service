@@ -21,6 +21,23 @@ static uint8_t s_u8CountFPBAD = 0;
 
 static bool s_u8BackToStandByFlag = false;
 
+RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
+
+// Global TX
+Fingerprint_Packet_t g_stFingerPrintTXData;
+// Global RX
+Fingerprint_Packet_t g_stFingerPrintRXData;
+volatile uint8_t g_au8RXFingerPrintBufferSize = 0;
+volatile uint8_t g_au8RXFingerPrintBuffer[RX_BUFFER_SIZE];
+// Data Ready flag
+volatile bool bDataReady = false;
+
+// Biến toàn cục hoặc tĩnh quản lý FSM
+Fingerprint_State_t g_FingerState = FSM_NONE;
+EnrollState_t g_EnrollState = ENROLL_IDLE;
+static uint16_t s_u16EnrollID = 0;
+static bool s_bEnrollCommandSent = false;
+
 bool Fingerprint_GetConfirmFPOKEnableFlag(void)
 {
     return s_u8CountConfirmFPOKEnableFlag;
@@ -42,23 +59,6 @@ void Fingerprint_SetConfirmFPBADEnableFlag(bool enable)
     s_u8CountConfirmFPBADEnableFlag = enable;
     s_u8CountConfirmFPBAD = 0;
 }
-
-RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
-
-// Global TX
-Fingerprint_Packet_t g_stFingerPrintTXData;
-// Global RX
-Fingerprint_Packet_t g_stFingerPrintRXData;
-volatile uint8_t g_au8RXFingerPrintBufferSize = 0;
-volatile uint8_t g_au8RXFingerPrintBuffer[RX_BUFFER_SIZE];
-// Data Ready flag
-volatile bool bDataReady = false;
-
-// Biến toàn cục hoặc tĩnh quản lý FSM
-Fingerprint_State_t g_FingerState = FSM_NONE;
-EnrollState_t g_EnrollState = ENROLL_IDLE;
-static uint16_t s_u16EnrollID = 0;
-static bool s_bEnrollCommandSent = false;
 
 void Fingerprint_SetEnrollID(uint16_t enrollID)
 {
