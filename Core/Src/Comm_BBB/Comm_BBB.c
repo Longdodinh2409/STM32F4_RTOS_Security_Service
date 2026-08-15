@@ -9,8 +9,6 @@
 #include "../Task_FingerPrint/task_uart_FingerPrint.h"
 #include "../Task_ParsingData/task_ParsingData.h"
 
-#define DEFAULT_CMD_VALUE 	(99)
-
 extern UART_HandleTypeDef huart1;
 extern uint8_t UART1_rx_data;
 extern TaskHandle_t task_PD_handler;
@@ -19,9 +17,6 @@ uint8_t rx_data;
 char rx_buffer[BBB_RX_MAX_LEN];
 char g_acRXBufferBBB[BBB_RX_MAX_LEN];
 uint8_t rx_index = 0;
-volatile uint8_t data_ready = 0;
-volatile uint8_t processing = 0;
-uint8_t cmd;
 
 char acTxBBBBuffer[64];
 
