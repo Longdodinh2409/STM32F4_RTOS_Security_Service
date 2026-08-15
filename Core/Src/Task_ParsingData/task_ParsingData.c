@@ -216,7 +216,7 @@ void ProcessParsingTimeDisplay(uint32_t timestamp, int timezone_offset_hours)
 
     // Bước 5: Tính Tháng
     int month = 1;
-    // Mảng lưu số ngày của 12 tháng (index 0 bỏ trống để dùng index 1-12 cho trực quan)
+    // Array save number of dates of each month
     int days_in_month[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     
     // Nếu là năm nhuận, tháng 2 có 29 ngày
@@ -229,7 +229,7 @@ void ProcessParsingTimeDisplay(uint32_t timestamp, int timezone_offset_hours)
         month++;                            // Tiến lên tháng tiếp theo
     }
 
-    // Bước 6: Tính Ngày (Phải cộng thêm 1 vì total_days là số ngày "đã trôi qua" tính từ ngày mùng 1)
+    // Step 6: Tính Ngày (Phải cộng thêm 1 vì total_days là số ngày "đã trôi qua" tính từ ngày mùng 1)
     int day = total_days + 1;
 
     SetStandbyDay((uint8_t)day);
@@ -243,8 +243,7 @@ void ProcessParsingTimeDisplay(uint32_t timestamp, int timezone_offset_hours)
 		bIsClearStandbyLayoutByNewTS = true;
 	}
 
-    // In kết quả
-    // printf("Ket qua thu cong: %02d/%02d/%d %02d:%02d:%02d\n", day, month, year, hour, minute, second);
+    // Debug RTT Viewer
 	sprintf(acTimeStamp, "%02d/%02d/%d %02d:%02d:%02d\n", day, month, year, hour, minute, second);
 	SEGGER_RTT_WriteString(0, acTimeStamp);
 }
@@ -266,6 +265,7 @@ void ProcessParsingMemberName(void)
 		else
 		{
 			// Display
+			// Start 2nd Confirm
 			Fingerprint_SetConfirmFPBADEnableFlag(true);
 		}
 	}
