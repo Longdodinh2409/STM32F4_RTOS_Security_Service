@@ -530,7 +530,6 @@ void ProcessDisplay(void)
 			
 			if (u32RemainingTimeSec == 0)
 			{
-				// SetDisplayState(SCREEN_STATE_STANDBY);
 				xTaskNotify(task_FP_handler, FINGERPRINT_DONE_BLOCK_BY_DISPLAY, eSetBits);
 			}
 			else

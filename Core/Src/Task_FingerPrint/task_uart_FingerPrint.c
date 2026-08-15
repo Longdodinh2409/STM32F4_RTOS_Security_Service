@@ -21,6 +21,23 @@ static uint8_t s_u8CountFPBAD = 0;
 
 static bool s_u8BackToStandByFlag = false;
 
+RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
+
+// Global TX
+Fingerprint_Packet_t g_stFingerPrintTXData;
+// Global RX
+Fingerprint_Packet_t g_stFingerPrintRXData;
+volatile uint8_t g_au8RXFingerPrintBufferSize = 0;
+volatile uint8_t g_au8RXFingerPrintBuffer[RX_BUFFER_SIZE];
+// Data Ready flag
+volatile bool bDataReady = false;
+
+// Biến toàn cục hoặc tĩnh quản lý FSM
+Fingerprint_State_t g_FingerState = FSM_NONE;
+EnrollState_t g_EnrollState = ENROLL_IDLE;
+static uint16_t s_u16EnrollID = 0;
+static bool s_bEnrollCommandSent = false;
+
 bool Fingerprint_GetConfirmFPOKEnableFlag(void)
 {
     return s_u8CountConfirmFPOKEnableFlag;
@@ -42,24 +59,6 @@ void Fingerprint_SetConfirmFPBADEnableFlag(bool enable)
     s_u8CountConfirmFPBADEnableFlag = enable;
     s_u8CountConfirmFPBAD = 0;
 }
-
-RingBuffer_t stRXRingBuffer = { .head = 0, .tail = 0 }; // for ISR
-
-// Global TX
-Fingerprint_Packet_t g_stFingerPrintTXData;
-// Global RX
-Fingerprint_Packet_t g_stFingerPrintRXData;
-volatile uint8_t g_au8RXFingerPrintBufferSize = 0;
-volatile uint8_t g_au8RXFingerPrintBuffer[RX_BUFFER_SIZE];
-// Data Ready flag
-volatile bool bDataReady = false;
-
-// Biến toàn cục hoặc tĩnh quản lý FSM
-Fingerprint_State_t g_FingerState = FSM_NONE;
-EnrollState_t g_EnrollState = ENROLL_IDLE;
-static uint16_t s_u16EnrollID = 0;
-static bool s_bEnrollCommandSent = false;
-// static uint32_t s_u32EnrollStartTick = 0;
 
 void Fingerprint_SetEnrollID(uint16_t enrollID)
 {
@@ -159,7 +158,7 @@ void FingerPrint_UART_RxCallback(uint8_t rx_byte) {
 			// Save size and set flag for ProcessMain
 			g_au8RXFingerPrintBufferSize = expected_total_length;
 
-			// SEGGER_RTT_WriteString(0, "Receive a packet FingerPrint RX data!\n");
+			// Debug SEGGER
 			sprintf(msg, "[My Debug] Receive a packet FingerPrint RX data!\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
@@ -184,11 +183,13 @@ void FingerPrint_UART_RxCallback(uint8_t rx_byte) {
 
 void Fingerprint_StartEnrollment(void)
 {
-	if (g_EnrollState == ENROLL_IDLE) {
+	if (g_EnrollState == ENROLL_IDLE) 
+	{
 		s_u16EnrollID = 0;
 		g_EnrollState = ENROLL_START;
 		s_bEnrollCommandSent = false;
-		// s_u32EnrollStartTick = HAL_GetTick();
+		
+		// Debug SEGGER
 		sprintf(msg, "[Enroll] Start new enrollment request (BBB will assign ID)\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 	}
@@ -215,15 +216,19 @@ void ProcessFingerPrintEnrollmentApplication(void)
 			{
 				if (s_u16EnrollID != 0)
 				{
+					// Debug SEGGER
 					sprintf(msg, "[Enroll] Assigned new ID from BBB = %u\n", s_u16EnrollID);
 					SEGGER_SYSVIEW_PrintfTarget(msg);
+
 					g_EnrollState = ENROLL_GET_IMG_1;
 					s_bEnrollCommandSent = false;
 				}
 				else
 				{
+					// Debug SEGGER
 					sprintf(msg, "[Enroll] Received notify but ID is invalid, enter ENROLL_ERROR\n");
 					SEGGER_SYSVIEW_PrintfTarget(msg);
+
 					CommBBB_SendEnrollIDError(0xFF);
 					g_EnrollState = ENROLL_ERROR;
 				}
@@ -231,8 +236,10 @@ void ProcessFingerPrintEnrollmentApplication(void)
 		}
 		else
 		{
+			// Debug SEGGER
 			sprintf(msg, "[Enroll] Wait for BBB ID timeout, enter ENROLL_ERROR\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
+
 			CommBBB_SendEnrollIDError(0xFF);
 			g_EnrollState = ENROLL_ERROR;
 		}
@@ -244,8 +251,10 @@ void ProcessFingerPrintEnrollmentApplication(void)
 		{
 			if (!s_bEnrollCommandSent)
 			{
+				// Debug SEGGER
 				sprintf(msg, "[Enroll] Send GEN_IMG for first capture\n");
 				SEGGER_SYSVIEW_PrintfTarget(msg);
+
 				Fingerprint_SendCommand(0x01, NULL, 0);
 				s_bEnrollCommandSent = true;
 			}
@@ -278,8 +287,10 @@ void ProcessFingerPrintEnrollmentApplication(void)
 		{
 			if (!s_bEnrollCommandSent)
 			{
+				// Debug SEGGER
 				sprintf(msg, "[Enroll] Send IMG_2_TZ for buffer 1\n");
 				SEGGER_SYSVIEW_PrintfTarget(msg);
+
 				uint8_t params[1] = { 0x01 };
 				Fingerprint_SendCommand(0x02, params, 1);
 				s_bEnrollCommandSent = true;
@@ -308,8 +319,10 @@ void ProcessFingerPrintEnrollmentApplication(void)
 		{
 			if (!s_bEnrollCommandSent)
 			{
+				// Debug SEGGER
 				sprintf(msg, "[Enroll] Waiting for finger removal\n");
 				SEGGER_SYSVIEW_PrintfTarget(msg);
+
 				Fingerprint_SendCommand(0x01, NULL, 0);
 				s_bEnrollCommandSent = true;
 			}
@@ -342,8 +355,10 @@ void ProcessFingerPrintEnrollmentApplication(void)
 		{
 			if (!s_bEnrollCommandSent)
 			{
+				// Debug SEGGER
 				sprintf(msg, "[Enroll] Send GEN_IMG for second capture\n");
 				SEGGER_SYSVIEW_PrintfTarget(msg);
+
 				Fingerprint_SendCommand(0x01, NULL, 0);
 				s_bEnrollCommandSent = true;
 			}
@@ -375,8 +390,10 @@ void ProcessFingerPrintEnrollmentApplication(void)
 		{
 			if (!s_bEnrollCommandSent)
 			{
+				// Debug SEGGER
 				sprintf(msg, "[Enroll] Send IMG_2_TZ for buffer 2\n");
 				SEGGER_SYSVIEW_PrintfTarget(msg);
+
 				uint8_t params[1] = { 0x02 };
 				Fingerprint_SendCommand(0x02, params, 1);
 				s_bEnrollCommandSent = true;
@@ -405,8 +422,10 @@ void ProcessFingerPrintEnrollmentApplication(void)
 		{
 			if (!s_bEnrollCommandSent)
 			{
+				// Debug SEGGER
 				sprintf(msg, "[Enroll] Send REG_MODEL\n");
 				SEGGER_SYSVIEW_PrintfTarget(msg);
+
 				Fingerprint_SendCommand(0x05, NULL, 0);
 				s_bEnrollCommandSent = true;
 			}
@@ -434,8 +453,10 @@ void ProcessFingerPrintEnrollmentApplication(void)
 		{
 			if (!s_bEnrollCommandSent)
 			{
+				// Debug SEGGER
 				sprintf(msg, "[Enroll] Send STORE_MODEL ID=%u\n", s_u16EnrollID);
 				SEGGER_SYSVIEW_PrintfTarget(msg);
+
 				uint8_t params[3] = { 0x01, (uint8_t)((s_u16EnrollID >> 8) & 0xFF), (uint8_t)(s_u16EnrollID & 0xFF) };
 				Fingerprint_SendCommand(0x06, params, 3);
 				s_bEnrollCommandSent = true;
@@ -500,14 +521,12 @@ void ProcessFingerPrintApplication(void)
 
 	// DEBUG: Initialize state machine on first call
 	if (g_FingerState == FSM_NONE) {
-		// printf("[FSM] Initializing Fingerprint State Machine...\r\n");
-		// SEGGER_RTT_WriteString(0, "Init...");
+		// Debug SEGGER
 		sprintf(msg, "[My Debug] Init...\n");
 		SEGGER_SYSVIEW_PrintfTarget(msg);
 
 		// Reset counter Display
 		Fingerprint_SetConfirmFPOKEnableFlag(false);
-
 		Fingerprint_SetConfirmFPBADEnableFlag(false);
 		s_u8CountFPBAD = 0;
 
@@ -533,7 +552,7 @@ void ProcessFingerPrintApplication(void)
 				SetDisplayState(SCREEN_STATE_STANDBY);
 			}
 
-			// Gửi lệnh 01H (Không cần tham số data)
+			// Debug SEGGER
 			sprintf(msg, "[My Debug] Send GEN_IMG - 01H\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
@@ -555,13 +574,10 @@ void ProcessFingerPrintApplication(void)
 	
 					if (u8confirmstate == 0x00) // 0x00: Có ngón tay & chụp thành công
 					{
-						// Comm BBB: There's a Finger!!!
-						// CommBBB_SendStateInfo((uint8_t)g_FingerState, NONE_MATCHED_FP_ID, NONE_MATCHED_FP_SCORE);
-						
 						// Display
 						SetDisplayState(SCREEN_STATE_PROCESSING);
 
-						g_FingerState = FSM_FINGER_SEND_IMG2TZ; // Đi tiếp bước 2
+						g_FingerState = FSM_FINGER_SEND_IMG2TZ; // next step 2
 
 						taskYIELD();
 					}
@@ -569,12 +585,12 @@ void ProcessFingerPrintApplication(void)
 					{
 						if (u8confirmstate == 0x02) // 0x02: Không có ngón tay trên kính
 						{
-							// Không có ngón tay thì nghỉ 1 lát (VD: 100ms) rồi quét lại
+							// Delay then Check FP again
 							g_FingerState = FSM_FINGER_DELAY;
 						} 
 						else 
 						{
-							// Lỗi khác (chụp lỗi, bẩn kính...), quét lại từ đầu
+							// Other errors (false capture, dirty on glass, etc.), back to step 1
 							g_FingerState = FSM_FINGER_SEND_GENIMG;
 						}
 
@@ -602,7 +618,7 @@ void ProcessFingerPrintApplication(void)
 			sprintf(msg, "[My Debug] Send IMG_2_TZ - 02H, Chon CharBuffer1\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
-			uint8_t bufferID[1] = { 0x01 }; // Tham số: Chọn CharBuffer1
+			uint8_t bufferID[1] = { 0x01 }; // Param for 0x02 command: Choose CharBuffer1
 			Fingerprint_SendCommand(0x02, bufferID, 1);
 			g_FingerState = FSM_FINGER_WAIT_IMG2TZ;
 		}
@@ -622,7 +638,7 @@ void ProcessFingerPrintApplication(void)
 					}
 					else
 					{
-						// Tạo lỗi (ngón tay ướt/nhoè), quay lại chờ ngón tay mới
+						// Failed, recheck FP
 						g_FingerState = FSM_FINGER_SEND_GENIMG;
 					}
 				}
@@ -635,7 +651,7 @@ void ProcessFingerPrintApplication(void)
 		// ---------------------------------------------------------
 		case FSM_FINGER_SEND_SEARCH:
 		{
-			// Tham số cho lệnh Search: BufferID (1), StartPage (0x00, 0x00), PageNum (0x01, 0x2C - Tìm tối đa 300 vân tay)
+			// Param for 0x04 Search command: BufferID (1), StartPage (0x00, 0x00), PageNum (0x012C - Search upto 300 FPs)
 			sprintf(msg, "[My Debug] Send SEARCH - 04H, BufferID (1), StartPage (0x00, 0x00), PageNum (0x01, 0x2C) search 300 FPs\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
 
@@ -669,16 +685,16 @@ void ProcessFingerPrintApplication(void)
 					}
 					else if (u8confirmstate == 0x17)
 					{
-						// printf("Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! \n");
+						// Debug SEGGER
 						sprintf(msg, "[Conclusion] Van tay da xac nhan truoc do. Hay bo tay ra va dat lai len Sensor! (neu muon) \n");
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 
-					if (Fingerprint_GetConfirmFPOKEnableFlag() == true)
-					{
-						s_u8CountConfirmFPOK++;
-						if (s_u8CountConfirmFPOK >= MAX_CONFIRMATION_CNT_FINGER_PRINT)
+						if (Fingerprint_GetConfirmFPOKEnableFlag() == true)
 						{
-							Fingerprint_SetConfirmFPOKEnableFlag(false);
+							s_u8CountConfirmFPOK++;
+							if (s_u8CountConfirmFPOK >= MAX_CONFIRMATION_CNT_FINGER_PRINT)
+							{
+								Fingerprint_SetConfirmFPOKEnableFlag(false);
 
 								SetDisplayState(SCREEN_STATE_PASS);
 								vTaskDelay(pdMS_TO_TICKS(2900));
@@ -687,12 +703,12 @@ void ProcessFingerPrintApplication(void)
 							}
 						}
 
-					if (Fingerprint_GetConfirmFPBADEnableFlag())
-					{
-						s_u8CountConfirmFPBAD++;
-						if (s_u8CountConfirmFPBAD >= MAX_CONFIRMATION_CNT_FINGER_PRINT)
+						if (Fingerprint_GetConfirmFPBADEnableFlag())
 						{
-							Fingerprint_SetConfirmFPBADEnableFlag(false);
+							s_u8CountConfirmFPBAD++;
+							if (s_u8CountConfirmFPBAD >= MAX_CONFIRMATION_CNT_FINGER_PRINT)
+							{
+								Fingerprint_SetConfirmFPBADEnableFlag(false);
 
 								s_u8CountFPBAD++;
 								if (s_u8CountFPBAD == 15)
@@ -722,7 +738,7 @@ void ProcessFingerPrintApplication(void)
 					}
 					else if (u8confirmstate == 0x09) // 0x09: KHÔNG TÌM THẤY (Ngón tay lạ)
 					{
-						// printf("Van tay sai! Khong tim thay trong thu vien.\n");
+						// Debug SEGGER
 						sprintf(msg, "[Conclusion] Van tay sai! Khong tim thay trong thu vien.\n");
 						SEGGER_SYSVIEW_PrintfTarget(msg);
 
@@ -730,7 +746,7 @@ void ProcessFingerPrintApplication(void)
 						CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
 					}
 
-					// Xử lý xong, bắt buộc phải đợi 1 lát (chờ người dùng rút ngón tay ra)
+					// Done processing, waiting for User get finger up
 					g_FingerState = FSM_FINGER_DELAY;
 				}
 			}
@@ -742,11 +758,11 @@ void ProcessFingerPrintApplication(void)
 		// ---------------------------------------------------------
 		case FSM_FINGER_DELAY:
 		{
-			// Nghỉ 100ms trước khi tiếp tục chu trình quét mới
-
+			// Debug SEGGER
 			sprintf(msg, "[My Debug] FingerPrint TX-RX delay 100ms\n");
 			SEGGER_SYSVIEW_PrintfTarget(msg);
-			// // Việc này giúp module rảnh rang không bị quá tải lệnh liên tục
+
+			// Việc này giúp module rảnh rang không bị quá tải lệnh liên tục
 			g_FingerState = FSM_FINGER_SEND_GENIMG; // Quay lại từ đầu
 			vTaskDelay(pdMS_TO_TICKS(100));
 		}
@@ -760,6 +776,7 @@ void ProcessFingerPrintApplication(void)
 			// SEGGER_SYSVIEW_PrintfTarget(msg);
 
 			SetDisplayState(SCREEN_STATE_TEMP_LOCK);
+
 			// Comm BBB: result of Finger: Valid or not?!?
 			CommBBB_SendStateInfo((uint8_t)g_FingerState, u16matchedID, u8confirmstate);
 
@@ -788,9 +805,6 @@ void ProcessFingerPrintApplication(void)
 
 			if (xTaskNotifyWait(0, FINGERPRINT_END_BLOCK_INFINITY_VALUE, &s_u32TaskNotifyValue, portMAX_DELAY) == pdTRUE)
 			{
-				// sprintf(msg, "[My Debug] FingerPrint TX-RX run again by BBB unlock\n");
-				// SEGGER_SYSVIEW_PrintfTarget(msg);
-
 				if (s_u32TaskNotifyValue & FINGERPRINT_END_BLOCK_INFINITY_VALUE)
 				{
 					g_FingerState = FSM_FINGER_SEND_GENIMG;	// Quay lại từ đầu

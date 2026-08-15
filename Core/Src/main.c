@@ -78,8 +78,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
-void task1_handler_func(void *para);
-void task2_handler_func(void *para);
+
 void My_SEGGER_SYSVIEW_Conf(void);
 /* USER CODE END PFP */
 
@@ -133,9 +132,6 @@ int main(void)
 	Init_UART2_FingerPrint();
 	ClearAllDisplayState();
 	/****************************** SYSTEM AREA  ******************************/
-
-	// xTaskCreate(task1_handler_func,             "Task-1",             configMINIMAL_STACK_SIZE,   "Hello from Task 1",  2,  &task1_handler);
-  	// xTaskCreate(task2_handler_func,             "Task-2",             configMINIMAL_STACK_SIZE,   "Hello from Task 2",  2,  &task2_handler);
   	xTaskCreate(Button_Task,       				"Task_UB",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_UsetBtn_handler);
 	xTaskCreate(ParsingRXData_Task,       		"Task_PD",  configMINIMAL_STACK_SIZE,   NULL,                 3,  &task_PD_handler);
 	xTaskCreate(Fingerprint_StateMachine_Task,  "Task_FP",   configMINIMAL_STACK_SIZE,   NULL,                 2,  &task_FP_handler);
@@ -441,36 +437,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void task1_handler_func(void *para) {
-	while (1) 
-	{
-		HAL_GPIO_TogglePin(GPIOD, LED_ORANGE);
-			// printf("%s \n", (char*) para);
-		SEGGER_RTT_printf(0, "%s \n", (char*) para);
-		vTaskDelay(pdMS_TO_TICKS(5));
-	}
-}
-
-void task2_handler_func(void *para) {
-	while (1) 
-	{
-		HAL_GPIO_TogglePin(GPIOD, LED_RED);
-			// printf("%s \n", (char*) para);
-		SEGGER_RTT_printf(0, "%s \n", (char*) para);
-		vTaskDelay(pdMS_TO_TICKS(5));
-	}
-}
-
-// UART 2
-// int _write(int file, char *ptr, int len) {
-//     for (int i = 0; i < len; i++) {
-//         ITM_SendChar((*ptr++));
-//     }
-//     return len;
-// }
-
 int _write(int file, char *ptr, int len) {
-    // HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
 	// Send to BBB
 	HAL_UART_Transmit_IT(&huart1, (uint8_t *)ptr, len);
 	// Debug on RTT Viewer (Terminal 0)
@@ -552,17 +519,12 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
      * 'pcTaskName' vừa bị tràn Stack.
      */
 
-    /* Bước 1: Tắt toàn bộ ngắt hệ thống để ngăn chặn thảm họa lan rộng */
+    /* Tắt toàn bộ ngắt hệ thống để ngăn chặn thảm họa lan rộng */
     taskDISABLE_INTERRUPTS();
 
-    /* 
-     * Bước 2: Bác có thể đặt Breakpoint tại dòng for(;;) này khi Debug.
-     * Mở Watch window, xem biến pcTaskName để biết đích danh Task nào gây lỗi,
-     * sau đó vào code khởi tạo Task đó tăng cấu hình StackSize lên!
-     */
     for( ;; )
     {
-        // Gắn code bật LED sáng chói lóa lên ở đây để báo hiệu lỗi
+        // Blink LED to warning User
     }
 }
 
@@ -572,7 +534,7 @@ void My_SEGGER_SYSVIEW_Conf(void)
 	DWT_CTRL |= (1 << 0);
 	SEGGER_SYSVIEW_Conf();
 	
-    // 3. Bây giờ bạn có thể in log thoải mái (lúc này hàm thư viện sẽ tự động điền chuỗi ID "SEGGER RTT")
+    // Debug RTT Viewer
     SEGGER_RTT_WriteString(0, "System Initialized Successfully!\n");
 #endif
 }

@@ -17,9 +17,6 @@ typedef enum {
 	SCREEN_STATE_MAX_CNT
 } E_SCREEN_STATE;
 
-// extern unsigned char garfield_128x64[];
-// extern E_SCREEN_STATE g_u8ScreenState;
-
 #define INVALID_CMD				(99)
 
 #define MAX_LENGTH_NAME_MEMBER_DISPLAY	(16)
